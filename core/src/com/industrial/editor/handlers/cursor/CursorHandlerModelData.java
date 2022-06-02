@@ -1,10 +1,9 @@
-package com.industrial.editor.handlers;
+package com.industrial.editor.handlers.cursor;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.industrial.editor.CursorSelectionModel;
 import lombok.Getter;
 import lombok.Setter;
 

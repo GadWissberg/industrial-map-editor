@@ -31,7 +31,8 @@ public enum EditModes implements EditorMode {
 			ElementTools.values(),
 			new CharactersOnTouchDownLeftEvent()),
 
-	ENVIRONMENT("Environment Objects Mode", EnvironmentDefinitions.values(),
+	ENVIRONMENT("Environment Objects Mode",
+			EnvironmentDefinitions.values(),
 			(params, assetsManager) -> new PlacedEnvObject(
 					new PlacedModelElement.PlacedModelElementParameters(params),
 					assetsManager),

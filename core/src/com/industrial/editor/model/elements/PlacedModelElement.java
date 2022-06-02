@@ -1,11 +1,13 @@
 package com.industrial.editor.model.elements;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
@@ -16,7 +18,9 @@ public abstract class PlacedModelElement extends PlacedElement {
 
 	public PlacedModelElement(final PlacedModelElementParameters params, final GameAssetsManager assetsManager) {
 		super(params);
-		this.modelInstance = new ModelInstance(assetsManager.getModel(params.getModelDefinition().getModelDefinition()));
+		Assets.Models modelDefinition = params.getModelDefinition().getModelDefinition();
+		this.modelInstance = new ModelInstance(assetsManager.getModel(modelDefinition));
+		Utils.applyExplicitModelTexture(modelDefinition, modelInstance, assetsManager);
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
 		modelInstance.transform.setTranslation(coords.getCol(), node.getHeight() + params.getHeight(), coords.getRow());

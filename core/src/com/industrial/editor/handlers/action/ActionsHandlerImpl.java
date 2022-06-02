@@ -13,14 +13,14 @@ import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.industrial.editor.CursorSelectionModel;
+import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.actions.ActionAnswer;
 import com.industrial.editor.actions.MappingAction;
 import com.industrial.editor.actions.processes.*;
 import com.industrial.editor.actions.types.*;
-import com.industrial.editor.handlers.CursorHandler;
-import com.industrial.editor.handlers.CursorHandlerModelData;
+import com.industrial.editor.handlers.cursor.CursorHandler;
+import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.tools.ElementTools;
@@ -84,7 +84,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				new FlatNode((int) position.z, (int) position.x),
 				assetsManager,
 				initializedTiles,
-				data.getMap());
+				data.map());
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	@Override
 	public void defineSelectedEnvObject( ) {
 		MapNodeData mapNodeData = getMapNodeDataFromCursor();
-		List<? extends PlacedElement> list = this.data.getPlacedElements().getPlacedObjects().get(MapRendererImpl.getMode());
+		List<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
 		List<PlacedElement> elementsInTheNode = list.stream()
 				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
 				.collect(Collectors.toList());
@@ -152,15 +152,15 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		Vector3 cursorPosition = services.cursorHandler().getHighlighter().transform.getTranslation(auxVector);
 		int row = (int) cursorPosition.z;
 		int col = (int) cursorPosition.x;
-		return data.getMap().getNodes()[row][col];
+		return data.map().getNodes()[row][col];
 	}
 
 	private boolean removeElementByMode( ) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		executeAction(new RemoveElementAction(
-				data.getMap(),
-				data.getPlacedElements(),
+				data.map(),
+				data.placedElements(),
 				new FlatNode((int) position.z, (int) position.x),
 				(EditModes) MapRendererImpl.getMode()));
 		return true;
@@ -173,7 +173,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				.getCursorSelectionModel()
 				.getModelInstance() == null) return;
 
-		GameMap map = data.getMap();
+		GameMap map = data.map();
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
 		Vector3 position = cursorSelectionModel.getModelInstance().transform.getTranslation(auxVector);
@@ -187,7 +187,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		}
 		PlaceEnvObjectAction action = new PlaceEnvObjectAction(
 				map,
-				(List<PlacedEnvObject>) data.getPlacedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
+				(List<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
 				node,
 				(EnvironmentDefinitions) services.selectionHandler().getSelectedElement(),
 				am,
@@ -204,10 +204,10 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		Vector3 position = cursorSelectionModel.getModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
 		int col = (int) position.x;
-		GameMap map = data.getMap();
+		GameMap map = data.map();
 		PlacePickupAction action = new PlacePickupAction(
 				map,
-				(List<PlacedPickup>) data.getPlacedElements().getPlacedObjects().get(EditModes.PICKUPS),
+				(List<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS),
 				map.getNodes()[row][col],
 				(ItemDefinition) services.selectionHandler().getSelectedElement(),
 				am,
@@ -221,10 +221,10 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
 		int col = (int) position.x;
-		GameMap map = data.getMap();
+		GameMap map = data.map();
 		PlaceLightAction action = new PlaceLightAction(
 				map,
-				(List<PlacedLight>) data.getPlacedElements().getPlacedObjects().get(EditModes.LIGHTS),
+				(List<PlacedLight>) data.placedElements().getPlacedObjects().get(EditModes.LIGHTS),
 				map.getNodes()[row][col],
 				services.selectionHandler().getSelectedElement(),
 				am);
@@ -236,7 +236,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 													final Set<MapNodeData> initializedTiles) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 pos = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
-		SelectTilesForLiftProcess p = new SelectTilesForLiftProcess(data.getMap(), new FlatNode((int) pos.z, (int) pos.x));
+		SelectTilesForLiftProcess p = new SelectTilesForLiftProcess(data.map(), new FlatNode((int) pos.z, (int) pos.x));
 		p.setDirection(direction);
 		p.setWallCreator(services.wallCreator());
 		p.setInitializedTiles(initializedTiles);
@@ -249,7 +249,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		FlatNode src = new FlatNode((int) position.z, (int) position.x);
-		currentProcess = new SelectTilesForWallTilingProcess(data.getMap(), src);
+		currentProcess = new SelectTilesForWallTilingProcess(data.map(), src);
 	}
 
 	@Override
@@ -259,10 +259,10 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
 		int col = (int) position.x;
-		GameMap map = data.getMap();
+		GameMap map = data.map();
 		PlaceCharacterAction action = new PlaceCharacterAction(
 				map,
-				(List<PlacedCharacter>) data.getPlacedElements().getPlacedObjects().get(EditModes.CHARACTERS),
+				(List<PlacedCharacter>) data.placedElements().getPlacedObjects().get(EditModes.CHARACTERS),
 				map.getNodes()[row][col],
 				(CharacterDefinition) services.selectionHandler().getSelectedElement(),
 				am,
@@ -318,7 +318,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 								   final FlatNode dst) {
 
 		Utils.applyOnRegionOfTiles(src, dst, (row, col) -> {
-			MapNodeData[][] nodes = data.getMap().getNodes();
+			MapNodeData[][] nodes = data.map().getNodes();
 			defineNodeEastAndWestWalls(defs, row, col, nodes);
 			defineNodeSouthAndNorthWalls(defs, row, col, nodes);
 		});
@@ -422,7 +422,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	@SuppressWarnings("JavaDoc")
 	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
 		LiftTilesAction.Parameters params = new LiftTilesAction.Parameters(src, dst, value, services.wallCreator());
-		ActionFactory.liftTiles(data.getMap(), params).execute(services.eventsNotifier());
+		ActionFactory.liftTiles(data.map(), params).execute(services.eventsNotifier());
 	}
 
 	/**
@@ -433,6 +433,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	 */
 	@SuppressWarnings("JavaDoc")
 	public void onEnvObjectDefined(final PlacedEnvObject element, final float height) {
-		ActionFactory.defineEnvObject(data.getMap(), element, height).execute(services.eventsNotifier());
+		ActionFactory.defineEnvObject(data.map(), element, height).execute(services.eventsNotifier());
 	}
 }

@@ -1,9 +1,5 @@
-package com.industrial.editor;
+package com.industrial.editor.handlers.cursor;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -13,15 +9,13 @@ import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
+import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.Optional;
 
-import static com.badlogic.gdx.Files.*;
-import static com.badlogic.gdx.Files.FileType.*;
-import static com.badlogic.gdx.Gdx.files;
 import static com.gadarts.industrial.shared.model.characters.Direction.EAST;
 
 @RequiredArgsConstructor
@@ -42,14 +36,7 @@ public class CursorSelectionModel {
 	public void setSelection(final ElementDefinition selectedElement, final ModelDefinition model) {
 		this.selectedElement = selectedElement;
 		modelInstance = new ModelInstance(assetsManager.getModel(model));
-		Optional.ofNullable(model.getTextureFileName()).ifPresent(t -> {
-			for (Material material : modelInstance.materials) {
-				if (material.has(TextureAttribute.Diffuse)) {
-					TextureAttribute attribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);
-					attribute.textureDescription.texture = assetsManager.getModelExplicitTexture(model);
-				}
-			}
-		});
+		Utils.applyExplicitModelTexture(model, modelInstance, assetsManager);
 		facingDirection = EAST;
 	}
 }

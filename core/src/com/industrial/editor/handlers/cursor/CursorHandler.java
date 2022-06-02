@@ -1,4 +1,4 @@
-package com.industrial.editor.handlers;
+package com.industrial.editor.handlers.cursor;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -54,7 +54,7 @@ public class CursorHandler implements Disposable {
 	private Decal cursorSimpleDecal;
 	private float flicker;
 
-	void applyOpacity( ) {
+	public void applyOpacity( ) {
 		ModelInstance modelInstance = cursorHandlerModelData.getCursorSelectionModel().getModelInstance();
 		BlendingAttribute blend = (BlendingAttribute) modelInstance.materials.get(0).get(BlendingAttribute.Type);
 		if (blend != null) {

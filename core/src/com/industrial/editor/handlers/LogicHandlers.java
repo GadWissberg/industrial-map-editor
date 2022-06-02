@@ -8,12 +8,14 @@ import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.industrial.editor.CursorSelectionModel;
+import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.handlers.action.ActionHandlerRelatedData;
 import com.industrial.editor.handlers.action.ActionHandlerRelatedServices;
 import com.industrial.editor.handlers.action.ActionsHandler;
 import com.industrial.editor.handlers.action.ActionsHandlerImpl;
+import com.industrial.editor.handlers.cursor.CursorHandler;
+import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
 import com.industrial.editor.model.GameMap;
 import lombok.Getter;
 

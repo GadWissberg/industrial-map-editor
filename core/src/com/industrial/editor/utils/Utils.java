@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Intersector;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterUtils;
 import com.gadarts.industrial.shared.model.characters.Direction;
@@ -24,6 +26,7 @@ import com.industrial.editor.model.elements.CharacterDecal;
 import com.industrial.editor.model.node.FlatNode;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_SCALE;
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_Y;
@@ -97,5 +100,18 @@ public class Utils {
 				runnable.run(row, col);
 			}
 		}
+	}
+
+	public static void applyExplicitModelTexture(ModelDefinition modelDefinition,
+												 ModelInstance modelInstance,
+												 GameAssetsManager assetsManager) {
+		Optional.ofNullable(modelDefinition.getTextureFileName()).ifPresent(t -> {
+			for (Material material : modelInstance.materials) {
+				if (material.has(TextureAttribute.Diffuse)) {
+					TextureAttribute attribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);
+					attribute.textureDescription.texture = assetsManager.getModelExplicitTexture(modelDefinition);
+				}
+			}
+		});
 	}
 }
