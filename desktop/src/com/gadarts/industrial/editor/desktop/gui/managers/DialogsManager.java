@@ -1,7 +1,7 @@
 package com.gadarts.industrial.editor.desktop.gui.managers;
 
-import com.gadarts.industrial.editor.desktop.dialogs.DialogPane;
-import com.gadarts.industrial.editor.desktop.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.DialogPane;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
 import com.industrial.editor.MapRenderer;
 
 import javax.swing.*;

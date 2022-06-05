@@ -1,7 +1,7 @@
 package com.gadarts.industrial.editor.desktop.gui.commands.tools;
 
 import com.gadarts.industrial.editor.desktop.gui.managers.Managers;
-import com.gadarts.industrial.editor.desktop.ModesManager;
+import com.gadarts.industrial.editor.desktop.gui.managers.ModesManager;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;

@@ -1,4 +1,4 @@
-package com.gadarts.industrial.editor.desktop;
+package com.gadarts.industrial.editor.desktop.gui.managers;
 
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;

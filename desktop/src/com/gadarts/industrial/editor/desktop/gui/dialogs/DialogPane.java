@@ -1,6 +1,6 @@
-package com.gadarts.industrial.editor.desktop.dialogs;
+package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
-import com.gadarts.industrial.editor.desktop.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,5 @@
 package com.gadarts.industrial.editor.desktop.gui.managers;
 
-import com.gadarts.industrial.editor.desktop.ModesManager;
 import com.industrial.editor.MapRenderer;
 
 import javax.swing.*;

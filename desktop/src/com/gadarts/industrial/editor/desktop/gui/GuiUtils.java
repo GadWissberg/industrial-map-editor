@@ -1,6 +1,6 @@
-package com.gadarts.industrial.editor.desktop;
+package com.gadarts.industrial.editor.desktop.gui;
 
-import com.gadarts.industrial.editor.desktop.dialogs.DialogPane;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.DialogPane;
 import com.gadarts.industrial.shared.assets.Assets;
 
 import javax.imageio.ImageIO;

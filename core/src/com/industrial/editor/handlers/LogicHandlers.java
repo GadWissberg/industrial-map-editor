@@ -6,7 +6,7 @@ import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapEditorEventsNotifier;
@@ -76,11 +76,11 @@ public class LogicHandlers implements Disposable {
 		selectionHandler.setSelectedElement(definition);
 	}
 
-	public void onTreeEnvSelected(final ElementDefinition selectedElement) {
-		selectionHandler.setSelectedElement(selectedElement);
+	public void onTreeEnvSelected(final ElementDefinition selected) {
+		selectionHandler.setSelectedElement(selected);
 		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		CursorSelectionModel cursorSelectionModel = cursorHandler.getCursorHandlerModelData().getCursorSelectionModel();
-		cursorSelectionModel.setSelection(selectedElement, ((EnvironmentDefinitions) selectedElement).getModelDefinition());
+		cursorSelectionModel.setSelection(selected, ((EnvironmentObjectDefinition) selected).getModelDefinition());
 		cursorHandler.applyOpacity();
 	}
 

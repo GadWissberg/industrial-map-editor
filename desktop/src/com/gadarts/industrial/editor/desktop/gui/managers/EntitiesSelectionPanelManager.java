@@ -1,17 +1,19 @@
 package com.gadarts.industrial.editor.desktop.gui.managers;
 
-import com.gadarts.industrial.editor.desktop.tree.EditorTree;
-import com.gadarts.industrial.editor.desktop.tree.ResourcesTreeCellRenderer;
+import com.gadarts.industrial.editor.desktop.gui.tree.EditorTree;
+import com.gadarts.industrial.editor.desktop.gui.tree.ResourcesTreeCellRenderer;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.editor.desktop.GalleryButton;
-import com.gadarts.industrial.editor.desktop.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.GalleryButton;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
 import com.gadarts.industrial.editor.desktop.gui.EditorCardLayout;
-import com.gadarts.industrial.editor.desktop.gui.TreeSection;
+import com.gadarts.industrial.editor.desktop.gui.tree.TreeSection;
 import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.characters.enemies.Enemies;
 import com.gadarts.industrial.shared.model.characters.player.PlayerDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
+import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.gadarts.industrial.shared.model.pickups.WeaponsDefinitions;
 import com.gadarts.industrial.editor.desktop.gui.EntriesDisplayTypes;
@@ -40,6 +42,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 	private static final String TREE_SECTION_ICON_CHARACTER = "character";
 	private static final String TREE_SECTION_ICON_PICKUPS = "pickup";
 	private static final String TREE_SECTION_ICON_ENV = "env";
+	private static final String TREE_SECTION_ICON_DOOR = "door";
 	private final Map<EditModes, EntriesDisplayTypes> modeToEntriesDisplayType = Map.of(
 			EditModes.CHARACTERS, EntriesDisplayTypes.TREE,
 			EditModes.TILES, EntriesDisplayTypes.GALLERY,
@@ -57,15 +60,21 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 							Enemies.values(),
 							TREE_SECTION_ICON_CHARACTER)
 			},
-			EditModes.PICKUPS, new TreeSection[]{new TreeSection(
-					"Pickups",
-					WeaponsDefinitions.values(),
-					TREE_SECTION_ICON_PICKUPS)
+			EditModes.PICKUPS, new TreeSection[]{
+					new TreeSection(
+							"Pickups",
+							WeaponsDefinitions.values(),
+							TREE_SECTION_ICON_PICKUPS)
 			},
-			EditModes.ENVIRONMENT, new TreeSection[]{new TreeSection(
-					"Environment",
-					EnvironmentDefinitions.values(),
-					TREE_SECTION_ICON_ENV)
+			EditModes.ENVIRONMENT, new TreeSection[]{
+					new TreeSection(
+							"Things",
+							ThingsDefinitions.values(),
+							TREE_SECTION_ICON_ENV),
+					new TreeSection(
+							"Doors",
+							DoorsDefinitions.values(),
+							TREE_SECTION_ICON_DOOR)
 			});
 	private JPanel entitiesPanel;
 
@@ -99,7 +108,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 	private DefaultMutableTreeNode createSectionNodeForTree(final String header, final ElementDefinition[] definitions) {
 		DefaultMutableTreeNode sectionNode = new DefaultMutableTreeNode(header);
 		Arrays.stream(definitions)
-				.filter(d -> d.isCanBeSeenOnTheMap())
+				.filter(ElementDefinition::isCanBeSeenOnTheMap)
 				.forEach(def -> sectionNode.add(new DefaultMutableTreeNode(def, false)));
 		return sectionNode;
 	}
@@ -157,7 +166,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 		} else if (mode == EditModes.PICKUPS) {
 			mapRenderer.onTreePickupSelected((ItemDefinition) definition);
 		} else if (mode == EditModes.ENVIRONMENT) {
-			mapRenderer.onTreeEnvSelected((EnvironmentDefinitions) definition);
+			mapRenderer.onTreeEnvSelected((ModelElementDefinition) definition);
 		}
 	}
 

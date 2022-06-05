@@ -1,12 +1,12 @@
-package com.gadarts.industrial.editor.desktop.dialogs;
+package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
-import com.gadarts.industrial.editor.desktop.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
 import com.industrial.editor.model.node.WallDefinition;
 import lombok.Getter;
 
 import javax.swing.*;
 
-import static com.gadarts.industrial.editor.desktop.dialogs.DialogPane.SPINNER_WIDTH;
+import static com.gadarts.industrial.editor.desktop.gui.dialogs.DialogPane.SPINNER_WIDTH;
 
 @Getter
 public class WallSpinners {

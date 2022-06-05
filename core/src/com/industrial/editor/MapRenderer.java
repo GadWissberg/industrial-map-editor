@@ -2,8 +2,8 @@ package com.industrial.editor;
 
 
 import com.gadarts.industrial.shared.assets.Assets;
+import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.mode.EditModes;
@@ -29,7 +29,7 @@ public interface MapRenderer {
 
 	void onSelectedObjectRotate(int direction);
 
-	void onTreeEnvSelected(EnvironmentDefinitions env);
+	void onTreeEnvSelected(ModelElementDefinition env);
 
 	void onTreePickupSelected(ItemDefinition definition);
 

@@ -1,6 +1,6 @@
 package com.gadarts.industrial.editor.desktop.gui.commands;
 
-import com.gadarts.industrial.editor.desktop.dialogs.SetAmbientLightDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.SetAmbientLightDialog;
 import com.gadarts.industrial.editor.desktop.gui.managers.DialogsManager;
 import com.gadarts.industrial.editor.desktop.gui.managers.Managers;
 import com.industrial.editor.MapRenderer;

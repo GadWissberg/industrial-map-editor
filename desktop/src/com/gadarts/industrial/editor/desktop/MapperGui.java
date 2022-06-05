@@ -1,7 +1,8 @@
 package com.gadarts.industrial.editor.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
-import com.gadarts.industrial.editor.desktop.dialogs.DialogPane;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.DialogPane;
 import com.gadarts.industrial.editor.desktop.gui.Gui;
 import com.gadarts.industrial.editor.desktop.gui.toolbar.ToolbarButtonProperties;
 import com.gadarts.industrial.shared.model.ElementDefinition;

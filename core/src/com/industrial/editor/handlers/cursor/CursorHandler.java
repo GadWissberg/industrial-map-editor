@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
@@ -166,7 +166,7 @@ public class CursorHandler implements Disposable {
 	 * @param modelBatch
 	 */
 	@SuppressWarnings("JavaDoc")
-	public void renderModelCursorFloorGrid(final EnvironmentDefinitions selectedElement, final ModelBatch modelBatch) {
+	public void renderModelCursorFloorGrid(final ModelElementDefinition selectedElement, final ModelBatch modelBatch) {
 		ModelInstance cursorTileModelInstance = cursorHandlerModelData.getCursorTileModelInstance();
 		Vector3 originalPosition = cursorTileModelInstance.transform.getTranslation(auxVector3_1);
 		Vector3 cursorPosition = highlighter.transform.getTranslation(auxVector3_3);
@@ -177,7 +177,7 @@ public class CursorHandler implements Disposable {
 	}
 
 	private void renderModelCursorFloorGridCells(final Vector3 cursorPosition,
-												 final EnvironmentDefinitions def,
+												 final ModelElementDefinition def,
 												 final Direction facingDirection,
 												 final ModelBatch modelBatch) {
 		int halfWidth = def.getWidth() / 2;

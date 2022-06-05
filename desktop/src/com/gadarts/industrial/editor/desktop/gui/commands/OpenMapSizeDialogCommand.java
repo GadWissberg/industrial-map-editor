@@ -1,6 +1,6 @@
 package com.gadarts.industrial.editor.desktop.gui.commands;
 
-import com.gadarts.industrial.editor.desktop.dialogs.SetMapSizeDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.SetMapSizeDialog;
 import com.gadarts.industrial.editor.desktop.gui.managers.Managers;
 import com.industrial.editor.MapRenderer;
 

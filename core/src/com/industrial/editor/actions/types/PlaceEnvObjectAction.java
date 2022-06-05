@@ -3,7 +3,7 @@ package com.industrial.editor.actions.types;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.actions.PlaceElementAction;
@@ -13,15 +13,15 @@ import com.industrial.editor.model.elements.PlacedModelElement.PlacedModelElemen
 
 import java.util.List;
 
-public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, EnvironmentDefinitions> {
+public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, EnvironmentObjectDefinition> {
 
-	private final EnvironmentDefinitions selectedEnvObject;
+	private final EnvironmentObjectDefinition selectedEnvObject;
 	private final List<PlacedEnvObject> placedEnvObjects;
 
 	public PlaceEnvObjectAction(final GameMap map,
 								final List<PlacedEnvObject> placedEnvObjects,
 								final MapNodeData node,
-								final EnvironmentDefinitions definition,
+								final EnvironmentObjectDefinition definition,
 								final GameAssetsManager assetsManager,
 								final Direction selectedObjectDirection) {
 		super(map, node, assetsManager, selectedObjectDirection, definition, placedEnvObjects);

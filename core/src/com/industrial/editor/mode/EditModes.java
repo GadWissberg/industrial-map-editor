@@ -2,7 +2,7 @@ package com.industrial.editor.mode;
 
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.pickups.WeaponsDefinitions;
 import com.industrial.editor.actions.processes.MappingProcess;
@@ -32,7 +32,7 @@ public enum EditModes implements EditorMode {
 			new CharactersOnTouchDownLeftEvent()),
 
 	ENVIRONMENT("Environment Objects Mode",
-			EnvironmentDefinitions.values(),
+			ThingsDefinitions.values(),
 			(params, assetsManager) -> new PlacedEnvObject(
 					new PlacedModelElement.PlacedModelElementParameters(params),
 					assetsManager),

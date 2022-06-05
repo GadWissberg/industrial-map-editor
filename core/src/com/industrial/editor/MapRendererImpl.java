@@ -11,8 +11,8 @@ import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.GeneralUtils;
+import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.handlers.cursor.CursorHandler;
@@ -170,7 +170,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	@Override
-	public void onTreeEnvSelected(final EnvironmentDefinitions env) {
+	public void onTreeEnvSelected(final ModelElementDefinition env) {
 		handlers.onTreeEnvSelected(env);
 	}
 

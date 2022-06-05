@@ -1,4 +1,4 @@
-package com.gadarts.industrial.editor.desktop.tree;
+package com.gadarts.industrial.editor.desktop.gui.tree;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

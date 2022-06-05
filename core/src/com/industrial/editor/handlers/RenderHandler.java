@@ -22,16 +22,19 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
+import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.NodeWalls;
 import com.gadarts.industrial.shared.model.map.Wall;
-import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.action.ActionsHandler;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
+import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.ModeType;
@@ -251,7 +254,7 @@ public class RenderHandler implements Disposable {
 		CursorHandler cursorHandler = handlersManager.getLogicHandlers().getCursorHandler();
 		if (selectedElement != null) {
 			if (mode == EditModes.ENVIRONMENT) {
-				EnvironmentDefinitions environmentDefinition = (EnvironmentDefinitions) selectedElement;
+				EnvironmentObjectDefinition environmentDefinition = (EnvironmentObjectDefinition) selectedElement;
 				cursorHandler.renderModelCursorFloorGrid(environmentDefinition, handlersManager.getRenderHandler().getModelBatch());
 				CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
 				CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
@@ -267,7 +270,7 @@ public class RenderHandler implements Disposable {
 		List<PlacedEnvObject> placedEnvObjects = (List<PlacedEnvObject>) placedElements.getPlacedObjects().get(EditModes.ENVIRONMENT);
 		for (final PlacedEnvObject placedEnvObject : placedEnvObjects) {
 			renderEnvObject(
-					(EnvironmentDefinitions) placedEnvObject.getDefinition(),
+					(EnvironmentObjectDefinition) placedEnvObject.getDefinition(),
 					placedEnvObject.getModelInstance(),
 					placedEnvObject.getFacingDirection());
 		}
@@ -280,14 +283,16 @@ public class RenderHandler implements Disposable {
 		modelInstance.transform.set(originalTransform);
 	}
 
-	private void renderEnvObject(final EnvironmentDefinitions definition,
+	private void renderEnvObject(final EnvironmentObjectDefinition definition,
 								 final ModelInstance modelInstance,
 								 final Direction facingDirection) {
 		Matrix4 originalTransform = auxMatrix.set(modelInstance.transform);
 		modelInstance.transform.translate(0.5f, 0, 0.5f);
 		modelInstance.transform.rotate(Vector3.Y, -1 * facingDirection.getDirection(auxVector2_1).angleDeg());
 		modelInstance.transform.translate(definition.getOffset(auxVector3_1));
-		EnvironmentDefinitions.handleEvenSize(definition, modelInstance, facingDirection);
+		if (definition.getEnvironmentObjectType() == EnvironmentObjectType.THING) {
+			ThingsDefinitions.handleEvenSize((ThingsDefinitions) definition, modelInstance, facingDirection);
+		}
 		handlersManager.getRenderHandler().getModelBatch().render(modelInstance);
 		modelInstance.transform.set(originalTransform);
 	}

@@ -1,10 +1,10 @@
 package com.gadarts.industrial.editor.desktop.gui;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
-import com.gadarts.industrial.editor.desktop.dialogs.DefineEnvObjectDialog;
-import com.gadarts.industrial.editor.desktop.dialogs.SelectObjectInNodeDialog;
-import com.gadarts.industrial.editor.desktop.dialogs.TilesLiftDialog;
-import com.gadarts.industrial.editor.desktop.dialogs.WallTilingDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.DefineEnvObjectDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.SelectObjectInNodeDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.TilesLiftDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.WallTilingDialog;
 import com.gadarts.industrial.editor.desktop.gui.managers.ManagersImpl;
 import com.gadarts.industrial.editor.desktop.gui.menu.MenuItemProperties;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.MenuItemDefinition;

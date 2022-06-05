@@ -1,4 +1,4 @@
-package com.gadarts.industrial.editor.desktop;
+package com.gadarts.industrial.editor.desktop.gui;
 
 import com.gadarts.industrial.shared.assets.Assets;
 import lombok.Getter;

@@ -276,8 +276,8 @@ public class MapInflater {
 								 final EditModes mode,
 								 final JsonArray elementsJsonArray,
 								 final GameMap map) {
-		elementsJsonArray.forEach(characterJsonObject -> {
-			JsonObject json = characterJsonObject.getAsJsonObject();
+		elementsJsonArray.forEach(jsonObject -> {
+			JsonObject json = jsonObject.getAsJsonObject();
 			PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
 			placedElements.add(mode.getCreationProcess().create(parameters, assetsManager));
 		});

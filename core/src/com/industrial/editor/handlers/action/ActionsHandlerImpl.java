@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentDefinitions;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
@@ -189,7 +189,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				map,
 				(List<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
 				node,
-				(EnvironmentDefinitions) services.selectionHandler().getSelectedElement(),
+				(EnvironmentObjectDefinition) services.selectionHandler().getSelectedElement(),
 				am,
 				cursorSelectionModel.getFacingDirection());
 		executeAction(action);

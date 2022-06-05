@@ -1,6 +1,5 @@
 package com.gadarts.industrial.editor.desktop.gui.managers;
 
-import com.gadarts.industrial.editor.desktop.ModesManager;
 import com.gadarts.industrial.editor.desktop.gui.commands.mode.SetModeCommand;
 import com.gadarts.industrial.editor.desktop.gui.menu.MenuItemProperties;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.MenuItemDefinition;

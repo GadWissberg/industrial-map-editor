@@ -1,4 +1,4 @@
-package com.gadarts.industrial.editor.desktop.dialogs;
+package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.model.elements.PlacedEnvObject;

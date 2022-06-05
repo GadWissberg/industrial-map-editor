@@ -1,8 +1,8 @@
-package com.gadarts.industrial.editor.desktop.dialogs;
+package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
 import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
-import com.gadarts.industrial.editor.desktop.GalleryButton;
-import com.gadarts.industrial.editor.desktop.GuiUtils;
+import com.gadarts.industrial.editor.desktop.gui.GalleryButton;
+import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.industrial.editor.MapRenderer;
