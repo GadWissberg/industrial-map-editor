@@ -1,8 +1,6 @@
 package com.industrial.editor.handlers.cursor;
 
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
@@ -13,8 +11,6 @@ import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.util.Optional;
 
 import static com.gadarts.industrial.shared.model.characters.Direction.EAST;
 
