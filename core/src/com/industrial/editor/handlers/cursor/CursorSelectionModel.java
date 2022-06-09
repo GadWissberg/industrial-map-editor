@@ -7,6 +7,7 @@ import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
+import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
 import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,24 @@ public class CursorSelectionModel {
 	private static final Vector3 auxVector3_2 = new Vector3();
 	private final GameAssetsManager assetsManager;
 	private ModelInstance modelInstance;
+	private ModelInstance appendixModelInstance;
 	private ElementDefinition selectedElement;
 
 
 	public void setSelection(final ElementDefinition selectedElement, final ModelDefinition model) {
 		this.selectedElement = selectedElement;
 		modelInstance = new ModelInstance(assetsManager.getModel(model));
+		initializeAppendix(selectedElement);
 		Utils.applyExplicitModelTexture(model, modelInstance, assetsManager);
 		facingDirection = EAST;
+	}
+
+	private void initializeAppendix(ElementDefinition selectedElement) {
+		if (selectedElement instanceof DoorsDefinitions) {
+			DoorsDefinitions selectedDoor = (DoorsDefinitions) selectedElement;
+			appendixModelInstance = new ModelInstance(assetsManager.getModel(selectedDoor.getFrameModelDefinition()));
+		} else {
+			appendixModelInstance = null;
+		}
 	}
 }

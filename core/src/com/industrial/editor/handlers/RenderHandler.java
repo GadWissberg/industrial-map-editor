@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
@@ -52,7 +51,8 @@ import java.util.Set;
 
 public class RenderHandler implements Disposable {
 	private static final Vector3 auxVector3_1 = new Vector3();
-	private static final Matrix4 auxMatrix = new Matrix4();
+	private static final Matrix4 auxMatrix_1 = new Matrix4();
+	private static final Matrix4 auxMatrix_2 = new Matrix4();
 	private static final Vector2 auxVector2_1 = new Vector2();
 	private static final int DECALS_POOL_SIZE = 200;
 	private static final Color GRID_COLOR = Color.GRAY;
@@ -254,30 +254,38 @@ public class RenderHandler implements Disposable {
 		CursorHandler cursorHandler = handlersManager.getLogicHandlers().getCursorHandler();
 		if (selectedElement != null) {
 			if (mode == EditModes.ENVIRONMENT) {
-				EnvironmentObjectDefinition environmentDefinition = (EnvironmentObjectDefinition) selectedElement;
-				cursorHandler.renderModelCursorFloorGrid(environmentDefinition, handlersManager.getRenderHandler().getModelBatch());
-				CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
-				CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
-				ModelInstance modelInstance = cursorSelectionModel.getModelInstance();
-				renderEnvObject(environmentDefinition, modelInstance, cursorSelectionModel.getFacingDirection());
+				renderCursorEnvObjectModel((EnvironmentObjectDefinition) selectedElement, cursorHandler);
 			} else if (mode == EditModes.PICKUPS) {
 				renderPickup(cursorHandler.getCursorHandlerModelData().getCursorSelectionModel().getModelInstance());
 			}
 		}
 	}
 
+	private void renderCursorEnvObjectModel(EnvironmentObjectDefinition selectedElement, CursorHandler cursorHandler) {
+		EnvironmentObjectDefinition environmentDefinition = selectedElement;
+		cursorHandler.renderModelCursorFloorGrid(environmentDefinition, modelBatch);
+		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
+		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
+		ModelInstance modelInstance = cursorSelectionModel.getModelInstance();
+		Direction facingDirection = cursorSelectionModel.getFacingDirection();
+		ModelInstance appendixModelInstance = cursorSelectionModel.getAppendixModelInstance();
+		renderEnvObject(environmentDefinition, modelInstance, facingDirection, appendixModelInstance);
+	}
+
 	private void renderEnvObjects(final PlacedElements placedElements) {
-		List<PlacedEnvObject> placedEnvObjects = (List<PlacedEnvObject>) placedElements.getPlacedObjects().get(EditModes.ENVIRONMENT);
+		Map<EditModes, List<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
+		List<PlacedEnvObject> placedEnvObjects = (List<PlacedEnvObject>) placedObjects.get(EditModes.ENVIRONMENT);
 		for (final PlacedEnvObject placedEnvObject : placedEnvObjects) {
 			renderEnvObject(
 					(EnvironmentObjectDefinition) placedEnvObject.getDefinition(),
 					placedEnvObject.getModelInstance(),
-					placedEnvObject.getFacingDirection());
+					placedEnvObject.getFacingDirection(),
+					placedEnvObject.getAppendixModelInstance());
 		}
 	}
 
 	private void renderPickup(final ModelInstance modelInstance) {
-		Matrix4 originalTransform = auxMatrix.set(modelInstance.transform);
+		Matrix4 originalTransform = auxMatrix_1.set(modelInstance.transform);
 		modelInstance.transform.translate(0.5f, 0, 0.5f);
 		handlersManager.getRenderHandler().getModelBatch().render(modelInstance);
 		modelInstance.transform.set(originalTransform);
@@ -285,16 +293,40 @@ public class RenderHandler implements Disposable {
 
 	private void renderEnvObject(final EnvironmentObjectDefinition definition,
 								 final ModelInstance modelInstance,
-								 final Direction facingDirection) {
-		Matrix4 originalTransform = auxMatrix.set(modelInstance.transform);
+								 final Direction facingDirection,
+								 ModelInstance appendixModelInstance) {
+		Matrix4 originalTransform = auxMatrix_1.set(modelInstance.transform);
+		rotateEnvObject(definition, modelInstance, facingDirection);
+		handleSpecificEnvRender(definition, modelInstance, facingDirection, definition.getEnvironmentObjectType());
+		modelBatch.render(modelInstance);
+		renderEnvAppendix(definition, facingDirection, appendixModelInstance);
+		modelInstance.transform.set(originalTransform);
+	}
+
+	private void renderEnvAppendix(EnvironmentObjectDefinition definition,
+								   Direction facingDirection,
+								   ModelInstance appendixModelInstance) {
+		if (appendixModelInstance != null) {
+			Matrix4 originalTransform = auxMatrix_2.set(appendixModelInstance.transform);
+			rotateEnvObject(definition, appendixModelInstance, facingDirection);
+			modelBatch.render(appendixModelInstance);
+			appendixModelInstance.transform.set(originalTransform);
+		}
+	}
+
+	private void rotateEnvObject(EnvironmentObjectDefinition definition, ModelInstance modelInstance, Direction facingDirection) {
 		modelInstance.transform.translate(0.5f, 0, 0.5f);
 		modelInstance.transform.rotate(Vector3.Y, -1 * facingDirection.getDirection(auxVector2_1).angleDeg());
 		modelInstance.transform.translate(definition.getOffset(auxVector3_1));
-		if (definition.getEnvironmentObjectType() == EnvironmentObjectType.THING) {
+	}
+
+	private void handleSpecificEnvRender(EnvironmentObjectDefinition definition,
+										 ModelInstance modelInstance,
+										 Direction facingDirection,
+										 EnvironmentObjectType environmentObjectType) {
+		if (environmentObjectType == EnvironmentObjectType.THING) {
 			ThingsDefinitions.handleEvenSize((ThingsDefinitions) definition, modelInstance, facingDirection);
 		}
-		handlersManager.getRenderHandler().getModelBatch().render(modelInstance);
-		modelInstance.transform.set(originalTransform);
 	}
 
 

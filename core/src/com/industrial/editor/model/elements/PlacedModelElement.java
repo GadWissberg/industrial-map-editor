@@ -10,8 +10,6 @@ import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
-import java.util.Optional;
-
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 
 @Getter
@@ -23,6 +21,11 @@ public abstract class PlacedModelElement extends PlacedElement {
 		Assets.Models modelDefinition = params.getModelDefinition().getModelDefinition();
 		this.modelInstance = new ModelInstance(assetsManager.getModel(modelDefinition));
 		Utils.applyExplicitModelTexture(modelDefinition, modelInstance, assetsManager);
+		applyInitialTransformOnModelInstance(params, modelInstance);
+	}
+
+	protected void applyInitialTransformOnModelInstance(PlacedModelElementParameters params,
+														ModelInstance modelInstance) {
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
 		float height = params.getHeight();

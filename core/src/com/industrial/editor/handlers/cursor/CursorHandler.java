@@ -140,9 +140,14 @@ public class CursorHandler implements Disposable {
 	}
 
 	private void updateCursorAdditionals(final int x, final float y, final int z, final EditorMode mode) {
-		ModelInstance modelInstance = cursorHandlerModelData.getCursorSelectionModel().getModelInstance();
+		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
+		ModelInstance modelInstance = cursorSelectionModel.getModelInstance();
 		if (modelInstance != null) {
 			modelInstance.transform.setTranslation(x, y, z);
+			ModelInstance appendixModelInstance = cursorSelectionModel.getAppendixModelInstance();
+			if (appendixModelInstance != null) {
+				appendixModelInstance.transform.setTranslation(x, y, z);
+			}
 		}
 		updateCursorOfDecalMode(x, y, z, mode);
 	}
