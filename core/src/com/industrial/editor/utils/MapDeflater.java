@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.industrial.editor.MapRendererData;
+import com.industrial.editor.mode.AdditionalDeflationProcess;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedElement;
@@ -51,12 +52,15 @@ public class MapDeflater {
 
 	private void addElementsGroup(final JsonObject output,
 								  final EditModes mode,
-								  final boolean addFacingDirection,
+								  final boolean addFacingDir,
 								  final PlacedElements placedElements) {
 		JsonArray jsonArray = new JsonArray();
 		placedElements.getPlacedObjects()
 				.get(mode)
-				.forEach(element -> jsonArray.add(createElementJsonObject(element, addFacingDirection)));
+				.forEach(element -> {
+					AdditionalDeflationProcess additionalDeflationProcess = mode.getAdditionalDeflationProcess();
+					jsonArray.add(createElementJsonObject(element, addFacingDir, additionalDeflationProcess));
+				});
 		output.add(mode.name().toLowerCase(), jsonArray);
 	}
 
@@ -72,7 +76,13 @@ public class MapDeflater {
 		output.add(MapJsonKeys.CHARACTERS, charactersJsonObject);
 	}
 
-	private JsonObject createElementJsonObject(final PlacedElement e, final boolean addFacingDirection) {
+	private JsonObject createElementJsonObject(PlacedElement e, final boolean addFacingDirection) {
+		return createElementJsonObject(e, addFacingDirection, null);
+	}
+
+	private JsonObject createElementJsonObject(PlacedElement e,
+											   boolean addFacingDirection,
+											   AdditionalDeflationProcess additionalDeflationProcess) {
 		JsonObject jsonObject = new JsonObject();
 		MapNodeData node = e.getNode();
 		Coords coords = node.getCoords();
@@ -83,6 +93,7 @@ public class MapDeflater {
 			jsonObject.addProperty(MapJsonKeys.DIRECTION, e.getFacingDirection().ordinal());
 		}
 		Optional.ofNullable(e.getDefinition()).ifPresent(d -> jsonObject.addProperty(MapJsonKeys.TYPE, d.name()));
+		Optional.ofNullable(additionalDeflationProcess).ifPresent(a -> a.run(jsonObject, e.getDefinition()));
 		return jsonObject;
 	}
 

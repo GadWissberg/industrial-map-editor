@@ -290,7 +290,8 @@ public class MapInflater {
 		elementsJsonArray.forEach(characterJsonObject -> {
 			JsonObject json = characterJsonObject.getAsJsonObject();
 			PlacedElementParameters parameters = inflateElementParameters(defs, json, map);
-			placedElements.add(mode.getCreationProcess().create(parameters, assetsManager));
+			PlacedElement placedElement = mode.getCreationProcess().create(parameters, assetsManager);
+			placedElements.add(placedElement);
 		});
 	}
 
