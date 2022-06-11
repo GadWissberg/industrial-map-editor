@@ -59,7 +59,11 @@ public class MapDeflater {
 				.get(mode)
 				.forEach(element -> {
 					AdditionalDeflationProcess additionalDeflationProcess = mode.getAdditionalDeflationProcess();
-					jsonArray.add(createElementJsonObject(element, addFacingDir, additionalDeflationProcess));
+					jsonArray.add(createElementJsonObject(
+							element,
+							addFacingDir,
+							additionalDeflationProcess,
+							mode.isHeightDefinedByNode()));
 				});
 		output.add(mode.name().toLowerCase(), jsonArray);
 	}
@@ -77,18 +81,19 @@ public class MapDeflater {
 	}
 
 	private JsonObject createElementJsonObject(PlacedElement e, final boolean addFacingDirection) {
-		return createElementJsonObject(e, addFacingDirection, null);
+		return createElementJsonObject(e, addFacingDirection, null, false);
 	}
 
 	private JsonObject createElementJsonObject(PlacedElement e,
 											   boolean addFacingDirection,
-											   AdditionalDeflationProcess additionalDeflationProcess) {
+											   AdditionalDeflationProcess additionalDeflationProcess,
+											   boolean heightDefinedByNode) {
 		JsonObject jsonObject = new JsonObject();
 		MapNodeData node = e.getNode();
 		Coords coords = node.getCoords();
 		jsonObject.addProperty(MapJsonKeys.ROW, coords.getRow());
 		jsonObject.addProperty(MapJsonKeys.COL, coords.getCol());
-		jsonObject.addProperty(MapJsonKeys.HEIGHT, e.getHeight());
+		jsonObject.addProperty(MapJsonKeys.HEIGHT, heightDefinedByNode ? node.getHeight() : e.getHeight());
 		if (addFacingDirection) {
 			jsonObject.addProperty(MapJsonKeys.DIRECTION, e.getFacingDirection().ordinal());
 		}

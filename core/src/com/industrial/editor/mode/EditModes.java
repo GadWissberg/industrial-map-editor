@@ -49,9 +49,11 @@ public enum EditModes implements EditorMode {
 			ElementTools.values(),
 			new PickupsOnTouchDownEventLeft()),
 
-	LIGHTS("Lights Mode", true,
+	LIGHTS("Lights Mode",
+			true,
 			PlacedLight::new,
-			new LightsOnTouchDownEventLeft());
+			new LightsOnTouchDownEventLeft(),
+			true);
 	private final String displayName;
 	private final boolean decalCursor;
 	private final PlacedElementCreation creationProcess;
@@ -60,11 +62,13 @@ public enum EditModes implements EditorMode {
 	private final EditorTool[] tools;
 	private final OnTouchDownLeftEvent onTouchDownLeft;
 	private final AdditionalDeflationProcess additionalDeflationProcess;
+	private final boolean heightDefinedByNode;
 
 	EditModes(String displayName,
 			  boolean decalCursor,
 			  PlacedElementCreation creation,
-			  OnTouchDownLeftEvent onTouchDownLeftEvent) {
+			  OnTouchDownLeftEvent onTouchDownLeftEvent,
+			  boolean heightDefinedByNode) {
 		this(displayName,
 				decalCursor,
 				creation,
@@ -72,7 +76,8 @@ public enum EditModes implements EditorMode {
 				false,
 				null,
 				onTouchDownLeftEvent,
-				null);
+				null,
+				heightDefinedByNode);
 	}
 
 	EditModes(String displayName,
@@ -88,7 +93,8 @@ public enum EditModes implements EditorMode {
 				false,
 				tools,
 				onTouchDownLeftEvent,
-				additionalDeflationProcess);
+				additionalDeflationProcess,
+				false);
 	}
 
 	EditModes(String displayName,
@@ -102,7 +108,8 @@ public enum EditModes implements EditorMode {
 				skipGenericElementLoading,
 				tools,
 				onTouchDownLeftEvent,
-				null);
+				null,
+				false);
 	}
 
 	EditModes(String displayName,
@@ -117,7 +124,8 @@ public enum EditModes implements EditorMode {
 				false,
 				tools,
 				onTouchDownLeftEvent,
-				null);
+				null,
+				false);
 	}
 
 	EditModes(String displayName,
@@ -133,7 +141,8 @@ public enum EditModes implements EditorMode {
 				skipGenericElementLoading,
 				tools,
 				onTouchDownLeftEvent,
-				null);
+				null,
+				false);
 	}
 
 
