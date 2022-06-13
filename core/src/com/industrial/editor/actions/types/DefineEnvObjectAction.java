@@ -23,12 +23,12 @@ public class DefineEnvObjectAction extends MappingAction {
 		element.setHeight(height);
 		Matrix4 transform = element.getModelInstance().transform;
 		Vector3 position = transform.getTranslation(auxVector);
-		transform.setTranslation(position.x, height, position.z);
+		transform.setTranslation(position.x, element.getNode().getHeight() + height, position.z);
 		actionDone();
 	}
 
 	@Override
-	public boolean isProcess() {
+	public boolean isProcess( ) {
 		return false;
 	}
 }

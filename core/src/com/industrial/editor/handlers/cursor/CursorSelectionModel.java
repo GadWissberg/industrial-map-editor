@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
 import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
 import com.industrial.editor.utils.Utils;
@@ -35,7 +36,7 @@ public class CursorSelectionModel {
 		this.selectedElement = selectedElement;
 		modelInstance = new ModelInstance(assetsManager.getModel(model));
 		initializeAppendix(selectedElement);
-		Utils.applyExplicitModelTexture(model, modelInstance, assetsManager);
+		GeneralUtils.applyExplicitModelTexture(model, modelInstance, assetsManager);
 		facingDirection = EAST;
 	}
 

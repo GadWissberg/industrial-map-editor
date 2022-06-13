@@ -18,6 +18,6 @@ public class PlacedLight extends PlacedElement {
 		decal = Utils.createSimpleDecal(gameAssetsManager.getTexture(Assets.UiTextures.BULB));
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
-		decal.setPosition(coords.getCol() + 0.5f, BULB_Y, coords.getRow() + 0.5f);
+		decal.setPosition(coords.getCol() + 0.5f, node.getHeight() + BULB_Y, coords.getRow() + 0.5f);
 	}
 }

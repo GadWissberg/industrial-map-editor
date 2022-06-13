@@ -102,16 +102,4 @@ public class Utils {
 		}
 	}
 
-	public static void applyExplicitModelTexture(ModelDefinition modelDefinition,
-												 ModelInstance modelInstance,
-												 GameAssetsManager assetsManager) {
-		Optional.ofNullable(modelDefinition.getTextureFileName()).ifPresent(t -> {
-			for (Material material : modelInstance.materials) {
-				if (material.has(TextureAttribute.Diffuse)) {
-					TextureAttribute attribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);
-					attribute.textureDescription.texture = assetsManager.getModelExplicitTexture(modelDefinition);
-				}
-			}
-		});
-	}
 }

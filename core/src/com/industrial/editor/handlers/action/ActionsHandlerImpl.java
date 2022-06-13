@@ -103,9 +103,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 			onLeftClick(assetsManager, initializedTiles);
 		} else if (button == Input.Buttons.RIGHT) {
 			if (MapRendererImpl.getMode() instanceof EditModes) {
-				if (MapRendererImpl.getTool() == TilesTools.BRUSH || MapRendererImpl.getTool() == ElementTools.BRUSH) {
-					return removeElementByMode();
-				}
+				return removeElementByMode();
 			}
 		}
 		return false;

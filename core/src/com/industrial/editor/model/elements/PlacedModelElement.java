@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.Coords;
+import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
@@ -20,7 +21,7 @@ public abstract class PlacedModelElement extends PlacedElement {
 		super(params);
 		Assets.Models modelDefinition = params.getModelDefinition().getModelDefinition();
 		this.modelInstance = new ModelInstance(assetsManager.getModel(modelDefinition));
-		Utils.applyExplicitModelTexture(modelDefinition, modelInstance, assetsManager);
+		GeneralUtils.applyExplicitModelTexture(modelDefinition, modelInstance, assetsManager);
 		applyInitialTransformOnModelInstance(params, modelInstance);
 	}
 
@@ -29,7 +30,7 @@ public abstract class PlacedModelElement extends PlacedElement {
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
 		float height = params.getHeight();
-		modelInstance.transform.setTranslation(coords.getCol(), height > 0 ? height : node.getHeight(), coords.getRow());
+		modelInstance.transform.setTranslation(coords.getCol(), node.getHeight() + height, coords.getRow());
 	}
 
 	@Getter
