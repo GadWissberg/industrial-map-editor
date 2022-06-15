@@ -15,6 +15,8 @@ import static com.gadarts.industrial.editor.desktop.gui.Gui.*;
 @Getter
 @Setter
 public class PersistenceManager extends BaseManager {
+	public static final String SETTINGS_KEY_LAST_OPENED_FOLDER = "last_opened_folder";
+
 	private File currentlyOpenedMap;
 	private Gson gson = new Gson();
 	private Map<String, String> settings = new HashMap<>();
@@ -57,7 +59,11 @@ public class PersistenceManager extends BaseManager {
 	public void updateCurrentlyOpenedFile(final File file, String settingsFilePath, JFrame window) {
 		setCurrentlyOpenedMap(file);
 		window.setTitle(String.format(WINDOW_HEADER, PROGRAM_TILE, file.getName()));
-		settings.put(SETTINGS_KEY_LAST_OPENED_FILE, file.getPath());
+		updateAndFlushField(settingsFilePath, file.getPath(), SETTINGS_KEY_LAST_OPENED_FILE);
+	}
+
+	private void updateAndFlushField(String settingsFilePath, String key, String value) {
+		settings.put(key, value);
 		saveSettings(settings, settingsFilePath);
 	}
 
@@ -68,5 +74,9 @@ public class PersistenceManager extends BaseManager {
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void updateLastOpenedFolder(String settingsFilePath, String path) {
+		updateAndFlushField(settingsFilePath, SETTINGS_KEY_LAST_OPENED_FOLDER, path);
 	}
 }
