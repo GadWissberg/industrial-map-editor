@@ -6,7 +6,7 @@ import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.gadarts.industrial.shared.model.pickups.WeaponsDefinitions;
+import com.gadarts.industrial.shared.model.pickups.PlayerWeaponsDefinitions;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.SelectionHandler;
 import com.industrial.editor.handlers.action.ActionsHandler;
@@ -44,7 +44,7 @@ public enum EditModes implements EditorMode {
 				jsonObject.addProperty(MapJsonKeys.ENV_TYPE, envType);
 			}),
 
-	PICKUPS("Pickups Mode", WeaponsDefinitions.values(),
+	PICKUPS("Pickups Mode", PlayerWeaponsDefinitions.values(),
 			(params, am) -> new PlacedPickup(new PlacedModelElement.PlacedModelElementParameters(params), am),
 			ElementTools.values(),
 			new PickupsOnTouchDownEventLeft()),

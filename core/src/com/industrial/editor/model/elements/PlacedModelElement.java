@@ -8,7 +8,6 @@ import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;

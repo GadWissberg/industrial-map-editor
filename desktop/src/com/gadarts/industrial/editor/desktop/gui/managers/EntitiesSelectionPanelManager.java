@@ -15,8 +15,8 @@ import com.gadarts.industrial.shared.model.characters.player.PlayerDefinition;
 import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
 import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.gadarts.industrial.shared.model.pickups.WeaponsDefinitions;
 import com.gadarts.industrial.editor.desktop.gui.EntriesDisplayTypes;
+import com.gadarts.industrial.shared.model.pickups.PlayerWeaponsDefinitions;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
@@ -63,7 +63,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 			EditModes.PICKUPS, new TreeSection[]{
 					new TreeSection(
 							"Pickups",
-							WeaponsDefinitions.values(),
+							PlayerWeaponsDefinitions.values(),
 							TREE_SECTION_ICON_PICKUPS)
 			},
 			EditModes.ENVIRONMENT, new TreeSection[]{
