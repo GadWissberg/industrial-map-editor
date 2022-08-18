@@ -41,7 +41,7 @@ public class Utils {
 													  final CharacterDefinition definition,
 													  final FlatNode node,
 													  final Direction selectedCharacterDirection) {
-		String idle = SpriteType.IDLE.name() + "_" + selectedCharacterDirection.name().toLowerCase();
+		String idle = SpriteType.IDLE.name() + "_0_" + selectedCharacterDirection.name().toLowerCase();
 		TextureAtlas atlas = assetsManager.getAtlas(definition.getAtlasDefinition());
 		TextureAtlas.AtlasRegion region = atlas.findRegion(idle.toLowerCase());
 		Decal decal = Decal.newDecal(region, true);

@@ -50,7 +50,7 @@ public class ResourcesHandler implements Disposable {
 		TextureAtlas atlas = assetsManager.getAtlas(characterDefinition.getAtlasDefinition());
 		HashMap<Direction, TextureAtlas.AtlasRegion> playerFrames = new HashMap<>();
 		Arrays.stream(Direction.values()).forEach(direction -> {
-			String name = SpriteType.IDLE.name() + "_" + direction.name();
+			String name = SpriteType.IDLE.name() + "_0_" + direction.name();
 			playerFrames.put(direction, atlas.findRegion(name.toLowerCase()));
 		});
 		String format = String.format(Utils.FRAMES_KEY_CHARACTER, characterDefinition.name());
