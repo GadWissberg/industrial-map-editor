@@ -1,12 +1,13 @@
 package com.gadarts.industrial.editor.desktop.gui.managers;
 
-import com.gadarts.industrial.editor.desktop.gui.tree.EditorTree;
-import com.gadarts.industrial.editor.desktop.gui.tree.ResourcesTreeCellRenderer;
-import com.gadarts.industrial.shared.assets.Assets;
+import com.gadarts.industrial.editor.desktop.gui.EditorCardLayout;
+import com.gadarts.industrial.editor.desktop.gui.EntriesDisplayTypes;
 import com.gadarts.industrial.editor.desktop.gui.GalleryButton;
 import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
-import com.gadarts.industrial.editor.desktop.gui.EditorCardLayout;
+import com.gadarts.industrial.editor.desktop.gui.tree.EditorTree;
+import com.gadarts.industrial.editor.desktop.gui.tree.ResourcesTreeCellRenderer;
 import com.gadarts.industrial.editor.desktop.gui.tree.TreeSection;
+import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
@@ -15,7 +16,6 @@ import com.gadarts.industrial.shared.model.characters.player.PlayerDefinition;
 import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
 import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.gadarts.industrial.editor.desktop.gui.EntriesDisplayTypes;
 import com.gadarts.industrial.shared.model.pickups.PlayerWeaponsDefinitions;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.mode.EditModes;
@@ -173,10 +173,6 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 	public void onApplicationStart(JPanel entitiesPanel, File assetsFolderLocation) {
 		this.entitiesPanel = entitiesPanel;
 		addEntitiesDataSelectors(assetsFolderLocation);
-	}
-
-	public void changeEntitiesSelectionModePerTool(EditorMode mode) {
-		changeEntitiesSelectionModePerTool(mode, null);
 	}
 
 	public void changeEntitiesSelectionModePerTool(EditorMode mode, EditorTool tool) {

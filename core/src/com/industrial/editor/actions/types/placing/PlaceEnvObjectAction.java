@@ -1,4 +1,4 @@
-package com.industrial.editor.actions.types;
+package com.industrial.editor.actions.types.placing;
 
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.Coords;

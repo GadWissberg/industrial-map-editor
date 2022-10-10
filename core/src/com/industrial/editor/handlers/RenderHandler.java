@@ -80,6 +80,16 @@ public class RenderHandler implements Disposable {
 		this.camera = camera;
 	}
 
+	private static <T extends PlacedDecalElement> void renderSimpleDecals(HandlersManager handlersManager,
+																		  Camera camera,
+																		  Map<EditModes, List<? extends PlacedElement>> placedObjects,
+																		  EditModes mode) {
+		List<T> placed = (List<T>) placedObjects.get(mode);
+		for (T placedObject : placed) {
+			handlersManager.getRenderHandler().renderDecal(placedObject.getDecal(), camera);
+		}
+	}
+
 	public void renderDecal(final Decal decal, final Camera camera) {
 		decal.lookAt(auxVector3_1.set(decal.getPosition()).sub(camera.direction), camera.up);
 		decalBatch.add(decal);
@@ -147,9 +157,12 @@ public class RenderHandler implements Disposable {
 		});
 	}
 
-	private void renderDecals(final HandlersManager handlersManager, final EditorMode mode, final PlacedElements placedElements) {
+	private void renderDecals(HandlersManager handlersManager,
+							  EditorMode mode,
+							  PlacedElements placedElements) {
 		Gdx.gl.glDepthMask(false);
-		if (handlersManager.getLogicHandlers().getCursorHandler().getHighlighter() != null && mode.getClass().equals(EditModes.class) && ((EditModes) mode).isDecalCursor()) {
+		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getHighlighter();
+		if (highlighter != null && mode.getClass().equals(EditModes.class) && ((EditModes) mode).isDecalCursor()) {
 			renderCursorOfDecalMode(handlersManager, mode, camera);
 		}
 		renderDecalPlacedElements(placedElements, handlersManager, camera);
@@ -161,13 +174,15 @@ public class RenderHandler implements Disposable {
 										   final HandlersManager handlersManager,
 										   final Camera camera) {
 		Map<EditModes, List<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
+		renderCharacters(handlersManager, camera, placedObjects);
+		renderSimpleDecals(handlersManager, camera, placedObjects, EditModes.LIGHTS);
+		renderSimpleDecals(handlersManager, camera, placedObjects, EditModes.TRIGGERS);
+	}
+
+	private void renderCharacters(HandlersManager handlersManager, Camera camera, Map<EditModes, List<? extends PlacedElement>> placedObjects) {
 		List<PlacedCharacter> placedCharacters = (List<PlacedCharacter>) placedObjects.get(EditModes.CHARACTERS);
 		for (final PlacedCharacter character : placedCharacters) {
 			renderCharacter(character.getCharacterDecal(), character.getCharacterDecal().getSpriteDirection(), camera, handlersManager);
-		}
-		List<PlacedLight> placedLights = (List<PlacedLight>) placedObjects.get(EditModes.LIGHTS);
-		for (final PlacedLight placedLight : placedLights) {
-			handlersManager.getRenderHandler().renderDecal(placedLight.getDecal(), camera);
 		}
 	}
 

@@ -42,4 +42,6 @@ public interface ActionsHandler {
 	boolean onTouchDown(GameAssetsManager assetsManager, Set<MapNodeData> placedTiles, int button);
 
 	boolean onTouchUp(Assets.SurfaceTextures selectedTile, Model cursorTileModel);
+
+	void placeTrigger(GameAssetsManager assetsManager);
 }

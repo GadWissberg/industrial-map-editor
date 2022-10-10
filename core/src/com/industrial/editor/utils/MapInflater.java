@@ -245,12 +245,15 @@ public class MapInflater {
 								 final EditModes mode,
 								 final PlacedElements placedElements,
 								 final GameMap map) {
+		JsonElement jsonElement = input.get(mode.name().toLowerCase());
+		if (jsonElement == null) return;
+
 		List<? extends PlacedElement> placedElementsList = placedElements.getPlacedObjects().get(mode);
 		placedElementsList.clear();
 		inflateElements(
 				(List<PlacedElement>) placedElementsList,
 				mode,
-				input.get(mode.name().toLowerCase()).getAsJsonArray(),
+				jsonElement.getAsJsonArray(),
 				map);
 	}
 

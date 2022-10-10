@@ -47,6 +47,11 @@ public enum ToolbarDefinitions implements ToolbarButtonDefinition {
 			"Lights Mode",
 			EditMenuItemsDefinitions.MODE_LIGHTS)),
 
+	MODE_TRIGGERS(new ToolbarButtonProperties(
+			"mode_trigger",
+			"Triggers Mode",
+			EditMenuItemsDefinitions.MODE_TRIGGERS)),
+
 	SEPARATOR_2(),
 
 	CAMERA_PAN(new ToolbarButtonProperties(

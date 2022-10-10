@@ -53,6 +53,12 @@ public enum EditModes implements EditorMode {
 			true,
 			PlacedLight::new,
 			new LightsOnTouchDownEventLeft(),
+			true),
+
+	TRIGGERS("Triggers Mode",
+			true,
+			PlacedTrigger::new,
+			new TriggersOnTouchDownEventLeft(),
 			true);
 	private final String displayName;
 	private final boolean decalCursor;

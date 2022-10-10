@@ -27,6 +27,7 @@ import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_Y;
@@ -53,6 +54,9 @@ public class CursorHandler implements Disposable {
 	private ModelInstance highlighter;
 	private Decal cursorSimpleDecal;
 	private float flicker;
+	private Map<EditModes, Assets.UiTextures> modesToDecal = Map.of(
+			EditModes.LIGHTS, Assets.UiTextures.BULB,
+			EditModes.TRIGGERS, Assets.UiTextures.TRIGGER);
 
 	public void applyOpacity( ) {
 		ModelInstance modelInstance = cursorHandlerModelData.getCursorSelectionModel().getModelInstance();
@@ -161,7 +165,6 @@ public class CursorHandler implements Disposable {
 	@SuppressWarnings("JavaDoc")
 	public void createCursors(final GameAssetsManager assetsManager, final Model tileModel) {
 		cursorHandlerModelData.createCursors(tileModel);
-//		createCursorCharacterDecal(assetsManager);
 		createCursorSimpleDecal(assetsManager);
 	}
 
@@ -231,5 +234,15 @@ public class CursorHandler implements Disposable {
 
 	public void initializeCursorCharacterDecal(GameAssetsManager assetsManager, CharacterDefinition definition) {
 		createCursorCharacterDecal(assetsManager, definition);
+	}
+
+	public void onEditModeSet(EditModes mode, GameAssetsManager assetsManager) {
+		if (mode.isDecalCursor()) {
+			Optional.ofNullable(modesToDecal.get(mode)).ifPresent(decal -> {
+				Texture decalTexture = assetsManager.getTexture(decal);
+				cursorSimpleDecal = Utils.createSimpleDecal(decalTexture);
+			});
+		}
+		setHighlighter(getCursorHandlerModelData().getCursorTileModelInstance());
 	}
 }

@@ -43,6 +43,7 @@ public class MapDeflater {
 		addElementsGroup(output, EditModes.ENVIRONMENT, true, placedElements);
 		addElementsGroup(output, EditModes.PICKUPS, false, placedElements);
 		addElementsGroup(output, EditModes.LIGHTS, false, placedElements);
+		addElementsGroup(output, EditModes.TRIGGERS, false, placedElements);
 		try (Writer writer = new FileWriter(path)) {
 			gson.toJson(output, writer);
 		} catch (final IOException e) {

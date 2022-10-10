@@ -1,4 +1,4 @@
-package com.industrial.editor.actions.types;
+package com.industrial.editor.actions.types.placing;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;

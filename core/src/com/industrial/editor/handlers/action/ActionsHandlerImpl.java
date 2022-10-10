@@ -7,12 +7,14 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.model.TriggersDefinitions;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
+import com.industrial.editor.actions.types.placing.*;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.actions.ActionAnswer;
@@ -23,8 +25,6 @@ import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
-import com.industrial.editor.mode.tools.ElementTools;
-import com.industrial.editor.mode.tools.TilesTools;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.*;
 import com.industrial.editor.model.node.FlatNode;
@@ -283,6 +283,22 @@ public class ActionsHandlerImpl implements ActionsHandler {
 			result = true;
 		}
 		return result;
+	}
+
+	@Override
+	public void placeTrigger(GameAssetsManager assetsManager) {
+		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
+		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
+		int row = (int) position.z;
+		int col = (int) position.x;
+		GameMap map = data.map();
+		PlaceTriggerAction action = new PlaceTriggerAction(
+				map,
+				(List<PlacedTrigger>) data.placedElements().getPlacedObjects().get(EditModes.TRIGGERS),
+				map.getNodes()[row][col],
+				TriggersDefinitions.EXIT_MAP,
+				assetsManager);
+		executeAction(action);
 	}
 
 	private void finishProcess(final Assets.SurfaceTextures selectedTile, final Model cursorTileModel) {

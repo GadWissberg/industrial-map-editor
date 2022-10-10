@@ -21,6 +21,7 @@ import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.ModeType;
 import com.industrial.editor.mode.tools.EditorTool;
 import com.industrial.editor.model.elements.CharacterDecal;
+import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
 import java.awt.*;
@@ -81,14 +82,10 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 	@Override
 	public void onEditModeSet(final EditModes mode) {
 		onModeSet(mode);
-		CursorHandler cursorHandler = logicHandlers.getCursorHandler();
-		if (mode != EditModes.LIGHTS && mode != EditModes.PICKUPS) {
-			if (mode == EditModes.TILES && logicHandlers.getSelectionHandler().getSelectedTile() != null) {
-				onTileSelected(logicHandlers.getSelectionHandler().getSelectedTile());
-			}
-		} else {
-			cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
+		if (mode == EditModes.TILES && logicHandlers.getSelectionHandler().getSelectedTile() != null) {
+			onTileSelected(logicHandlers.getSelectionHandler().getSelectedTile());
 		}
+		logicHandlers.getCursorHandler().onEditModeSet(mode, resourcesHandler.getAssetsManager());
 	}
 
 	@Override
