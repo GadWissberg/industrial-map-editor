@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.model.CameraUtils;
 import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
@@ -38,6 +39,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static com.gadarts.industrial.shared.model.CameraUtils.*;
+
 /**
  * The world renderer.
  */
@@ -54,9 +57,6 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public static final Vector3 auxVector3_1 = new Vector3();
 	public static final int TARGET_VERSION = 5;
 	private static final float NEAR = 0.01f;
-	private static final float CAMERA_HEIGHT = 14;
-	private static final float[] CAMERA_START_POINT = {12F, CAMERA_HEIGHT, 12F};
-	private static final float[] CAMERA_INITIAL_POSITION = {4F, 6F, 4F};
 
 	@Getter
 	public static EditorMode mode = EditModes.TILES;
@@ -85,7 +85,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 
 
 	@Override
-	public void create() {
+	public void create( ) {
 		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		wallCreator = new WallCreator(assetsManager);
 		camera = createCamera();
@@ -96,7 +96,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 
-	private OrthographicCamera createCamera() {
+	private OrthographicCamera createCamera( ) {
 		ViewportResolution viewportResolution = data.getViewportResolution();
 		OrthographicCamera cam = new OrthographicCamera(
 				viewportResolution.VIEWPORT_WIDTH,
@@ -109,15 +109,14 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	private void initializeCameraPosition(final OrthographicCamera cam) {
-		cam.position.set(CAMERA_INITIAL_POSITION);
 		cam.up.set(0, 1, 0);
 		cam.zoom = 1;
-		cam.lookAt(auxVector3_1.setZero());
-		cam.position.set(CAMERA_START_POINT);
+		cam.position.set(START_OFFSET_X, CAMERA_HEIGHT, START_OFFSET_Z);
+		CameraUtils.initializeCameraAngle(cam);
 	}
 
 	@Override
-	public void render() {
+	public void render( ) {
 		update();
 		PlacedElements placedElements = data.getPlacedElements();
 		handlers.getRenderHandler().render(
@@ -128,7 +127,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 
-	private void update() {
+	private void update( ) {
 		InputProcessor inputProcessor = Gdx.input.getInputProcessor();
 		if (inputProcessor != null && DefaultSettings.ENABLE_DEBUG_INPUT) {
 			CameraInputController cameraInputController = (CameraInputController) inputProcessor;
@@ -143,7 +142,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 
 
 	@Override
-	public void dispose() {
+	public void dispose( ) {
 		handlers.dispose();
 		wallCreator.dispose();
 	}
@@ -190,7 +189,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	@Override
-	public void onNewMapRequested() {
+	public void onNewMapRequested( ) {
 		data.reset();
 		initializeCameraPosition(camera);
 		handlers.getRenderHandler().createModels(data.getMap().getDimension());
@@ -217,7 +216,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	@Override
-	public float getAmbientLightValue() {
+	public float getAmbientLightValue( ) {
 		return data.getMap().getAmbientLight();
 	}
 
@@ -240,7 +239,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	@Override
-	public Dimension getMapSize() {
+	public Dimension getMapSize( ) {
 		MapNodeData[][] nodes = data.getMap().getNodes();
 		return new Dimension(nodes.length, nodes[0].length);
 	}
@@ -261,7 +260,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 
-	void initializeInput() {
+	void initializeInput( ) {
 		if (DefaultSettings.ENABLE_DEBUG_INPUT) {
 			CameraInputController processor = new CameraInputController(camera);
 			Gdx.input.setInputProcessor(processor);
