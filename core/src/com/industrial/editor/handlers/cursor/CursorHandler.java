@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
@@ -24,6 +25,7 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.CharacterDecal;
 import com.industrial.editor.model.node.FlatNode;
 import com.industrial.editor.utils.Utils;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,6 +50,8 @@ public class CursorHandler implements Disposable {
 	private static final Vector3 auxVector3_1 = new Vector3();
 	private static final Vector3 auxVector3_2 = new Vector3();
 	private static final Vector3 auxVector3_3 = new Vector3();
+	@Getter(AccessLevel.NONE)
+	private final Vector2 lastMouseTouchPosition = new Vector2();
 
 	private CursorHandlerModelData cursorHandlerModelData = new CursorHandlerModelData();
 	private CharacterDecal cursorCharacterDecal;
@@ -244,5 +248,13 @@ public class CursorHandler implements Disposable {
 			});
 		}
 		setHighlighter(getCursorHandlerModelData().getCursorTileModelInstance());
+	}
+
+	public void setLastMouseTouchPosition(int screenX, int screenY) {
+		lastMouseTouchPosition.set(screenX, screenY);
+	}
+
+	public Vector2 getLastMouseTouchPosition(Vector2 output) {
+		return output.set(lastMouseTouchPosition);
 	}
 }

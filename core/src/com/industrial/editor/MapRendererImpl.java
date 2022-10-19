@@ -16,10 +16,9 @@ import com.gadarts.industrial.shared.model.ModelElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.HandlersManager;
 import com.industrial.editor.handlers.HandlersManagerImpl;
-import com.industrial.editor.handlers.ResourcesHandler;
+import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
@@ -57,15 +56,12 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public static final Vector3 auxVector3_1 = new Vector3();
 	public static final int TARGET_VERSION = 5;
 	private static final float NEAR = 0.01f;
-
+	private final static Vector2 auxVector2 = new Vector2();
 	@Getter
 	public static EditorMode mode = EditModes.TILES;
-
 	@Getter
 	public static EditorTool tool = TilesTools.BRUSH;
-
 	private final MapRendererData data;
-	private final Vector2 lastMouseTouchPosition = new Vector2();
 	private final HandlersManager handlers;
 	private WallCreator wallCreator;
 	private OrthographicCamera camera;
@@ -228,7 +224,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	@Override
 	public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {
 		if (button == Input.Buttons.LEFT) {
-			lastMouseTouchPosition.set(screenX, screenY);
+			handlers.getLogicHandlers().getCursorHandler().setLastMouseTouchPosition(screenX, screenY);
 		}
 		Set<MapNodeData> placedTiles = data.getPlacedElements().getPlacedTiles();
 		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
@@ -250,13 +246,18 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 			CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
 			result = cursorHandler.updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
 		}
-		lastMouseTouchPosition.set(screenX, screenY);
+		handlers.getLogicHandlers().getCursorHandler().setLastMouseTouchPosition(screenX, screenY);
 		return result;
 	}
 
 	private void onTouchDraggedInViewMode(int screenX, int screenY) {
 		Vector3 rotationPoint = GeneralUtils.defineRotationPoint(auxVector3_1, camera);
-		((ViewModes) mode).getManipulation().run(lastMouseTouchPosition, camera, screenX, screenY, rotationPoint);
+		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
+		((ViewModes) mode).getManipulation().run(
+				cursorHandler.getLastMouseTouchPosition(auxVector2),
+				camera,
+				screenX, screenY,
+				rotationPoint);
 	}
 
 	@Override
