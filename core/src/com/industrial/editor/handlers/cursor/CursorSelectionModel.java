@@ -9,7 +9,6 @@ import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
-import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

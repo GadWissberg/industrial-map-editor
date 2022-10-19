@@ -73,10 +73,9 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public MapRendererImpl(final int width, final int height, final String assetsLocation) {
 		data = new MapRendererData(new ViewportResolution(width / 50, height / 50));
 		handlers = new HandlersManagerImpl(data);
-		ResourcesHandler resourcesHandler = handlers.getResourcesHandler();
-		resourcesHandler.init(assetsLocation);
+		handlers.getResourcesHandler().init(assetsLocation);
 		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
-		GameAssetsManager assetsManager = resourcesHandler.getAssetsManager();
+		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		cursorHandler.getCursorHandlerModelData().setCursorSelectionModel(new CursorSelectionModel(assetsManager));
 		PlacedElements placedElements = data.getPlacedElements();
 		handlers.getMapFileHandler().init(assetsManager, cursorHandler, placedElements.getPlacedTiles());
@@ -96,25 +95,6 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 
-	private OrthographicCamera createCamera( ) {
-		ViewportResolution viewportResolution = data.getViewportResolution();
-		OrthographicCamera cam = new OrthographicCamera(
-				viewportResolution.VIEWPORT_WIDTH,
-				viewportResolution.VIEWPORT_HEIGHT);
-		cam.near = NEAR;
-		cam.far = FAR;
-		cam.update();
-		initializeCameraPosition(cam);
-		return cam;
-	}
-
-	private void initializeCameraPosition(final OrthographicCamera cam) {
-		cam.up.set(0, 1, 0);
-		cam.zoom = 1;
-		cam.position.set(START_OFFSET_X, CAMERA_HEIGHT, START_OFFSET_Z);
-		CameraUtils.initializeCameraAngle(cam);
-	}
-
 	@Override
 	public void render( ) {
 		update();
@@ -125,21 +105,6 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 				handlers.getLogicHandlers().getSelectionHandler().getSelectedElement(),
 				tool);
 	}
-
-
-	private void update( ) {
-		InputProcessor inputProcessor = Gdx.input.getInputProcessor();
-		if (inputProcessor != null && DefaultSettings.ENABLE_DEBUG_INPUT) {
-			CameraInputController cameraInputController = (CameraInputController) inputProcessor;
-			cameraInputController.update();
-		}
-		camera.update();
-		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
-		if (cursorHandler.getHighlighter() != null) {
-			cursorHandler.updateCursorFlicker(mode);
-		}
-	}
-
 
 	@Override
 	public void dispose( ) {
@@ -260,16 +225,6 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 
-	void initializeInput( ) {
-		if (DefaultSettings.ENABLE_DEBUG_INPUT) {
-			CameraInputController processor = new CameraInputController(camera);
-			Gdx.input.setInputProcessor(processor);
-			processor.autoUpdate = true;
-		} else {
-			Gdx.input.setInputProcessor(this);
-		}
-	}
-
 	@Override
 	public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {
 		if (button == Input.Buttons.LEFT) {
@@ -290,13 +245,18 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public boolean touchDragged(final int screenX, final int screenY, final int pointer) {
 		boolean result = true;
 		if (mode.getClass().equals(ViewModes.class)) {
-			Vector3 rotationPoint = GeneralUtils.defineRotationPoint(auxVector3_1, camera);
-			((ViewModes) mode).getManipulation().run(lastMouseTouchPosition, camera, screenX, screenY, rotationPoint);
+			onTouchDraggedInViewMode(screenX, screenY);
 		} else {
-			result = handlers.getLogicHandlers().getCursorHandler().updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
+			CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
+			result = cursorHandler.updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
 		}
 		lastMouseTouchPosition.set(screenX, screenY);
 		return result;
+	}
+
+	private void onTouchDraggedInViewMode(int screenX, int screenY) {
+		Vector3 rotationPoint = GeneralUtils.defineRotationPoint(auxVector3_1, camera);
+		((ViewModes) mode).getManipulation().run(lastMouseTouchPosition, camera, screenX, screenY, rotationPoint);
 	}
 
 	@Override
@@ -304,7 +264,58 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		return handlers.getLogicHandlers().getCursorHandler().updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
 	}
 
+	/**
+	 * Adds the given object as a listener to the renderer's events.
+	 *
+	 * @param subscriber
+	 */
 	public void subscribeForEvents(final MapManagerEventsSubscriber subscriber) {
 		handlers.getEventsNotifier().subscribeForEvents(subscriber);
+	}
+
+	/**
+	 * Initializes the input according to debug mode.
+	 */
+	void initializeInput( ) {
+		if (DefaultSettings.ENABLE_DEBUG_INPUT) {
+			CameraInputController processor = new CameraInputController(camera);
+			Gdx.input.setInputProcessor(processor);
+			processor.autoUpdate = true;
+		} else {
+			Gdx.input.setInputProcessor(this);
+		}
+	}
+
+	private OrthographicCamera createCamera( ) {
+		ViewportResolution viewportResolution = data.getViewportResolution();
+		OrthographicCamera cam = new OrthographicCamera(
+				viewportResolution.viewportWidth(),
+				viewportResolution.viewportHeight());
+		cam.near = NEAR;
+		cam.far = FAR;
+		cam.update();
+		initializeCameraPosition(cam);
+		return cam;
+	}
+
+	private void initializeCameraPosition(final OrthographicCamera cam) {
+		cam.up.set(0, 1, 0);
+		cam.zoom = 1;
+		cam.position.set(START_OFFSET_X, CAMERA_HEIGHT, START_OFFSET_Z);
+		CameraUtils.initializeCameraAngle(cam);
+	}
+
+
+	private void update( ) {
+		InputProcessor inputProcessor = Gdx.input.getInputProcessor();
+		if (inputProcessor != null && DefaultSettings.ENABLE_DEBUG_INPUT) {
+			CameraInputController cameraInputController = (CameraInputController) inputProcessor;
+			cameraInputController.update();
+		}
+		camera.update();
+		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
+		if (cursorHandler.getHighlighter() != null) {
+			cursorHandler.updateCursorFlicker(mode);
+		}
 	}
 }

@@ -28,16 +28,16 @@ public class LiftTilesAction extends MappingAction {
 
 	@Override
 	public void execute(final MapEditorEventsNotifier eventsNotifier) {
-		int minRow = Math.min(params.getSrcNode().getRow(), params.getDstNode().getRow());
-		int minCol = Math.min(params.getSrcNode().getCol(), params.getDstNode().getCol());
-		int maxRow = Math.max(params.getSrcNode().getRow(), params.getDstNode().getRow());
-		int maxCol = Math.max(params.getSrcNode().getCol(), params.getDstNode().getCol());
+		int minRow = Math.min(params.srcNode().getRow(), params.dstNode().getRow());
+		int minCol = Math.min(params.srcNode().getCol(), params.dstNode().getCol());
+		int maxRow = Math.max(params.srcNode().getRow(), params.dstNode().getRow());
+		int maxCol = Math.max(params.srcNode().getCol(), params.dstNode().getCol());
 		MapNodeData[][] t = map.getNodes();
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
 				IntStream.rangeClosed(minCol, maxCol).forEach(col ->
 						Optional.ofNullable(t[row][col]).ifPresent(n -> {
 							if (n.getTextureDefinition() != null) {
-								n.applyHeight(params.getValue());
+								n.applyHeight(params.value());
 							}
 						})));
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
@@ -47,16 +47,16 @@ public class LiftTilesAction extends MappingAction {
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
 		if (row > 0) {
-			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> params.getWallCreator().adjustNorthWall(n, north));
+			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> params.wallCreator().adjustNorthWall(n, north));
 		}
 		if (col < t[0].length - 1) {
-			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> params.getWallCreator().adjustEastWall(n, east));
+			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> params.wallCreator().adjustEastWall(n, east));
 		}
 		if (row < t.length - 1) {
-			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> params.getWallCreator().adjustSouthWall(n, south));
+			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> params.wallCreator().adjustSouthWall(n, south));
 		}
 		if (col > 0) {
-			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> params.getWallCreator().adjustWestWall(n, west));
+			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> params.wallCreator().adjustWestWall(n, west));
 		}
 	}
 
@@ -66,12 +66,6 @@ public class LiftTilesAction extends MappingAction {
 		return false;
 	}
 
-	@RequiredArgsConstructor
-	@Getter
-	public static class Parameters {
-		private final FlatNode srcNode;
-		private final FlatNode dstNode;
-		private final float value;
-		private final WallCreator wallCreator;
+	public record Parameters(FlatNode srcNode, FlatNode dstNode, float value, WallCreator wallCreator) {
 	}
 }

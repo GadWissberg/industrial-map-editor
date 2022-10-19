@@ -37,8 +37,8 @@ public class LogicHandlers implements Disposable {
 	private void createActionsHandler(final HandlersManagerRelatedData handlersManagerRelatedData,
 									  final WallCreator wallCreator,
 									  final ResourcesHandler resourcesHandler) {
-		GameMap map = handlersManagerRelatedData.getMap();
-		ActionHandlerRelatedData data = new ActionHandlerRelatedData(map, handlersManagerRelatedData.getPlacedElements());
+		GameMap map = handlersManagerRelatedData.map();
+		ActionHandlerRelatedData data = new ActionHandlerRelatedData(map, handlersManagerRelatedData.placedElements());
 		actionsHandler = new ActionsHandlerImpl(data, new ActionHandlerRelatedServices(
 				getCursorHandler(),
 				wallCreator,

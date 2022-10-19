@@ -366,28 +366,28 @@ public class ActionsHandlerImpl implements ActionsHandler {
 							 final MapNodeData mapNodeData,
 							 final MapNodeData node) {
 		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getSouthWall() : null;
-		defineWall(node.getWalls().getNorthWall(), neighborWall, defs.getNorth());
+		defineWall(node.getWalls().getNorthWall(), neighborWall, defs.north());
 	}
 
 	private void defineWest(final NodeWallsDefinitions defs,
 							final MapNodeData mapNodeData,
 							final MapNodeData node) {
 		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getEastWall() : null;
-		defineWall(node.getWalls().getWestWall(), neighborWall, defs.getWest());
+		defineWall(node.getWalls().getWestWall(), neighborWall, defs.west());
 	}
 
 	private void defineSouth(final NodeWallsDefinitions defs,
 							 final MapNodeData mapNodeData,
 							 final MapNodeData node) {
 		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getNorthWall() : null;
-		defineWall(node.getWalls().getSouthWall(), neighborWall, defs.getSouth());
+		defineWall(node.getWalls().getSouthWall(), neighborWall, defs.south());
 	}
 
 	private void defineEast(final NodeWallsDefinitions defs,
 							final MapNodeData neighborNode,
 							final MapNodeData node) {
 		Wall neighborWall = neighborNode != null ? neighborNode.getWalls().getWestWall() : null;
-		defineWall(node.getWalls().getEastWall(), neighborWall, defs.getEast());
+		defineWall(node.getWalls().getEastWall(), neighborWall, defs.east());
 	}
 
 	private void defineWall(final Wall selectedWall,

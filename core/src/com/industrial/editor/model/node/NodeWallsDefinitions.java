@@ -1,14 +1,7 @@
 package com.industrial.editor.model.node;
 
-import lombok.Getter;
-
-@Getter
-public class NodeWallsDefinitions {
-	private final WallDefinition east;
-	private final WallDefinition south;
-	private final WallDefinition west;
-	private final WallDefinition north;
-
+public record NodeWallsDefinitions(WallDefinition east, WallDefinition south, WallDefinition west,
+								   WallDefinition north) {
 	public NodeWallsDefinitions(final WallDefinition east,
 								final WallDefinition south,
 								final WallDefinition west,

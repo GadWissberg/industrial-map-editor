@@ -21,7 +21,6 @@ import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.ModeType;
 import com.industrial.editor.mode.tools.EditorTool;
 import com.industrial.editor.model.elements.CharacterDecal;
-import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
 import java.awt.*;
