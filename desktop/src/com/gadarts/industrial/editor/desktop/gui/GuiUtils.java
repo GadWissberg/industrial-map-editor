@@ -27,6 +27,12 @@ public final class GuiUtils {
 												  final Assets.SurfaceTextures texture,
 												  final ItemListener onClick) throws IOException {
 		ImageIcon imageIcon = loadImage(assetsFolderLocation, texture);
+		return createTextureImageButton(texture, onClick, imageIcon);
+	}
+
+	public static GalleryButton createTextureImageButton(Assets.SurfaceTextures texture,
+														 ItemListener onClick,
+														 ImageIcon imageIcon) throws IOException {
 		GalleryButton button = new GalleryButton(texture, imageIcon);
 		button.setPreferredSize(new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight()));
 		button.setMaximumSize(new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight() + 40));
@@ -34,7 +40,7 @@ public final class GuiUtils {
 		return button;
 	}
 
-	public static ImageIcon loadImage(final File assetsFolderLocation, final Assets.SurfaceTextures texture) throws IOException {
+	public static ImageIcon loadImage(File assetsFolderLocation, Assets.SurfaceTextures texture) throws IOException {
 		String path = assetsFolderLocation.getAbsolutePath() + File.separator + texture.getFilePath();
 		FileInputStream inputStream = new FileInputStream(path);
 		ImageIcon imageIcon = new ImageIcon(ImageIO.read(inputStream));

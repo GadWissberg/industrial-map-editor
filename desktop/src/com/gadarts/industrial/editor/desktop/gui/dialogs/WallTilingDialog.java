@@ -1,8 +1,8 @@
 package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
-import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
 import com.gadarts.industrial.editor.desktop.gui.GalleryButton;
 import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
+import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.industrial.editor.MapRenderer;
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.gadarts.industrial.editor.desktop.gui.GuiUtils.loadImage;
+import static com.gadarts.industrial.shared.WallCreator.WORLD_UNIT_SIZE;
 import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSING;
 import static javax.swing.BorderFactory.*;
 
@@ -55,12 +57,11 @@ public class WallTilingDialog extends DialogPane {
 	void initializeView( ) {
 		try {
 			List<MapNodeData> nodes = mapRenderer.getRegion(src, dst);
-			JPanel sectionsPanel = new JPanel();
-			sectionsPanel.setLayout(new GridLayout(2, 2));
-			addEastSection(sectionsPanel, decideEastInitialValues(nodes));
-			addNorthSection(sectionsPanel, decideNorthInitialValues(nodes));
-			addSouthSection(sectionsPanel, decideSouthInitialValues(nodes));
-			addWestSection(sectionsPanel, decideWestInitialValues(nodes));
+			float maxHeight = nodes.stream().max(
+							(o1, o2) -> o1.getHeight() > o2.getHeight() ? 1 : o1.getHeight() == o2.getHeight() ? 0 : -1)
+					.get()
+					.getHeight();
+			JPanel sectionsPanel = addSections(nodes, maxHeight);
 			add(sectionsPanel);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -77,12 +78,25 @@ public class WallTilingDialog extends DialogPane {
 		});
 	}
 
+	private JPanel addSections(List<MapNodeData> nodes, float maxHeight) throws IOException {
+		JPanel sectionsPanel = new JPanel();
+		sectionsPanel.setLayout(new GridLayout(2, 2));
+		addEastSection(sectionsPanel, decideEastInitialValues(nodes), maxHeight);
+		addNorthSection(sectionsPanel, decideNorthInitialValues(nodes), maxHeight);
+		addSouthSection(sectionsPanel, decideSouthInitialValues(nodes), maxHeight);
+		addWestSection(sectionsPanel, decideWestInitialValues(nodes), maxHeight);
+		return sectionsPanel;
+	}
+
 	private WallDefinition decideEastInitialValues(List<MapNodeData> nodes) {
 		Optional<Wall> def = nodes.stream()
 				.filter(n -> n.getWalls().getEastWall() != null)
 				.map(mapNodeData -> mapNodeData.getWalls().getEastWall())
 				.findFirst();
-		WallDefinition initialValues = new WallDefinition(MISSING, WallSpinners.DEF_V_SCALE, WallSpinners.DEF_H_OFFSET, WallSpinners.DEF_V_OFFSET);
+		WallDefinition initialValues = new WallDefinition(
+				MISSING,
+				WallSpinners.DEF_V_SCALE,
+				WallSpinners.DEF_H_OFFSET, WallSpinners.DEF_V_OFFSET);
 
 		if (def.isPresent()) {
 			Wall wall = def.get();
@@ -217,28 +231,51 @@ public class WallTilingDialog extends DialogPane {
 		return initialValues;
 	}
 
-	private void addEastSection(JPanel sectionsPanel, WallDefinition initialValues) throws IOException {
-		eastImageButton = createImageButton(initialValues.getTexture());
+	private void addEastSection(JPanel sectionsPanel, WallDefinition initialValues, float maxHeight) throws IOException {
+		ImageIcon imageIcon = loadImage(assetsFolderLocation, initialValues.getTexture());
+		eastImageButton = GuiUtils.createTextureImageButton(initialValues.getTexture(), null, imageIcon);
 		JPanel spinnersPanel = createSection(sectionsPanel, LABEL_EAST, eastImageButton);
 		eastWallSpinners = new WallSpinners(spinnersPanel, initialValues);
+		addWallImageButtonListener(maxHeight, imageIcon, eastImageButton, eastWallSpinners);
 	}
 
-	private void addNorthSection(JPanel sectionsPanel, WallDefinition initialValues) throws IOException {
-		northImageButton = createImageButton(initialValues.getTexture());
+	private void addWallImageButtonListener(float maxHeight,
+											ImageIcon imageIcon,
+											GalleryButton imageButton,
+											WallSpinners wallSpinners) {
+		imageButton.addItemListener(itemEvent -> {
+			if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+				GuiUtils.openNewDialog(getParent(), new TexturesGalleryDialog(assetsFolderLocation, image -> {
+					imageButton.applyTexture(image, imageIcon);
+					double value = (maxHeight / (imageIcon.getIconHeight() / WORLD_UNIT_SIZE));
+					wallSpinners.getWallVScale().getModel().setValue(value);
+				}));
+			}
+		});
+	}
+
+	private void addNorthSection(JPanel sectionsPanel, WallDefinition initialValues, float maxHeight) throws IOException {
+		ImageIcon imageIcon = loadImage(assetsFolderLocation, initialValues.getTexture());
+		northImageButton = GuiUtils.createTextureImageButton(initialValues.getTexture(), null, imageIcon);
 		JPanel spinnersPanel = createSection(sectionsPanel, LABEL_NORTH, northImageButton);
 		northWallSpinners = new WallSpinners(spinnersPanel, initialValues);
+		addWallImageButtonListener(maxHeight, imageIcon, northImageButton, northWallSpinners);
 	}
 
-	private void addSouthSection(JPanel sectionsPanel, WallDefinition initialValues) throws IOException {
-		southImageButton = createImageButton(initialValues.getTexture());
+	private void addSouthSection(JPanel sectionsPanel, WallDefinition initialValues, float maxHeight) throws IOException {
+		ImageIcon imageIcon = loadImage(assetsFolderLocation, initialValues.getTexture());
+		southImageButton = GuiUtils.createTextureImageButton(initialValues.getTexture(), null, imageIcon);
 		JPanel spinnersPanel = createSection(sectionsPanel, LABEL_SOUTH, southImageButton);
 		southWallSpinners = new WallSpinners(spinnersPanel, initialValues);
+		addWallImageButtonListener(maxHeight, imageIcon, southImageButton, southWallSpinners);
 	}
 
-	private void addWestSection(JPanel sectionsPanel, WallDefinition initialValues) throws IOException {
-		westImageButton = createImageButton(initialValues.getTexture());
+	private void addWestSection(JPanel sectionsPanel, WallDefinition initialValues, float maxHeight) throws IOException {
+		ImageIcon imageIcon = loadImage(assetsFolderLocation, initialValues.getTexture());
+		westImageButton = GuiUtils.createTextureImageButton(initialValues.getTexture(), null, imageIcon);
 		JPanel spinnersPanel = createSection(sectionsPanel, LABEL_WEST, westImageButton);
 		westWallSpinners = new WallSpinners(spinnersPanel, initialValues);
+		addWallImageButtonListener(maxHeight, imageIcon, westImageButton, westWallSpinners);
 	}
 
 	private JPanel createSection(JPanel sectionsPanel, String header, GalleryButton imageButton) {
@@ -273,22 +310,6 @@ public class WallTilingDialog extends DialogPane {
 
 	public String getDialogTitle( ) {
 		return "Tile Walls";
-	}
-
-	private GalleryButton createImageButton(SurfaceTextures texture) throws IOException {
-		GalleryButton button = GuiUtils.createTextureImageButton(assetsFolderLocation, texture);
-		button.addItemListener(itemEvent -> {
-			if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
-				GuiUtils.openNewDialog(getParent(), new TexturesGalleryDialog(assetsFolderLocation, image -> {
-					try {
-						button.applyTexture(image, GuiUtils.loadImage(assetsFolderLocation, image));
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
-				}));
-			}
-		});
-		return button;
 	}
 
 }
