@@ -106,31 +106,30 @@ public class MapInflater {
 							  final GameMap map,
 							  final WallCreator wallCreator) {
 		MapNodeData[][] nodes = map.getNodes();
-		Model wallModel = wallCreator.getWallModel();
 		float height = mapNodeData.getHeight();
 		Coords coords = mapNodeData.getCoords();
-		Optional.ofNullable(node.get(EAST)).ifPresent(east -> {
-			MapNodeData eastNode = nodes[coords.getRow()][coords.getCol() + 1];
-			if (height != eastNode.getHeight()) {
-				inflateEastWall(mapNodeData, wallModel, east, eastNode);
-			}
-		});
 		Optional.ofNullable(node.get(MapJsonKeys.SOUTH)).ifPresent(south -> {
 			MapNodeData southNode = nodes[coords.getRow() + 1][coords.getCol()];
 			if (height != southNode.getHeight()) {
-				inflateSouthWall(mapNodeData, wallModel, south, southNode);
+				inflateSouthWall(mapNodeData, wallCreator.getSouthWallModel(), south, southNode);
 			}
 		});
 		Optional.ofNullable(node.get(WEST)).ifPresent(west -> {
 			MapNodeData westNode = nodes[coords.getRow()][coords.getCol() - 1];
 			if (height != westNode.getHeight()) {
-				inflateWestWall(mapNodeData, wallModel, west, westNode);
+				inflateWestWall(mapNodeData, wallCreator.getWestWallModel(), west, westNode);
 			}
 		});
 		Optional.ofNullable(node.get(NORTH)).ifPresent(north -> {
 			MapNodeData northNode = nodes[coords.getRow() - 1][coords.getCol()];
 			if (height != northNode.getHeight()) {
-				inflateNorthWall(mapNodeData, wallModel, north, northNode);
+				inflateNorthWall(mapNodeData, wallCreator.getNorthWallModel(), north, northNode);
+			}
+		});
+		Optional.ofNullable(node.get(EAST)).ifPresent(east -> {
+			MapNodeData eastNode = nodes[coords.getRow() - 1][coords.getCol()];
+			if (height != eastNode.getHeight()) {
+				inflateEastWall(mapNodeData, wallCreator.getNorthWallModel(), east, eastNode);
 			}
 		});
 	}
@@ -140,7 +139,7 @@ public class MapInflater {
 								  final JsonElement north,
 								  final MapNodeData northNode) {
 		JsonObject wallJsonObj = north.getAsJsonObject();
-		Wall northWall = createNorthWall(mapNodeData, wallModel, wallJsonObj);
+		Wall northWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
 		mapNodeData.getWalls().setNorthWall(northWall);
 		WallCreator.adjustWallBetweenNorthAndSouth(
 				mapNodeData,
@@ -149,12 +148,18 @@ public class MapInflater {
 				defineHorizontalOffset(wallJsonObj, northWall), defineVerticalOffset(wallJsonObj, northWall));
 	}
 
-	private Wall createNorthWall(final MapNodeData mapNodeData, final Model wallModel, final JsonObject wallJsonObj) {
-		return WallCreator.createNorthWall(
+	private void inflateEastWall(final MapNodeData mapNodeData,
+								 final Model wallModel,
+								 final JsonElement east,
+								 final MapNodeData eastNode) {
+		JsonObject wallJsonObj = east.getAsJsonObject();
+		Wall eastWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
+		mapNodeData.getWalls().setEastWall(eastWall);
+		WallCreator.adjustWallBetweenEastAndWest(
 				mapNodeData,
-				wallModel,
-				assetsManager,
-				Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString()));
+				eastNode,
+				defineVScale(wallJsonObj, eastWall),
+				defineHorizontalOffset(wallJsonObj, eastWall), defineVerticalOffset(wallJsonObj, eastWall));
 	}
 
 	private void inflateWestWall(final MapNodeData mapNodeData,
@@ -162,7 +167,7 @@ public class MapInflater {
 								 final JsonElement west,
 								 final MapNodeData westNode) {
 		JsonObject wallJsonObj = west.getAsJsonObject();
-		Wall westWall = createWestWall(mapNodeData, wallModel, wallJsonObj);
+		Wall westWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
 		mapNodeData.getWalls().setWestWall(westWall);
 		WallCreator.adjustWallBetweenEastAndWest(
 				mapNodeData,
@@ -171,20 +176,12 @@ public class MapInflater {
 				defineHorizontalOffset(wallJsonObj, westWall), defineVerticalOffset(wallJsonObj, westWall));
 	}
 
-	private Wall createWestWall(final MapNodeData mapNodeData, final Model wallModel, final JsonObject wallJsonObj) {
-		return WallCreator.createWestWall(
-				mapNodeData,
-				wallModel,
-				assetsManager,
-				Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString()));
-	}
-
 	private void inflateSouthWall(final MapNodeData mapNodeData,
 								  final Model wallModel,
 								  final JsonElement south,
 								  final MapNodeData southNode) {
 		JsonObject wallJsonObj = south.getAsJsonObject();
-		Wall southWall = createSouthWall(mapNodeData, wallModel, wallJsonObj);
+		Wall southWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
 		mapNodeData.getWalls().setSouthWall(southWall);
 		WallCreator.adjustWallBetweenNorthAndSouth(
 				southNode,
@@ -193,34 +190,8 @@ public class MapInflater {
 				defineHorizontalOffset(wallJsonObj, southWall), defineVerticalOffset(wallJsonObj, southWall));
 	}
 
-	private Wall createSouthWall(final MapNodeData mapNodeData, final Model wallModel, final JsonObject wallJsonObj) {
-		return WallCreator.createSouthWall(
-				mapNodeData,
-				wallModel,
-				assetsManager,
-				Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString()));
-	}
-
-	private void inflateEastWall(final MapNodeData mapNodeData,
-								 final Model wallModel,
-								 final JsonElement east,
-								 final MapNodeData eastNode) {
-		JsonObject wallJsonObj = east.getAsJsonObject();
-		Wall eastWall = createEastWall(mapNodeData, wallModel, wallJsonObj);
-		mapNodeData.getWalls().setEastWall(eastWall);
-		WallCreator.adjustWallBetweenEastAndWest(
-				eastNode,
-				mapNodeData,
-				defineVScale(wallJsonObj, eastWall),
-				defineHorizontalOffset(wallJsonObj, eastWall), defineVerticalOffset(wallJsonObj, eastWall));
-	}
-
-	private Wall createEastWall(final MapNodeData mapNodeData, final Model wallModel, final JsonObject wallJsonObj) {
-		return WallCreator.createEastWall(
-				mapNodeData,
-				wallModel,
-				assetsManager,
-				Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString()));
+	private static Assets.SurfaceTextures extractTextureName(JsonObject wallJsonObj) {
+		return Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString());
 	}
 
 	private float defineVScale(final JsonObject wallJsonObj, final Wall wall) {

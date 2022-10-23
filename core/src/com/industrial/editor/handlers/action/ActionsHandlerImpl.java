@@ -390,28 +390,28 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		defineWall(node.getWalls().getEastWall(), neighborWall, defs.east());
 	}
 
-	private void defineWall(final Wall selectedWall,
-							final Wall neighborWall,
-							final WallDefinition wallDefinition) {
+	private void defineWall(Wall selectedWall,
+							Wall neighborWall,
+							WallDefinition wallDefinition) {
 		Wall wall = Optional.ofNullable(selectedWall).orElse(neighborWall);
 		Optional.ofNullable(wall).flatMap(w -> Optional.ofNullable(wallDefinition)).ifPresent(t -> {
 			Material material = wall.getModelInstance().materials.get(0);
 			TextureAttribute textureAtt = (TextureAttribute) material.get(TextureAttribute.Diffuse);
 			defineWallTexture(wallDefinition, wall, textureAtt);
-			Optional.ofNullable(wallDefinition.getVScale()).ifPresent(scale -> {
-				if (scale != 0) {
-					textureAtt.scaleV = textureAtt.scaleV < 0 ? -1 * scale : scale;
-					wall.setVScale(scale);
-				}
-			});
-			Optional.ofNullable(wallDefinition.getHorizontalOffset()).ifPresent(offset -> {
-				textureAtt.offsetU = offset;
-				wall.setHOffset(offset);
-			});
-			Optional.ofNullable(wallDefinition.getVerticalOffset()).ifPresent(offset -> {
-				textureAtt.offsetV = offset;
-				wall.setVOffset(offset);
-			});
+//			Optional.ofNullable(wallDefinition.getVScale()).ifPresent(scale -> {
+//				if (scale != 0) {
+//					textureAtt.scaleV = textureAtt.scaleV < 0 ? -1 * scale : scale;
+//					wall.setVScale(scale);
+//				}
+//			});
+//			Optional.ofNullable(wallDefinition.getHorizontalOffset()).ifPresent(offset -> {
+//				textureAtt.offsetU = offset;
+//				wall.setHOffset(offset);
+//			});
+//			Optional.ofNullable(wallDefinition.getVerticalOffset()).ifPresent(offset -> {
+//				textureAtt.offsetV = offset;
+//				wall.setVOffset(offset);
+//			});
 			material.set(textureAtt);
 		});
 	}

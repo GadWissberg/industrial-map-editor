@@ -47,16 +47,16 @@ public class LiftTilesAction extends MappingAction {
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
 		if (row > 0) {
-			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> params.wallCreator().adjustNorthWall(n, north));
+			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> params.wallCreator().adjustSouthWall(n, north));
 		}
 		if (col < t[0].length - 1) {
-			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> params.wallCreator().adjustEastWall(n, east));
+			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> params.wallCreator().adjustWestWall(n, east));
 		}
 		if (row < t.length - 1) {
-			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> params.wallCreator().adjustSouthWall(n, south));
+			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> params.wallCreator().adjustNorthWall(south, n));
 		}
 		if (col > 0) {
-			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> params.wallCreator().adjustWestWall(n, west));
+			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> params.wallCreator().adjustEastWall(west, n));
 		}
 	}
 
