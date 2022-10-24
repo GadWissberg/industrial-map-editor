@@ -47,16 +47,40 @@ public class LiftTilesAction extends MappingAction {
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
 		if (row > 0) {
-			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> params.wallCreator().adjustSouthWall(n, north));
+			Optional.ofNullable(t[row - 1][col]).ifPresent(north -> adjustWallBetweenNorthAndSouthNodes(north, n));
 		}
 		if (col < t[0].length - 1) {
-			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> params.wallCreator().adjustWestWall(n, east));
+			Optional.ofNullable(t[row][col + 1]).ifPresent(east -> adjustWallBetweenEastAndWestNodes(n, east));
 		}
 		if (row < t.length - 1) {
-			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> params.wallCreator().adjustNorthWall(south, n));
+			Optional.ofNullable(t[row + 1][col]).ifPresent(south -> adjustWallBetweenNorthAndSouthNodes(n, south));
 		}
 		if (col > 0) {
-			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> params.wallCreator().adjustEastWall(west, n));
+			Optional.ofNullable(t[row][col - 1]).ifPresent(west -> adjustWallBetweenEastAndWestNodes(west, n));
+		}
+	}
+
+	private void adjustWallBetweenEastAndWestNodes(MapNodeData westernNode,
+												   MapNodeData easternNode) {
+		float westNodeHeight = westernNode.getHeight();
+		float eastHeight = easternNode.getHeight();
+		WallCreator wallCreator = params.wallCreator();
+		if (westNodeHeight > eastHeight) {
+			wallCreator.adjustWestWall(westernNode, easternNode);
+		} else if (westNodeHeight < eastHeight) {
+			wallCreator.adjustEastWall(westernNode, easternNode);
+		}
+	}
+
+	private void adjustWallBetweenNorthAndSouthNodes(MapNodeData northernNode,
+													 MapNodeData southernNode) {
+		float northernNodeHeight = northernNode.getHeight();
+		float southernNodeHeight = southernNode.getHeight();
+		WallCreator wallCreator = params.wallCreator();
+		if (northernNodeHeight > southernNodeHeight) {
+			wallCreator.adjustNorthWall(southernNode, northernNode);
+		} else if (northernNodeHeight < southernNodeHeight) {
+			wallCreator.adjustSouthWall(southernNode, northernNode);
 		}
 	}
 

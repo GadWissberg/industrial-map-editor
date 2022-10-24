@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector3;
+import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.TriggersDefinitions;
@@ -342,11 +343,12 @@ public class ActionsHandlerImpl implements ActionsHandler {
 											  final int row,
 											  final int col,
 											  final MapNodeData[][] nodes) {
+		MapNodeData selectedNode = nodes[row][col];
 		if (nodes.length - 1 > row) {
-			defineSouth(defs, nodes[row + 1][col], nodes[row][col]);
+			defineWall(selectedNode.getWalls().getSouthWall(), selectedNode, nodes[row + 1][col], defs.south());
 		}
 		if (0 < row) {
-			defineNorth(defs, nodes[row - 1][col], nodes[row][col]);
+			defineWall(selectedNode.getWalls().getNorthWall(), selectedNode, nodes[row - 1][col], defs.north());
 		}
 	}
 
@@ -354,50 +356,23 @@ public class ActionsHandlerImpl implements ActionsHandler {
 											final int row,
 											final int col,
 											final MapNodeData[][] nodes) {
+		MapNodeData selectedNode = nodes[row][col];
 		if (nodes[0].length - 1 > col) {
-			defineEast(defs, nodes[row][col + 1], nodes[row][col]);
+			defineWall(selectedNode.getWalls().getEastWall(), selectedNode, nodes[row][col + 1], defs.east());
 		}
 		if (0 < col) {
-			defineWest(defs, nodes[row][col - 1], nodes[row][col]);
+			defineWall(selectedNode.getWalls().getWestWall(), selectedNode, nodes[row][col - 1], defs.west());
 		}
-	}
-
-	private void defineNorth(final NodeWallsDefinitions defs,
-							 final MapNodeData mapNodeData,
-							 final MapNodeData node) {
-		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getSouthWall() : null;
-		defineWall(node.getWalls().getNorthWall(), neighborWall, defs.north());
-	}
-
-	private void defineWest(final NodeWallsDefinitions defs,
-							final MapNodeData mapNodeData,
-							final MapNodeData node) {
-		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getEastWall() : null;
-		defineWall(node.getWalls().getWestWall(), neighborWall, defs.west());
-	}
-
-	private void defineSouth(final NodeWallsDefinitions defs,
-							 final MapNodeData mapNodeData,
-							 final MapNodeData node) {
-		Wall neighborWall = mapNodeData != null ? mapNodeData.getWalls().getNorthWall() : null;
-		defineWall(node.getWalls().getSouthWall(), neighborWall, defs.south());
-	}
-
-	private void defineEast(final NodeWallsDefinitions defs,
-							final MapNodeData neighborNode,
-							final MapNodeData node) {
-		Wall neighborWall = neighborNode != null ? neighborNode.getWalls().getWestWall() : null;
-		defineWall(node.getWalls().getEastWall(), neighborWall, defs.east());
 	}
 
 	private void defineWall(Wall selectedWall,
-							Wall neighborWall,
+							MapNodeData selectedNode,
+							MapNodeData neighborNode,
 							WallDefinition wallDefinition) {
-		Wall wall = Optional.ofNullable(selectedWall).orElse(neighborWall);
-		Optional.ofNullable(wall).flatMap(w -> Optional.ofNullable(wallDefinition)).ifPresent(t -> {
-			Material material = wall.getModelInstance().materials.get(0);
+		Optional.ofNullable(selectedWall).flatMap(w -> Optional.ofNullable(wallDefinition)).ifPresent(t -> {
+			Material material = selectedWall.getModelInstance().materials.get(0);
 			TextureAttribute textureAtt = (TextureAttribute) material.get(TextureAttribute.Diffuse);
-			defineWallTexture(wallDefinition, wall, textureAtt);
+			defineWallTexture(wallDefinition, selectedWall, textureAtt, selectedNode, neighborNode);
 //			Optional.ofNullable(wallDefinition.getVScale()).ifPresent(scale -> {
 //				if (scale != 0) {
 //					textureAtt.scaleV = textureAtt.scaleV < 0 ? -1 * scale : scale;
@@ -416,14 +391,21 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		});
 	}
 
-	private void defineWallTexture(final WallDefinition wallDefinition,
-								   final Wall wall,
-								   final TextureAttribute textureAtt) {
+	private void defineWallTexture(WallDefinition wallDefinition,
+								   Wall wall,
+								   TextureAttribute textureAtt,
+								   MapNodeData selectedNode,
+								   MapNodeData neighborNode) {
 		Assets.SurfaceTextures texture = wallDefinition.getTexture();
 		wall.setDefinition(texture != null ? texture : wall.getDefinition());
 		GameAssetsManager assetsManager = services.assetsManager();
 		Optional.ofNullable(texture)
-				.ifPresent(tex -> textureAtt.textureDescription.texture = assetsManager.getTexture(texture));
+				.ifPresent(tex -> {
+					textureAtt.textureDescription.texture = assetsManager.getTexture(texture);
+					float sizeHeight = Math.abs(selectedNode.getHeight() - neighborNode.getHeight());
+					float y = Math.min(selectedNode.getHeight(), neighborNode.getHeight());
+					WallCreator.adjustWallTexture(wall.getModelInstance(), sizeHeight, y);
+				});
 	}
 
 	/**
