@@ -403,8 +403,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				.ifPresent(tex -> {
 					textureAtt.textureDescription.texture = assetsManager.getTexture(texture);
 					float sizeHeight = Math.abs(selectedNode.getHeight() - neighborNode.getHeight());
-					float y = Math.min(selectedNode.getHeight(), neighborNode.getHeight());
-					WallCreator.adjustWallTexture(wall.getModelInstance(), sizeHeight, y);
+					WallCreator.adjustWallTexture(wall.getModelInstance(), sizeHeight);
 				});
 	}
 

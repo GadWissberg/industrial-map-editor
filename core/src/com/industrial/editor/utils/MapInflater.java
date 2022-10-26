@@ -3,6 +3,7 @@ package com.industrial.editor.utils;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
+import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
 import com.gadarts.industrial.shared.model.Coords;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSING;
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 
@@ -43,9 +45,13 @@ import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 public class MapInflater {
 	private final GameAssetsManager assetsManager;
 	private final CursorHandler cursorHandler;
-	private final Set<MapNodeData> initializedTiles;
+	private final Set<MapNodeData> initializedNodes;
 	private final Gson gson = new Gson();
 	private GameMap map;
+
+	private static SurfaceTextures extractTextureName(JsonObject wallJsonObj) {
+		return SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString());
+	}
 
 	/**
 	 * Deserializes map json into the given map object.
@@ -62,9 +68,12 @@ public class MapInflater {
 		this.map = data.getMap();
 		try (Reader reader = new FileReader(path)) {
 			JsonObject input = gson.fromJson(reader, JsonObject.class);
-			JsonObject tilesJsonObject = input.getAsJsonObject(TILES);
-			map.setNodes(inflateTiles(tilesJsonObject, initializedTiles, renderHandler));
-			inflateHeightsAndWalls(tilesJsonObject, map, wallCreator);
+			JsonObject nodesJsonObject = input.getAsJsonObject(NODES);
+			JsonArray nodesDataJson = nodesJsonObject.getAsJsonArray(NODES_DATA);
+			map.setNodes(inflateNodes(nodesJsonObject, initializedNodes, renderHandler));
+			nodesDataJson.forEach(nodeDataJson -> inflateNodeHeight(map, nodeDataJson.getAsJsonObject()));
+			nodesDataJson.forEach(nodeDataJson -> inflateWalls(nodeDataJson.getAsJsonObject(), map, wallCreator));
+			fillMissingTextures(map, wallCreator);
 			PlacedElements placedElements = data.getPlacedElements();
 			inflateCharacters(input, placedElements);
 			Arrays.stream(EditModes.values()).forEach(mode -> {
@@ -79,137 +88,143 @@ public class MapInflater {
 		}
 	}
 
-	private void inflateHeightsAndWalls(final JsonObject tilesJsonObject,
-										final GameMap map,
-										final WallCreator wallCreator) {
-		JsonElement heights = tilesJsonObject.get(HEIGHTS);
-		if (heights != null) {
-			heights.getAsJsonArray().forEach(nodeJsonElement -> {
-				JsonObject nodeJsonObject = nodeJsonElement.getAsJsonObject();
-				int row = nodeJsonObject.get(ROW).getAsInt();
-				int col = nodeJsonObject.get(COL).getAsInt();
-				MapNodeData mapNodeData = map.getNodes()[row][col];
-				mapNodeData.lift(nodeJsonObject.get(HEIGHT).getAsFloat());
-			});
-			heights.getAsJsonArray().forEach(nodeJsonElement -> {
-				JsonObject nodeJsonObject = nodeJsonElement.getAsJsonObject();
-				int row = nodeJsonObject.get(ROW).getAsInt();
-				int col = nodeJsonObject.get(COL).getAsInt();
-				MapNodeData mapNodeData = map.getNodes()[row][col];
-				inflateWalls(nodeJsonObject, mapNodeData, map, wallCreator);
-			});
+	private void fillMissingTextures(GameMap map, WallCreator wallCreator) {
+		MapNodeData[][] nodes = map.getNodes();
+		for (int row = 0; row < nodes.length; row++) {
+			for (int col = 0; col < nodes[row].length; col++) {
+				MapNodeData node = nodes[row][col];
+				fillSouthWallMissingTexture(wallCreator, nodes, node);
+				fillNorthWallMissingTexture(wallCreator, nodes, node);
+				fillEastWallMissingTexture(wallCreator, nodes, node);
+				fillWestWallMissingTexture(wallCreator, nodes, node);
+			}
 		}
 	}
 
-	private void inflateWalls(final JsonObject node,
-							  final MapNodeData mapNodeData,
-							  final GameMap map,
-							  final WallCreator wallCreator) {
+	private void fillSouthWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
+		if (node.getCoords().getRow() == nodes.length - 1 || node.getWalls().getSouthWall() != null) return;
+		MapNodeData southNode = nodes[node.getCoords().getRow() + 1][node.getCoords().getCol()];
+		if (node.getHeight() < southNode.getHeight()) {
+			inflateSouthWall(node, wallCreator.getSouthWallModel(), MISSING, southNode, wallCreator);
+		}
+	}
+
+	private void fillNorthWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
+		if (node.getCoords().getRow() == 0 || node.getWalls().getNorthWall() != null) return;
+		MapNodeData northNode = nodes[node.getCoords().getRow() - 1][node.getCoords().getCol()];
+		if (node.getHeight() < northNode.getHeight()) {
+			inflateNorthWall(node, wallCreator.getNorthWallModel(), MISSING, northNode, wallCreator);
+		}
+	}
+
+	private void fillWestWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
+		if (node.getCoords().getCol() == 0 || node.getWalls().getWestWall() != null) return;
+		MapNodeData westNode = nodes[node.getCoords().getRow()][node.getCoords().getCol() - 1];
+		if (node.getHeight() < westNode.getHeight()) {
+			inflateWestWall(node, wallCreator.getWestWallModel(), MISSING, westNode, wallCreator);
+		}
+	}
+
+	private void fillEastWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
+		if (node.getCoords().getCol() == nodes[0].length - 1 || node.getWalls().getEastWall() != null) return;
+		MapNodeData eastNode = nodes[node.getCoords().getRow()][node.getCoords().getCol() + 1];
+		if (node.getHeight() < eastNode.getHeight()) {
+			inflateEastWall(node, wallCreator.getEastWallModel(), MISSING, eastNode, wallCreator);
+		}
+	}
+
+	private void inflateNodeHeight(GameMap map,
+								   JsonObject nodeJsonObject) {
+		MapNodeData mapNodeData = map.getNodes()[nodeJsonObject.get(ROW).getAsInt()][nodeJsonObject.get(COL).getAsInt()];
+		if (nodeJsonObject.has(HEIGHT)) {
+			mapNodeData.lift(nodeJsonObject.get(HEIGHT).getAsFloat());
+		}
+	}
+
+	private void inflateWalls(JsonObject nodeJsonObject,
+							  GameMap map,
+							  WallCreator wallCreator) {
 		MapNodeData[][] nodes = map.getNodes();
-		float height = mapNodeData.getHeight();
+		MapNodeData mapNodeData = map.getNodes()[nodeJsonObject.get(ROW).getAsInt()][nodeJsonObject.get(COL).getAsInt()];
 		Coords coords = mapNodeData.getCoords();
-		Optional.ofNullable(node.get(MapJsonKeys.SOUTH)).ifPresent(south -> {
-			MapNodeData southNode = nodes[coords.getRow() + 1][coords.getCol()];
-			if (height != southNode.getHeight()) {
-				inflateSouthWall(mapNodeData, wallCreator.getSouthWallModel(), south, southNode);
-			}
-		});
-		Optional.ofNullable(node.get(WEST)).ifPresent(west -> {
-			MapNodeData westNode = nodes[coords.getRow()][coords.getCol() - 1];
-			if (height != westNode.getHeight()) {
-				inflateWestWall(mapNodeData, wallCreator.getWestWallModel(), west, westNode);
-			}
-		});
-		Optional.ofNullable(node.get(NORTH)).ifPresent(north -> {
-			MapNodeData northNode = nodes[coords.getRow() - 1][coords.getCol()];
-			if (height != northNode.getHeight()) {
-				inflateNorthWall(mapNodeData, wallCreator.getNorthWallModel(), north, northNode);
-			}
-		});
-		Optional.ofNullable(node.get(EAST)).ifPresent(east -> {
-			MapNodeData eastNode = nodes[coords.getRow() - 1][coords.getCol()];
-			if (height != eastNode.getHeight()) {
-				inflateEastWall(mapNodeData, wallCreator.getNorthWallModel(), east, eastNode);
-			}
-		});
+		JsonObject wallsJsonObject = Optional.ofNullable(nodeJsonObject.get(WALLS))
+				.orElseGet(JsonObject::new)
+				.getAsJsonObject();
+
+		Model eastWallModel = wallCreator.getEastWallModel();
+		Model westWallModel = wallCreator.getWestWallModel();
+		Model northWallModel = wallCreator.getNorthWallModel();
+		Model southWallModel = wallCreator.getSouthWallModel();
+		int row = coords.getRow();
+		int col = coords.getCol();
+		if (row > 0 && mapNodeData.getHeight() < nodes[row - 1][col].getHeight()) {
+			Optional.ofNullable(wallsJsonObject.get(MapJsonKeys.NORTH)).ifPresent(north -> {
+				SurfaceTextures texture = extractTextureName(north.getAsJsonObject());
+				inflateNorthWall(mapNodeData, northWallModel, texture, nodes[row - 1][col], wallCreator);
+			});
+		}
+
+		if (row < nodes.length - 1 && mapNodeData.getHeight() < nodes[row + 1][col].getHeight()) {
+			Optional.ofNullable(wallsJsonObject.get(MapJsonKeys.SOUTH)).ifPresent(north -> {
+				SurfaceTextures texture = extractTextureName(north.getAsJsonObject());
+				inflateSouthWall(mapNodeData, southWallModel, texture, nodes[row + 1][col], wallCreator);
+			});
+		}
+
+		if (col > 0 && mapNodeData.getHeight() < nodes[row][col - 1].getHeight()) {
+			Optional.ofNullable(wallsJsonObject.get(WEST)).ifPresent(west -> {
+				SurfaceTextures texture = extractTextureName(west.getAsJsonObject());
+				inflateWestWall(mapNodeData, westWallModel, texture, nodes[row][col - 1], wallCreator);
+			});
+		}
+
+		if (col < nodes[0].length - 1 && mapNodeData.getHeight() < nodes[row][col + 1].getHeight()) {
+			Optional.ofNullable(wallsJsonObject.get(EAST)).ifPresent(east -> {
+				SurfaceTextures texture = extractTextureName(east.getAsJsonObject());
+				inflateEastWall(mapNodeData, eastWallModel, texture, nodes[row][col + 1], wallCreator);
+			});
+		}
+
 	}
 
-	private void inflateNorthWall(final MapNodeData mapNodeData,
-								  final Model wallModel,
-								  final JsonElement north,
-								  final MapNodeData northNode) {
-		JsonObject wallJsonObj = north.getAsJsonObject();
-		Wall northWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
+	private void inflateNorthWall(MapNodeData mapNodeData,
+								  Model wallModel,
+								  SurfaceTextures texture,
+								  MapNodeData northNode,
+								  WallCreator wallCreator) {
+		Wall northWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, texture);
 		mapNodeData.getWalls().setNorthWall(northWall);
-		WallCreator.adjustWallBetweenNorthAndSouth(
-				mapNodeData,
-				northNode,
-				defineVScale(wallJsonObj, northWall),
-				defineHorizontalOffset(wallJsonObj, northWall), defineVerticalOffset(wallJsonObj, northWall));
+		wallCreator.adjustNorthWall(mapNodeData, northNode);
 	}
 
-	private void inflateEastWall(final MapNodeData mapNodeData,
-								 final Model wallModel,
-								 final JsonElement east,
-								 final MapNodeData eastNode) {
-		JsonObject wallJsonObj = east.getAsJsonObject();
-		Wall eastWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
+	private void inflateEastWall(MapNodeData mapNodeData,
+								 Model wallModel,
+								 SurfaceTextures texture,
+								 MapNodeData eastNode,
+								 WallCreator wallCreator) {
+		Wall eastWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, texture);
 		mapNodeData.getWalls().setEastWall(eastWall);
-		WallCreator.adjustWallBetweenEastAndWest(
-				mapNodeData,
-				eastNode,
-				defineVScale(wallJsonObj, eastWall),
-				defineHorizontalOffset(wallJsonObj, eastWall), defineVerticalOffset(wallJsonObj, eastWall));
+		wallCreator.adjustEastWall(mapNodeData, eastNode);
 	}
 
-	private void inflateWestWall(final MapNodeData mapNodeData,
-								 final Model wallModel,
-								 final JsonElement west,
-								 final MapNodeData westNode) {
-		JsonObject wallJsonObj = west.getAsJsonObject();
-		Wall westWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
+	private void inflateWestWall(MapNodeData mapNodeData,
+								 Model wallModel,
+								 SurfaceTextures texture,
+								 MapNodeData westNode,
+								 WallCreator wallCreator) {
+		Wall westWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, texture);
 		mapNodeData.getWalls().setWestWall(westWall);
-		WallCreator.adjustWallBetweenEastAndWest(
-				mapNodeData,
-				westNode,
-				defineVScale(wallJsonObj, westWall),
-				defineHorizontalOffset(wallJsonObj, westWall), defineVerticalOffset(wallJsonObj, westWall));
+		wallCreator.adjustWestWall(westNode, mapNodeData);
 	}
 
-	private void inflateSouthWall(final MapNodeData mapNodeData,
-								  final Model wallModel,
-								  final JsonElement south,
-								  final MapNodeData southNode) {
-		JsonObject wallJsonObj = south.getAsJsonObject();
-		Wall southWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, extractTextureName(wallJsonObj));
+	private void inflateSouthWall(MapNodeData mapNodeData,
+								  Model wallModel,
+								  SurfaceTextures texture,
+								  MapNodeData southNode,
+								  WallCreator wallCreator) {
+		Wall southWall = WallCreator.createWall(mapNodeData, wallModel, assetsManager, texture);
 		mapNodeData.getWalls().setSouthWall(southWall);
-		WallCreator.adjustWallBetweenNorthAndSouth(
-				southNode,
-				mapNodeData,
-				defineVScale(wallJsonObj, southWall),
-				defineHorizontalOffset(wallJsonObj, southWall), defineVerticalOffset(wallJsonObj, southWall));
-	}
-
-	private static Assets.SurfaceTextures extractTextureName(JsonObject wallJsonObj) {
-		return Assets.SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString());
-	}
-
-	private float defineVScale(final JsonObject wallJsonObj, final Wall wall) {
-		float vScale = wallJsonObj.has(V_SCALE) ? wallJsonObj.get(V_SCALE).getAsFloat() : 0;
-		wall.setVScale(vScale);
-		return vScale;
-	}
-
-	private float defineHorizontalOffset(final JsonObject wallJsonObj, final Wall wall) {
-		float hOffset = wallJsonObj.has(H_OFFSET) ? wallJsonObj.get(H_OFFSET).getAsFloat() : 0;
-		wall.setHOffset(hOffset);
-		return hOffset;
-	}
-
-	private float defineVerticalOffset(final JsonObject wallJsonObj, final Wall wall) {
-		float vOffset = wallJsonObj.has(V_OFFSET) ? wallJsonObj.get(V_OFFSET).getAsFloat() : 0;
-		wall.setVOffset(vOffset);
-		return vOffset;
+		wallCreator.adjustSouthWall(southNode, mapNodeData);
 	}
 
 	private void inflateElements(final JsonObject input,
@@ -291,40 +306,44 @@ public class MapInflater {
 		return new PlacedElementParameters(definition, dir, node, height);
 	}
 
-	private MapNodeData[][] inflateTiles(final JsonObject tilesJsonObject,
-										 final Set<MapNodeData> initializedTiles,
-										 final RenderHandler viewAuxHandler) {
-		int width = tilesJsonObject.get(WIDTH).getAsInt();
-		int depth = tilesJsonObject.get(DEPTH).getAsInt();
+	private MapNodeData[][] inflateNodes(JsonObject nodesJsonObject,
+										 Set<MapNodeData> initializedNodes,
+										 RenderHandler viewAuxHandler) {
+		int width = nodesJsonObject.get(WIDTH).getAsInt();
+		int depth = nodesJsonObject.get(DEPTH).getAsInt();
 		viewAuxHandler.createModels(new Dimension(width, depth));
-		String matrix = tilesJsonObject.get(MATRIX).getAsString();
+		String matrix = nodesJsonObject.get(MATRIX).getAsString();
 		MapNodeData[][] inputMap = new MapNodeData[depth][width];
-		initializedTiles.clear();
+		initializedNodes.clear();
 		byte[] matrixByte = Base64.getDecoder().decode(matrix.getBytes());
 		IntStream.range(0, depth)
 				.forEach(row -> IntStream.range(0, width)
-						.forEach(col -> inflateTile(width, matrixByte, inputMap, new FlatNode(row, col))));
+						.forEach(col -> inflateNode(
+								width,
+								matrixByte,
+								inputMap,
+								new FlatNode(row, col))));
 		return inputMap;
 	}
 
-	private void inflateTile(final int mapWidth,
-							 final byte[] matrix,
-							 final MapNodeData[][] inputMap,
-							 final FlatNode node) {
-		int row = node.getRow();
-		int col = node.getCol();
+	private void inflateNode(int mapWidth,
+							 byte[] matrix,
+							 MapNodeData[][] inputMap,
+							 FlatNode flatNode) {
+		int row = flatNode.getRow();
+		int col = flatNode.getCol();
 		byte tileId = matrix[row * mapWidth + col % mapWidth];
-		MapNodeData tile;
+		MapNodeData node;
 		if (tileId != 0) {
-			Assets.SurfaceTextures textureDefinition = Assets.SurfaceTextures.values()[tileId - 1];
+			SurfaceTextures textureDefinition = SurfaceTextures.values()[tileId - 1];
 			CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
-			tile = new MapNodeData(cursorHandlerModelData.getCursorTileModel(), row, col, MapNodesTypes.PASSABLE_NODE);
-			Utils.initializeTile(tile, textureDefinition, assetsManager);
-			initializedTiles.add(tile);
+			node = new MapNodeData(cursorHandlerModelData.getCursorTileModel(), row, col, MapNodesTypes.PASSABLE_NODE);
+			Utils.initializeNode(node, textureDefinition, assetsManager);
+			initializedNodes.add(node);
 		} else {
-			tile = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
+			node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
 		}
-		inputMap[row][col] = tile;
+		inputMap[row][col] = node;
 	}
 
 }

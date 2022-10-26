@@ -68,7 +68,7 @@ public class Utils {
 		return decal;
 	}
 
-	public static void initializeTile(final MapNodeData tile,
+	public static void initializeNode(final MapNodeData tile,
 									  final Assets.SurfaceTextures selectedTile,
 									  final GameAssetsManager assetsManager) {
 		tile.setTextureDefinition(selectedTile);

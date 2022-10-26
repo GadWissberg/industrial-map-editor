@@ -58,7 +58,7 @@ public class PlaceTilesProcess extends MappingProcess<PlaceTilesFinishProcessPar
 		if (tile.getModelInstance() == null) {
 			tile.initializeModelInstance(params.getTileModel());
 		}
-		Utils.initializeTile(tile, params.getSelectedTile(), assetsManager);
+		Utils.initializeNode(tile, params.getSelectedTile(), assetsManager);
 		initializedTiles.add(tile);
 	}
 
