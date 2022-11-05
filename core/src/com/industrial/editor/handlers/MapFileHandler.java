@@ -5,6 +5,7 @@ import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapRendererData;
 import com.industrial.editor.handlers.cursor.CursorHandler;
+import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.utils.MapDeflater;
 import com.industrial.editor.utils.MapInflater;
 

@@ -9,6 +9,7 @@ import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.MapEditorEventsNotifier;
+import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.tools.EditorTool;
@@ -16,14 +17,15 @@ import com.industrial.editor.mode.tools.EditorTool;
 import java.awt.*;
 
 public interface HandlersManager extends Disposable {
+	AxisModelHandler getAxisModelHandler( );
 
-	ResourcesHandler getResourcesHandler();
+	ResourcesHandler getResourcesHandler( );
 
-	MapFileHandler getMapFileHandler();
+	MapFileHandler getMapFileHandler( );
 
 	void onCreate(OrthographicCamera camera, WallCreator wallCreator, Dimension dimension);
 
-	RenderHandler getRenderHandler();
+	RenderHandler getRenderHandler( );
 
 	void onTileSelected(Assets.SurfaceTextures texture);
 
@@ -33,7 +35,7 @@ public interface HandlersManager extends Disposable {
 
 	void onTreePickupSelected(ItemDefinition definition);
 
-	MapEditorEventsNotifier getEventsNotifier();
+	MapEditorEventsNotifier getEventsNotifier( );
 
 
 	void onEditModeSet(EditModes mode);
@@ -46,5 +48,5 @@ public interface HandlersManager extends Disposable {
 
 	boolean onTouchUp(Model cursorTileModel);
 
-	LogicHandlers getLogicHandlers();
+	LogicHandlers getLogicHandlers( );
 }

@@ -3,6 +3,7 @@ package com.industrial.editor.handlers.action;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.WallCreator;
@@ -78,16 +79,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		placeTilesProcess.execute(services.eventsNotifier());
 	}
 
-	private PlaceTilesProcess createPlaceTilesProcess(final GameAssetsManager assetsManager,
-													  final Set<MapNodeData> initializedTiles,
-													  final Vector3 position) {
-		return new PlaceTilesProcess(
-				new FlatNode((int) position.z, (int) position.x),
-				assetsManager,
-				initializedTiles,
-				data.map());
-	}
-
 	/**
 	 * Called when the mouse is pressed.
 	 *
@@ -110,18 +101,63 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		return false;
 	}
 
-	private void onLeftClick(GameAssetsManager assetsManager, Set<MapNodeData> initializedTiles) {
-		EditorMode mode = MapRendererImpl.getMode();
-		if (mode.getClass().equals(EditModes.class)) {
-			mode.onTouchDownLeft(
-					currentProcess,
-					this,
-					assetsManager,
-					initializedTiles,
-					services.selectionHandler());
-		}
+	@Override
+	public void placeEnvObject(final GameAssetsManager am) {
+		if (isCursorSelectionModelDisabled()) return;
+		executeAction(new PlaceEnvObjectAction(
+				data.map(),
+				(List<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
+				getOrCreateNode(),
+				(EnvironmentObjectDefinition) services.selectionHandler().getSelectedElement(),
+				am,
+				services.cursorHandler().getCursorHandlerModelData().getCursorSelectionModel().getFacingDirection()));
 	}
 
+	private boolean isCursorSelectionModelDisabled( ) {
+		return services.cursorHandler()
+				.getCursorHandlerModelData()
+				.getCursorSelectionModel()
+				.getModelInstance() == null;
+	}
+
+	private MapNodeData getOrCreateNode( ) {
+		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
+		ModelInstance modelInstance = cursorHandlerModelData.getCursorSelectionModel().getModelInstance();
+		Vector3 position = modelInstance.transform.getTranslation(auxVector);
+		int row = (int) position.z;
+		int col = (int) position.x;
+		MapNodeData[][] nodes = data.map().getNodes();
+		MapNodeData node = nodes[row][col];
+		if (node == null) {
+			node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
+			nodes[row][col] = node;
+		}
+		return node;
+	}
+
+	/**
+	 * Called when tiles height was changed.
+	 *
+	 * @param src
+	 * @param dst
+	 * @param value
+	 */
+	@SuppressWarnings("JavaDoc")
+	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
+		LiftNodesAction.Parameters params = new LiftNodesAction.Parameters(src, dst, value, services.wallCreator());
+		ActionFactory.liftNodes(data.map(), params).execute(services.eventsNotifier());
+	}
+
+	/**
+	 * Called when an environment object was defined.
+	 *
+	 * @param element
+	 * @param height
+	 */
+	@SuppressWarnings("JavaDoc")
+	public void onEnvObjectDefined(final PlacedEnvObject element, final float height) {
+		ActionFactory.defineEnvObject(data.map(), element, height).execute(services.eventsNotifier());
+	}
 
 	@Override
 	public void defineSelectedEnvObject( ) {
@@ -136,62 +172,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		} else if (size > 1) {
 			defineSelectedEnvObjectsInNode(mapNodeData, elementsInTheNode);
 		}
-	}
-
-	private void defineSelectedEnvObjectsInNode(final MapNodeData mapNodeData,
-												final List<PlacedElement> elementsInTheNode) {
-		if (mapNodeData != null) {
-			ActionAnswer<PlacedElement> answer = new ActionAnswer<>(data ->
-					services.eventsNotifier().selectedEnvObjectToDefine((PlacedEnvObject) data));
-			services.eventsNotifier().nodeSelectedToSelectObjectsInIt(elementsInTheNode, answer);
-		}
-	}
-
-	private MapNodeData getMapNodeDataFromCursor( ) {
-		Vector3 cursorPosition = services.cursorHandler().getHighlighter().transform.getTranslation(auxVector);
-		int row = (int) cursorPosition.z;
-		int col = (int) cursorPosition.x;
-		return data.map().getNodes()[row][col];
-	}
-
-	private boolean removeElementByMode( ) {
-		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
-		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
-		executeAction(new RemoveElementAction(
-				data.map(),
-				data.placedElements(),
-				new FlatNode((int) position.z, (int) position.x),
-				(EditModes) MapRendererImpl.getMode()));
-		return true;
-	}
-
-	@Override
-	public void placeEnvObject(final GameAssetsManager am) {
-		if (services.cursorHandler()
-				.getCursorHandlerModelData()
-				.getCursorSelectionModel()
-				.getModelInstance() == null) return;
-
-		GameMap map = data.map();
-		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
-		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
-		Vector3 position = cursorSelectionModel.getModelInstance().transform.getTranslation(auxVector);
-		int row = (int) position.z;
-		int col = (int) position.x;
-		MapNodeData[][] nodes = map.getNodes();
-		MapNodeData node = nodes[row][col];
-		if (node == null) {
-			node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
-			nodes[row][col] = node;
-		}
-		PlaceEnvObjectAction action = new PlaceEnvObjectAction(
-				map,
-				(List<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
-				node,
-				(EnvironmentObjectDefinition) services.selectionHandler().getSelectedElement(),
-				am,
-				cursorSelectionModel.getFacingDirection());
-		executeAction(action);
 	}
 
 	@Override
@@ -270,6 +250,25 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	/**
+	 * Called when a node's walls were defined.
+	 *
+	 * @param defs
+	 * @param src
+	 * @param dst
+	 */
+	@SuppressWarnings("JavaDoc")
+	public void onNodeWallsDefined(final NodeWallsDefinitions defs,
+								   final FlatNode src,
+								   final FlatNode dst) {
+
+		Utils.applyOnRegionOfTiles(src, dst, (row, col) -> {
+			MapNodeData[][] nodes = data.map().getNodes();
+			defineNodeEastAndWestWalls(defs, row, col, nodes);
+			defineNodeSouthAndNorthWalls(defs, row, col, nodes);
+		});
+	}
+
+	/**
 	 * Called when the mouse button is released.
 	 *
 	 * @param selectedTile
@@ -302,6 +301,56 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		executeAction(action);
 	}
 
+	private PlaceTilesProcess createPlaceTilesProcess(final GameAssetsManager assetsManager,
+													  final Set<MapNodeData> initializedTiles,
+													  final Vector3 position) {
+		return new PlaceTilesProcess(
+				new FlatNode((int) position.z, (int) position.x),
+				assetsManager,
+				initializedTiles,
+				data.map());
+	}
+
+	private void onLeftClick(GameAssetsManager assetsManager, Set<MapNodeData> initializedTiles) {
+		EditorMode mode = MapRendererImpl.getMode();
+		if (mode.getClass().equals(EditModes.class)) {
+			mode.onTouchDownLeft(
+					currentProcess,
+					this,
+					assetsManager,
+					initializedTiles,
+					services.selectionHandler());
+		}
+	}
+
+
+	private void defineSelectedEnvObjectsInNode(final MapNodeData mapNodeData,
+												final List<PlacedElement> elementsInTheNode) {
+		if (mapNodeData != null) {
+			ActionAnswer<PlacedElement> answer = new ActionAnswer<>(data ->
+					services.eventsNotifier().selectedEnvObjectToDefine((PlacedEnvObject) data));
+			services.eventsNotifier().nodeSelectedToSelectObjectsInIt(elementsInTheNode, answer);
+		}
+	}
+
+	private MapNodeData getMapNodeDataFromCursor( ) {
+		Vector3 cursorPosition = services.cursorHandler().getHighlighter().transform.getTranslation(auxVector);
+		int row = (int) cursorPosition.z;
+		int col = (int) cursorPosition.x;
+		return data.map().getNodes()[row][col];
+	}
+
+	private boolean removeElementByMode( ) {
+		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
+		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
+		executeAction(new RemoveElementAction(
+				data.map(),
+				data.placedElements(),
+				new FlatNode((int) position.z, (int) position.x),
+				(EditModes) MapRendererImpl.getMode()));
+		return true;
+	}
+
 	private void finishProcess(final Assets.SurfaceTextures selectedTile, final Model cursorTileModel) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
@@ -318,25 +367,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 			currentProcess.finish(new SelectTilesForWallTilingFinishProcessParameters(dstRow, dstCol, services.eventsNotifier()));
 		}
 		this.currentProcess = null;
-	}
-
-	/**
-	 * Called when a node's walls were defined.
-	 *
-	 * @param defs
-	 * @param src
-	 * @param dst
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void onNodeWallsDefined(final NodeWallsDefinitions defs,
-								   final FlatNode src,
-								   final FlatNode dst) {
-
-		Utils.applyOnRegionOfTiles(src, dst, (row, col) -> {
-			MapNodeData[][] nodes = data.map().getNodes();
-			defineNodeEastAndWestWalls(defs, row, col, nodes);
-			defineNodeSouthAndNorthWalls(defs, row, col, nodes);
-		});
 	}
 
 	private void defineNodeSouthAndNorthWalls(final NodeWallsDefinitions defs,
@@ -373,20 +403,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 			Material material = selectedWall.getModelInstance().materials.get(0);
 			TextureAttribute textureAtt = (TextureAttribute) material.get(TextureAttribute.Diffuse);
 			defineWallTexture(wallDefinition, selectedWall, textureAtt, selectedNode, neighborNode);
-//			Optional.ofNullable(wallDefinition.getVScale()).ifPresent(scale -> {
-//				if (scale != 0) {
-//					textureAtt.scaleV = textureAtt.scaleV < 0 ? -1 * scale : scale;
-//					wall.setVScale(scale);
-//				}
-//			});
-//			Optional.ofNullable(wallDefinition.getHorizontalOffset()).ifPresent(offset -> {
-//				textureAtt.offsetU = offset;
-//				wall.setHOffset(offset);
-//			});
-//			Optional.ofNullable(wallDefinition.getVerticalOffset()).ifPresent(offset -> {
-//				textureAtt.offsetV = offset;
-//				wall.setVOffset(offset);
-//			});
 			material.set(textureAtt);
 		});
 	}
@@ -405,29 +421,5 @@ public class ActionsHandlerImpl implements ActionsHandler {
 					float sizeHeight = Math.abs(selectedNode.getHeight() - neighborNode.getHeight());
 					WallCreator.adjustWallTexture(wall.getModelInstance(), sizeHeight);
 				});
-	}
-
-	/**
-	 * Called when tiles height was changed.
-	 *
-	 * @param src
-	 * @param dst
-	 * @param value
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
-		LiftTilesAction.Parameters params = new LiftTilesAction.Parameters(src, dst, value, services.wallCreator());
-		ActionFactory.liftTiles(data.map(), params).execute(services.eventsNotifier());
-	}
-
-	/**
-	 * Called when an environment object was defined.
-	 *
-	 * @param element
-	 * @param height
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void onEnvObjectDefined(final PlacedEnvObject element, final float height) {
-		ActionFactory.defineEnvObject(data.map(), element, height).execute(services.eventsNotifier());
 	}
 }

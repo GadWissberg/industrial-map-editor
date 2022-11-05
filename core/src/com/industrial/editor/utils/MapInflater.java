@@ -2,7 +2,6 @@ package com.industrial.editor.utils;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.WallCreator;
-import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
@@ -16,7 +15,7 @@ import com.gadarts.industrial.shared.model.map.Wall;
 import com.google.gson.*;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
-import com.industrial.editor.handlers.RenderHandler;
+import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.model.elements.PlacedElements;
 import com.industrial.editor.MapRendererData;
 import com.industrial.editor.mode.EditModes;
@@ -90,9 +89,8 @@ public class MapInflater {
 
 	private void fillMissingTextures(GameMap map, WallCreator wallCreator) {
 		MapNodeData[][] nodes = map.getNodes();
-		for (int row = 0; row < nodes.length; row++) {
-			for (int col = 0; col < nodes[row].length; col++) {
-				MapNodeData node = nodes[row][col];
+		for (MapNodeData[] mapNodeData : nodes) {
+			for (MapNodeData node : mapNodeData) {
 				fillSouthWallMissingTexture(wallCreator, nodes, node);
 				fillNorthWallMissingTexture(wallCreator, nodes, node);
 				fillEastWallMissingTexture(wallCreator, nodes, node);
@@ -308,10 +306,10 @@ public class MapInflater {
 
 	private MapNodeData[][] inflateNodes(JsonObject nodesJsonObject,
 										 Set<MapNodeData> initializedNodes,
-										 RenderHandler viewAuxHandler) {
+										 RenderHandler renderHandler) {
 		int width = nodesJsonObject.get(WIDTH).getAsInt();
 		int depth = nodesJsonObject.get(DEPTH).getAsInt();
-		viewAuxHandler.createModels(new Dimension(width, depth));
+		renderHandler.createModels(new Dimension(width, depth));
 		String matrix = nodesJsonObject.get(MATRIX).getAsString();
 		MapNodeData[][] inputMap = new MapNodeData[depth][width];
 		initializedNodes.clear();

@@ -16,6 +16,7 @@ import com.industrial.editor.MapRendererData;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
+import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.ModeType;
@@ -33,6 +34,7 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 	private final ResourcesHandler resourcesHandler = new ResourcesHandler();
 	private final MapEditorEventsNotifier eventsNotifier;
 	private final LogicHandlers logicHandlers;
+	private final AxisModelHandler axisModelHandler = new AxisModelHandler();
 	private RenderHandler renderHandler;
 
 
@@ -48,6 +50,7 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 		Optional.ofNullable(renderHandler).ifPresent(r -> r.dispose());
 		Optional.ofNullable(resourcesHandler).ifPresent(r -> r.dispose());
 		Optional.ofNullable(logicHandlers).ifPresent(r -> r.dispose());
+		Optional.ofNullable(axisModelHandler).ifPresent(r -> r.dispose());
 	}
 
 	@Override
@@ -55,9 +58,8 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 		GameAssetsManager assetsManager = resourcesHandler.getAssetsManager();
 		resourcesHandler.initializeGameFiles();
 		renderHandler = new RenderHandler(assetsManager, this, camera);
+		renderHandler.init(levelSize);
 		logicHandlers.onCreate(handlersManagerRelatedData, wallCreator, assetsManager, renderHandler, resourcesHandler);
-		renderHandler.createBatches(camera);
-		renderHandler.createModels(levelSize);
 	}
 
 	public void onTileSelected(final Assets.SurfaceTextures texture) {

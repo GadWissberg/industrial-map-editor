@@ -71,7 +71,6 @@ public class RemoveElementAction extends MappingAction implements AnswerSubscrib
 	public void onAnswerGiven(final PlacedElement data) {
 		List<? extends PlacedElement> placedElementsList = this.placedElements.getPlacedObjects().get(mode);
 		placedElementsList.remove(data);
-		actionDone();
 	}
 
 }

@@ -1,20 +1,13 @@
-package com.industrial.editor.handlers;
+package com.industrial.editor.handlers.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -30,6 +23,8 @@ import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.NodeWalls;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.industrial.editor.actions.processes.MappingProcess;
+import com.industrial.editor.handlers.HandlersManager;
+import com.industrial.editor.handlers.SelectionHandler;
 import com.industrial.editor.handlers.action.ActionsHandler;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
@@ -41,7 +36,6 @@ import com.industrial.editor.mode.tools.EditorTool;
 import com.industrial.editor.model.elements.*;
 import com.industrial.editor.model.node.FlatNode;
 import com.industrial.editor.utils.Utils;
-import lombok.Getter;
 
 import java.awt.*;
 import java.util.List;
@@ -54,27 +48,17 @@ public class RenderHandler implements Disposable {
 	private static final Matrix4 auxMatrix_1 = new Matrix4();
 	private static final Matrix4 auxMatrix_2 = new Matrix4();
 	private static final Vector2 auxVector2_1 = new Vector2();
-	private static final int DECALS_POOL_SIZE = 200;
-	private static final Color GRID_COLOR = Color.GRAY;
 
-	private final AxisModelHandler axisModelHandler = new AxisModelHandler();
 	private final GameAssetsManager assetsManager;
 	private final HandlersManager handlersManager;
 	private final Camera camera;
-	@Getter
-	private final Model tileModel;
-	private Model gridModel;
-	private ModelInstance gridModelInstance;
-	@Getter
-	private ModelBatch modelBatch;
-
-	@Getter
-	private DecalBatch decalBatch;
+	private final RenderHandlerBatches renderHandlerBatches = new RenderHandlerBatches();
+	private final RenderHandlerAuxModels renderHandlerAuxModels = new RenderHandlerAuxModels();
+	private CameraGroupStrategy groupStrategy;
 
 	public RenderHandler(final GameAssetsManager assetsManager,
 						 final HandlersManager handlersManager,
 						 final Camera camera) {
-		tileModel = createRectModel();
 		this.assetsManager = assetsManager;
 		this.handlersManager = handlersManager;
 		this.camera = camera;
@@ -92,29 +76,9 @@ public class RenderHandler implements Disposable {
 
 	public void renderDecal(final Decal decal, final Camera camera) {
 		decal.lookAt(auxVector3_1.set(decal.getPosition()).sub(camera.direction), camera.up);
-		decalBatch.add(decal);
+		renderHandlerBatches.getDecalBatch().add(decal);
 	}
 
-	void createBatches(final Camera camera) {
-		CameraGroupStrategy groupStrategy = new CameraGroupStrategy(camera);
-		this.decalBatch = new DecalBatch(DECALS_POOL_SIZE, groupStrategy);
-		this.modelBatch = new ModelBatch();
-	}
-
-	private Model createRectModel( ) {
-		ModelBuilder builder = new ModelBuilder();
-		BlendingAttribute highlightBlend = new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		Material material = new Material(highlightBlend);
-		return builder.createRect(
-				0, 0, 1,
-				1, 0, 1,
-				1, 0, 0,
-				0, 0, 0,
-				0, 1, 0,
-				material,
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates
-		);
-	}
 
 	public void draw(EditorMode mode,
 					 PlacedElements placedElements,
@@ -129,32 +93,8 @@ public class RenderHandler implements Disposable {
 	}
 
 	public void renderAux(final ModelBatch modelBatch) {
-		axisModelHandler.render(modelBatch);
-		modelBatch.render(gridModelInstance);
-	}
-
-	public void createModels(final Dimension levelSize) {
-		Model axisModelX = axisModelHandler.getAxisModelX();
-		Model axisModelY = axisModelHandler.getAxisModelY();
-		Model axisModelZ = axisModelHandler.getAxisModelZ();
-		if (axisModelX == null && axisModelY == null && axisModelZ == null) {
-			axisModelHandler.createAxis();
-		}
-		createGrid(levelSize);
-	}
-
-	private void createGrid(final Dimension levelSize) {
-		Gdx.app.postRunnable(( ) -> {
-			if (gridModel != null) {
-				gridModel.dispose();
-			}
-			ModelBuilder builder = new ModelBuilder();
-			Material material = new Material(ColorAttribute.createDiffuse(GRID_COLOR));
-			int attributes = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal;
-			gridModel = builder.createLineGrid(levelSize.width, levelSize.height, 1, 1, material, attributes);
-			gridModelInstance = new ModelInstance(gridModel);
-			gridModelInstance.transform.translate(levelSize.width / 2f, 0.01f, levelSize.height / 2f);
-		});
+		handlersManager.getAxisModelHandler().render(modelBatch);
+		modelBatch.render(renderHandlerAuxModels.getGridModelInstance());
 	}
 
 	private void renderDecals(HandlersManager handlersManager,
@@ -166,7 +106,7 @@ public class RenderHandler implements Disposable {
 			renderCursorOfDecalMode(handlersManager, mode, camera);
 		}
 		renderDecalPlacedElements(placedElements, handlersManager, camera);
-		handlersManager.getRenderHandler().getDecalBatch().flush();
+		renderHandlerBatches.getDecalBatch().flush();
 		Gdx.gl.glDepthMask(true);
 	}
 
@@ -214,7 +154,7 @@ public class RenderHandler implements Disposable {
 							  EditorMode mode,
 							  ElementDefinition selectedElement,
 							  EditorTool tool) {
-		ModelBatch modelBatch = handlersManager.getRenderHandler().getModelBatch();
+		ModelBatch modelBatch = renderHandlerBatches.getModelBatch();
 		modelBatch.begin(camera);
 		renderAux(modelBatch);
 		renderCursor(mode, selectedElement, tool);
@@ -235,7 +175,7 @@ public class RenderHandler implements Disposable {
 	private void renderTiles(final Set<MapNodeData> initializedTiles) {
 		for (final MapNodeData tile : initializedTiles) {
 			if (tile.getModelInstance() != null) {
-				ModelBatch modelBatch = handlersManager.getRenderHandler().getModelBatch();
+				ModelBatch modelBatch = renderHandlerBatches.getModelBatch();
 				modelBatch.render(tile.getModelInstance());
 				NodeWalls walls = tile.getWalls();
 				renderWall(modelBatch, walls.getNorthWall());
@@ -259,7 +199,7 @@ public class RenderHandler implements Disposable {
 			Assets.SurfaceTextures selectedTile = selectionHandler.getSelectedTile();
 			boolean cursorAlwaysDisplayed = tool.isForceCursorDisplay();
 			if (((!cursorAlwaysDisplayed && (selectedElement != null || selectedTile != null)) || cursorAlwaysDisplayed)) {
-				handlersManager.getRenderHandler().getModelBatch().render(highlighter);
+				renderHandlerBatches.getModelBatch().render(highlighter);
 			}
 		}
 		renderCursorObjectModel(selectedElement, mode);
@@ -277,14 +217,13 @@ public class RenderHandler implements Disposable {
 	}
 
 	private void renderCursorEnvObjectModel(EnvironmentObjectDefinition selectedElement, CursorHandler cursorHandler) {
-		EnvironmentObjectDefinition environmentDefinition = selectedElement;
-		cursorHandler.renderModelCursorFloorGrid(environmentDefinition, modelBatch);
+		cursorHandler.renderModelCursorFloorGrid(selectedElement, renderHandlerBatches.getModelBatch());
 		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
 		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
 		ModelInstance modelInstance = cursorSelectionModel.getModelInstance();
 		Direction facingDirection = cursorSelectionModel.getFacingDirection();
 		ModelInstance appendixModelInstance = cursorSelectionModel.getAppendixModelInstance();
-		renderEnvObject(environmentDefinition, modelInstance, facingDirection, appendixModelInstance);
+		renderEnvObject(selectedElement, modelInstance, facingDirection, appendixModelInstance);
 	}
 
 	private void renderEnvObjects(final PlacedElements placedElements) {
@@ -302,7 +241,7 @@ public class RenderHandler implements Disposable {
 	private void renderPickup(final ModelInstance modelInstance) {
 		Matrix4 originalTransform = auxMatrix_1.set(modelInstance.transform);
 		modelInstance.transform.translate(0.5f, 0, 0.5f);
-		handlersManager.getRenderHandler().getModelBatch().render(modelInstance);
+		renderHandlerBatches.getModelBatch().render(modelInstance);
 		modelInstance.transform.set(originalTransform);
 	}
 
@@ -313,7 +252,7 @@ public class RenderHandler implements Disposable {
 		Matrix4 originalTransform = auxMatrix_1.set(modelInstance.transform);
 		rotateEnvObject(definition, modelInstance, facingDirection);
 		handleSpecificEnvRender(definition, modelInstance, facingDirection, definition.getEnvironmentObjectType());
-		modelBatch.render(modelInstance);
+		renderHandlerBatches.getModelBatch().render(modelInstance);
 		renderEnvAppendix(definition, facingDirection, appendixModelInstance);
 		modelInstance.transform.set(originalTransform);
 	}
@@ -324,7 +263,7 @@ public class RenderHandler implements Disposable {
 		if (appendixModelInstance != null) {
 			Matrix4 originalTransform = auxMatrix_2.set(appendixModelInstance.transform);
 			rotateEnvObject(definition, appendixModelInstance, facingDirection);
-			modelBatch.render(appendixModelInstance);
+			renderHandlerBatches.getModelBatch().render(appendixModelInstance);
 			appendixModelInstance.transform.set(originalTransform);
 		}
 	}
@@ -354,7 +293,7 @@ public class RenderHandler implements Disposable {
 				handlersManager.getLogicHandlers().getCursorHandler().renderRectangleMarking(
 						srcNode.getRow(),
 						srcNode.getCol(),
-						handlersManager.getRenderHandler().getModelBatch());
+						renderHandlerBatches.getModelBatch());
 			}
 		});
 	}
@@ -368,11 +307,22 @@ public class RenderHandler implements Disposable {
 
 	@Override
 	public void dispose( ) {
-		tileModel.dispose();
-		modelBatch.dispose();
-		decalBatch.dispose();
-		axisModelHandler.dispose();
-		gridModel.dispose();
+		renderHandlerAuxModels.dispose();
+		renderHandlerBatches.dispose();
+		groupStrategy.dispose();
 	}
 
+	public void init(Dimension levelSize) {
+		groupStrategy = new CameraGroupStrategy(camera);
+		renderHandlerBatches.createBatches(groupStrategy);
+		renderHandlerAuxModels.init(levelSize, handlersManager.getAxisModelHandler());
+	}
+
+	public void createModels(Dimension dimension) {
+		renderHandlerAuxModels.createModels(dimension, handlersManager.getAxisModelHandler());
+	}
+
+	public Model getTileModel( ) {
+		return renderHandlerAuxModels.getTileModel();
+	}
 }

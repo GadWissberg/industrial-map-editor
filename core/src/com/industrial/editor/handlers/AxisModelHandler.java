@@ -24,7 +24,7 @@ public class AxisModelHandler implements Disposable {
 	private Model axisModelY;
 	private Model axisModelZ;
 
-	void createAxis( ) {
+	public void createAxis( ) {
 		ModelBuilder modelBuilder = new ModelBuilder();
 		axisModelX = createAxisModel(modelBuilder, auxVector3_2.set(1, 0, 0), Color.RED);
 		axisModelInstanceX = new ModelInstance(axisModelX);

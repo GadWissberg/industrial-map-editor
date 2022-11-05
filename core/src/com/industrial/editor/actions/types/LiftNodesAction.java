@@ -7,20 +7,18 @@ import com.industrial.editor.actions.MappingAction;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.node.FlatNode;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Setter(AccessLevel.PACKAGE)
-public class LiftTilesAction extends MappingAction {
+public class LiftNodesAction extends MappingAction {
 
 
 	private final Parameters params;
 
-	public LiftTilesAction(final GameMap map, final Parameters params) {
+	public LiftNodesAction(final GameMap map, final Parameters params) {
 		super(map);
 		this.params = params;
 	}

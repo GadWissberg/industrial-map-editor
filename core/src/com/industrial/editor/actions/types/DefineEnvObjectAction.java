@@ -24,7 +24,6 @@ public class DefineEnvObjectAction extends MappingAction {
 		Matrix4 transform = element.getModelInstance().transform;
 		Vector3 position = transform.getTranslation(auxVector);
 		transform.setTranslation(position.x, element.getNode().getHeight() + height, position.z);
-		actionDone();
 	}
 
 	@Override

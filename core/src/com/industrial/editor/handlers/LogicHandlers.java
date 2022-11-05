@@ -16,6 +16,7 @@ import com.industrial.editor.handlers.action.ActionsHandler;
 import com.industrial.editor.handlers.action.ActionsHandlerImpl;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
+import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.model.GameMap;
 import lombok.Getter;
 
