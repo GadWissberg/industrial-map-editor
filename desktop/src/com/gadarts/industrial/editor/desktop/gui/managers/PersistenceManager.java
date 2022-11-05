@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.gadarts.industrial.editor.desktop.gui.Gui.*;
+import static javax.swing.SwingUtilities.getWindowAncestor;
 
 @Getter
 @Setter
@@ -23,6 +26,20 @@ public class PersistenceManager extends BaseManager {
 
 	public PersistenceManager(MapRenderer mapRenderer) {
 		super(mapRenderer);
+	}
+
+	public void tryOpeningFile(final File file, JFrame window) {
+		try {
+			getMapRenderer().onLoadMapRequested(file.getPath());
+			updateCurrentlyOpenedFile(
+					file,
+					SETTINGS_FILE,
+					window);
+			updateLastOpenedFolder(SETTINGS_FILE, file.getParent());
+		} catch (final IOException error) {
+			error.printStackTrace();
+			JOptionPane.showMessageDialog(window, String.format("Failed to open map file: %s", file.getPath()));
+		}
 	}
 
 	private void tryOpeningFile(final File file, MapRenderer mapRenderer, JFrame window) {
@@ -59,7 +76,7 @@ public class PersistenceManager extends BaseManager {
 	public void updateCurrentlyOpenedFile(final File file, String settingsFilePath, JFrame window) {
 		setCurrentlyOpenedMap(file);
 		window.setTitle(String.format(WINDOW_HEADER, PROGRAM_TILE, file.getName()));
-		updateAndFlushField(settingsFilePath, file.getPath(), SETTINGS_KEY_LAST_OPENED_FILE);
+		updateAndFlushField(settingsFilePath, SETTINGS_KEY_LAST_OPENED_FILE, file.getPath());
 	}
 
 	private void updateAndFlushField(String settingsFilePath, String key, String value) {

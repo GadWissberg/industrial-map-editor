@@ -5,6 +5,10 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.Map;
+
+import static com.gadarts.industrial.editor.desktop.gui.Gui.SETTINGS_KEY_LAST_OPENED_FILE;
+import static com.gadarts.industrial.editor.desktop.gui.managers.PersistenceManager.SETTINGS_KEY_LAST_OPENED_FOLDER;
 
 @Getter
 public class ManagersImpl implements Managers {
@@ -30,7 +34,13 @@ public class ManagersImpl implements Managers {
 	@Override
 	public void onMapRendererIsReady(MapRenderer mapRenderer, JFrame windowParent) {
 		persistenceManager.readSettingsFile(windowParent, mapRenderer);
+		openLatestFile(windowParent);
 	}
 
-
+	private void openLatestFile(JFrame windowParent) {
+		Map<String, String> settings = persistenceManager.getSettings();
+		if (settings.containsKey(SETTINGS_KEY_LAST_OPENED_FOLDER)) {
+			persistenceManager.tryOpeningFile(new File(settings.get(SETTINGS_KEY_LAST_OPENED_FILE)), windowParent);
+		}
+	}
 }

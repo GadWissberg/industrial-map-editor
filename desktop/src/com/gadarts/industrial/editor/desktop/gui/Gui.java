@@ -6,6 +6,7 @@ import com.gadarts.industrial.editor.desktop.gui.dialogs.SelectObjectInNodeDialo
 import com.gadarts.industrial.editor.desktop.gui.dialogs.TilesLiftDialog;
 import com.gadarts.industrial.editor.desktop.gui.dialogs.WallTilingDialog;
 import com.gadarts.industrial.editor.desktop.gui.managers.ManagersImpl;
+import com.gadarts.industrial.editor.desktop.gui.managers.PersistenceManager;
 import com.gadarts.industrial.editor.desktop.gui.menu.MenuItemProperties;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.MenuItemDefinition;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.Menus;
@@ -40,6 +41,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
+import static com.gadarts.industrial.editor.desktop.gui.managers.PersistenceManager.SETTINGS_KEY_LAST_OPENED_FOLDER;
+
 
 public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	public static final String FOLDER_TOOLBAR_BUTTONS = "toolbar_buttons";
@@ -52,6 +55,7 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	public static final String PROGRAM_TILE = "Necronemes Map Editor";
 	public static final String SETTINGS_KEY_LAST_OPENED_FILE = "last_opened_file";
 	public static final String SETTINGS_FILE = "settings.json";
+	public static final int MENU_SEPARATOR_HEIGHT = 10;
 	private static final String FOLDER_ASSETS = "core" + File.separator + "assets";
 	private static final String ICON_FORMAT = ".png";
 	public static final String UI_ASSETS_FOLDER_PATH = FOLDER_ASSETS
@@ -60,12 +64,11 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 			+ File.separator
 			+ "%s"
 			+ ICON_FORMAT;
-	public static final int MENU_SEPARATOR_HEIGHT = 10;
 	private final LwjglAWTCanvas lwjgl;
 	private final MapRenderer mapRenderer;
 	private final File assetsFolderLocation;
 	private final ManagersImpl managers;
-	private Map<String, ButtonGroup> menuItemGroups = new HashMap<>();
+	private final Map<String, ButtonGroup> menuItemGroups = new HashMap<>();
 
 	public Gui(final LwjglAWTCanvas lwjgl, final MapRenderer mapRenderer, final Properties properties) {
 		super(String.format(WINDOW_HEADER, PROGRAM_TILE, DEFAULT_MAP_NAME));
@@ -81,7 +84,6 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 		}
 		defineWindow();
 	}
-
 
 	private void addMenuBar( ) {
 		JMenuBar menuBar = new JMenuBar();
