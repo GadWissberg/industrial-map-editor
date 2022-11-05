@@ -62,25 +62,27 @@ public class LiftTilesAction extends MappingAction {
 
 	private void adjustWallBetweenEastAndWestNodes(MapNodeData westernNode,
 												   MapNodeData easternNode) {
-		float westNodeHeight = westernNode.getHeight();
-		float eastHeight = easternNode.getHeight();
 		WallCreator wallCreator = params.wallCreator();
-		if (westNodeHeight > eastHeight) {
+		if (westernNode.getHeight() > easternNode.getHeight()) {
 			wallCreator.adjustWestWall(westernNode, easternNode);
-		} else if (westNodeHeight < eastHeight) {
+		} else if (westernNode.getHeight() < easternNode.getHeight()) {
 			wallCreator.adjustEastWall(westernNode, easternNode);
+		} else {
+			westernNode.getWalls().setEastWall(null);
+			easternNode.getWalls().setWestWall(null);
 		}
 	}
 
 	private void adjustWallBetweenNorthAndSouthNodes(MapNodeData northernNode,
 													 MapNodeData southernNode) {
-		float northernNodeHeight = northernNode.getHeight();
-		float southernNodeHeight = southernNode.getHeight();
 		WallCreator wallCreator = params.wallCreator();
-		if (northernNodeHeight > southernNodeHeight) {
+		if (northernNode.getHeight() > southernNode.getHeight()) {
 			wallCreator.adjustNorthWall(southernNode, northernNode);
-		} else if (northernNodeHeight < southernNodeHeight) {
+		} else if (northernNode.getHeight() < southernNode.getHeight()) {
 			wallCreator.adjustSouthWall(southernNode, northernNode);
+		} else {
+			southernNode.getWalls().setNorthWall(null);
+			northernNode.getWalls().setSouthWall(null);
 		}
 	}
 
