@@ -1,8 +1,10 @@
 package com.industrial.editor;
 
+import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.ActionAnswer;
 import com.industrial.editor.model.elements.PlacedElement;
 import com.industrial.editor.model.elements.PlacedEnvObject;
+import com.industrial.editor.model.elements.PlacedLight;
 import com.industrial.editor.model.node.FlatNode;
 
 import java.util.HashSet;
@@ -35,5 +37,9 @@ public class MapEditorEventsNotifier {
 
 	public void rendererIsReady( ) {
 		subscribers.forEach(MapManagerEventsSubscriber::onMapRendererIsReady);
+	}
+
+	public void selectedNodeToPlaceLight(MapNodeData nodeData, PlacedLight lightInNode) {
+		subscribers.forEach(subscriber -> subscriber.onSelectedNodeToPlaceLight(nodeData, lightInNode));
 	}
 }

@@ -13,6 +13,8 @@ import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.google.gson.*;
+import com.industrial.editor.actions.types.placing.PlaceLightAction;
+import com.industrial.editor.actions.types.placing.PlaceLightActionParameters;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
 import com.industrial.editor.handlers.render.RenderHandler;
@@ -22,6 +24,7 @@ import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedElement;
 import com.industrial.editor.model.elements.PlacedElement.PlacedElementParameters;
+import com.industrial.editor.model.elements.PlacedLight;
 import com.industrial.editor.model.node.FlatNode;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +39,7 @@ import java.util.stream.IntStream;
 import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSING;
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
+import static com.industrial.editor.model.elements.PlacedLight.*;
 
 /**
  * Deserializes map json.
@@ -266,7 +270,17 @@ public class MapInflater {
 		elementsJsonArray.forEach(jsonObject -> {
 			JsonObject json = jsonObject.getAsJsonObject();
 			PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
-			placedElements.add(mode.getCreationProcess().create(parameters, assetsManager));
+			Optional.ofNullable(mode.getCreationProcess()).ifPresentOrElse(
+					c -> placedElements.add(c.create(
+							parameters,
+							assetsManager)),
+					( ) -> {
+						float radius = json.has(RADIUS) ? json.get(RADIUS).getAsFloat() : DEFAULT_LIGHT_RADIUS;
+						float i = json.has(INTENSITY) ? json.get(INTENSITY).getAsFloat() : DEFAULT_LIGHT_INTENSITY;
+						placedElements.add(new PlacedLight(
+								new PlacedElementParameters(null, parameters.getNode(), parameters.getHeight()),
+								assetsManager).set(new PlaceLightActionParameters(parameters.getHeight(), radius, i)));
+					});
 		});
 	}
 

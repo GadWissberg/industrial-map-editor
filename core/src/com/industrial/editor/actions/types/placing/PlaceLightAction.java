@@ -1,7 +1,6 @@
 package com.industrial.editor.actions.types.placing;
 
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.model.GameMap;
@@ -9,24 +8,38 @@ import com.industrial.editor.model.elements.PlacedElement.PlacedElementParameter
 import com.industrial.editor.model.elements.PlacedLight;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PlaceLightAction extends PlaceDecalElementAction<PlacedLight> {
 
-	public PlaceLightAction(final GameMap map,
-							final List<PlacedLight> placedElements,
-							final MapNodeData node,
-							final ElementDefinition selectedCharacter,
-							final GameAssetsManager assetsManager) {
-		super(map, node, assetsManager, Direction.SOUTH, selectedCharacter, placedElements);
+	private final PlaceLightActionParameters parameters;
+
+	public PlaceLightAction(GameMap map,
+							List<PlacedLight> placedElements,
+							MapNodeData node,
+							GameAssetsManager assetsManager,
+							PlaceLightActionParameters parameters) {
+		super(map, node, assetsManager, Direction.SOUTH, null, placedElements);
+		this.parameters = parameters;
 	}
 
 	@Override
-	protected PlacedLight createElement(final MapNodeData tile) {
-		PlacedLight result = null;
-		if (tile != null) {
-			result = new PlacedLight(new PlacedElementParameters(elementDefinition, node, 0), assetsManager);
+	protected PlacedLight createElement(final MapNodeData node) {
+		if (node != null) {
+			Optional<PlacedLight> lightAtNode = placedElements.stream().filter(l -> l.getNode().equals(node)).findFirst();
+			if (lightAtNode.isPresent()) {
+				return lightAtNode.get().set(parameters);
+			} else {
+				return createLight(parameters);
+			}
 		}
-		return result;
+		return null;
+	}
+
+	private PlacedLight createLight(PlaceLightActionParameters parameters) {
+		return new PlacedLight(
+				new PlacedElementParameters(elementDefinition, this.node, this.parameters.height()),
+				assetsManager).set(parameters);
 	}
 
 }

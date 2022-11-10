@@ -175,6 +175,18 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
+	public void selectedNodeToPlaceLight( ) {
+		MapNodeData mapNodeData = getMapNodeDataFromCursor();
+		List<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
+		Optional<? extends PlacedElement> lightInNode = list.stream()
+				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
+				.findFirst();
+		services.eventsNotifier().selectedNodeToPlaceLight(
+				mapNodeData,
+				lightInNode.isPresent() ? (PlacedLight) lightInNode.get() : null);
+	}
+
+	@Override
 	public void placePickup(final GameAssetsManager am) {
 		if (services.selectionHandler().getSelectedElement() == null) return;
 
@@ -195,18 +207,19 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placeLight(final GameAssetsManager am) {
+	public void placeLight(final GameAssetsManager am, FlatNode node, float height, float radius, float intensity) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
 		int col = (int) position.x;
 		GameMap map = data.map();
+		PlaceLightActionParameters parameters = new PlaceLightActionParameters(height, radius, intensity);
 		PlaceLightAction action = new PlaceLightAction(
 				map,
 				(List<PlacedLight>) data.placedElements().getPlacedObjects().get(EditModes.LIGHTS),
 				map.getNodes()[row][col],
-				services.selectionHandler().getSelectedElement(),
-				am);
+				am,
+				parameters);
 		executeAction(action);
 	}
 

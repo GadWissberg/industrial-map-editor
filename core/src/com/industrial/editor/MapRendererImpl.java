@@ -220,6 +220,12 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		return result;
 	}
 
+	@Override
+	public void onLightPlaced(FlatNode node, float height, float radius, float intensity) {
+		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		handlers.getLogicHandlers().getActionsHandler().placeLight(assetsManager, node, height, radius, intensity);
+	}
+
 
 	@Override
 	public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {

@@ -22,7 +22,9 @@ public interface ActionsHandler {
 
 	void defineSelectedEnvObject();
 
-	void placeLight(GameAssetsManager assetsManager);
+	void selectedNodeToPlaceLight( );
+
+	void placeLight(GameAssetsManager assetsManager, FlatNode node, float height, float radius, float intensity);
 
 	void placeCharacter(GameAssetsManager assetsManager);
 

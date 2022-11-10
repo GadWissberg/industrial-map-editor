@@ -51,7 +51,6 @@ public enum EditModes implements EditorMode {
 
 	LIGHTS("Lights Mode",
 			true,
-			PlacedLight::new,
 			new LightsOnTouchDownEventLeft(),
 			true),
 
@@ -69,6 +68,13 @@ public enum EditModes implements EditorMode {
 	private final OnTouchDownLeftEvent onTouchDownLeft;
 	private final AdditionalDeflationProcess additionalDeflationProcess;
 	private final boolean heightDefinedByNode;
+
+	EditModes(String displayName,
+			  boolean decalCursor,
+			  OnTouchDownLeftEvent onTouchDownLeftEvent,
+			  boolean heightDefinedByNode) {
+		this(displayName, decalCursor, null, onTouchDownLeftEvent, heightDefinedByNode);
+	}
 
 	EditModes(String displayName,
 			  boolean decalCursor,

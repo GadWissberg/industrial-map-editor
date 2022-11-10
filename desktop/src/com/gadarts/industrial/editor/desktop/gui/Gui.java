@@ -1,21 +1,19 @@
 package com.gadarts.industrial.editor.desktop.gui;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
-import com.gadarts.industrial.editor.desktop.gui.dialogs.DefineEnvObjectDialog;
-import com.gadarts.industrial.editor.desktop.gui.dialogs.SelectObjectInNodeDialog;
-import com.gadarts.industrial.editor.desktop.gui.dialogs.TilesLiftDialog;
-import com.gadarts.industrial.editor.desktop.gui.dialogs.WallTilingDialog;
+import com.gadarts.industrial.editor.desktop.gui.dialogs.*;
 import com.gadarts.industrial.editor.desktop.gui.managers.ManagersImpl;
-import com.gadarts.industrial.editor.desktop.gui.managers.PersistenceManager;
 import com.gadarts.industrial.editor.desktop.gui.menu.MenuItemProperties;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.MenuItemDefinition;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.Menus;
 import com.gadarts.industrial.editor.desktop.DesktopLauncher;
+import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapManagerEventsSubscriber;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.actions.ActionAnswer;
 import com.industrial.editor.model.elements.PlacedElement;
 import com.industrial.editor.model.elements.PlacedEnvObject;
+import com.industrial.editor.model.elements.PlacedLight;
 import com.industrial.editor.model.node.FlatNode;
 import org.lwjgl.openal.AL;
 import org.pushingpixels.radiance.theming.api.skin.RadianceTwilightLookAndFeel;
@@ -40,8 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-
-import static com.gadarts.industrial.editor.desktop.gui.managers.PersistenceManager.SETTINGS_KEY_LAST_OPENED_FOLDER;
 
 
 public class Gui extends JFrame implements MapManagerEventsSubscriber {
@@ -234,5 +230,10 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	@Override
 	public void onMapRendererIsReady( ) {
 		SwingUtilities.invokeLater(( ) -> managers.onMapRendererIsReady(mapRenderer, this));
+	}
+
+	@Override
+	public void onSelectedNodeToPlaceLight(MapNodeData nodeData, PlacedLight lightInNode) {
+		managers.getDialogsManager().openDialog(new PlaceLightDialog(new FlatNode(nodeData), mapRenderer, lightInNode));
 	}
 }

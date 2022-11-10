@@ -14,7 +14,7 @@ public class LightsOnTouchDownEventLeft implements OnTouchDownLeftEvent {
 					   final ActionsHandler actionsHandler,
 					   final GameAssetsManager assetsManager,
 					   final Set<MapNodeData> initializedTiles, SelectionHandler selectionHandler) {
-		actionsHandler.placeLight(assetsManager);
+		actionsHandler.selectedNodeToPlaceLight();
 		return true;
 	}
 }

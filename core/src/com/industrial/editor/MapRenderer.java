@@ -58,4 +58,6 @@ public interface MapRenderer {
 	Dimension getMapSize();
 
 	List<MapNodeData> getRegion(FlatNode src, FlatNode dst);
+
+	void onLightPlaced(FlatNode node, float height, float radius, float intensity);
 }
