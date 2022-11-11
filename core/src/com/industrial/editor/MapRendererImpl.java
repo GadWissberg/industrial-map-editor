@@ -33,10 +33,8 @@ import lombok.Getter;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import static com.gadarts.industrial.shared.model.CameraUtils.*;
 
@@ -75,7 +73,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		cursorHandler.getCursorHandlerModelData().setCursorSelectionModel(new CursorSelectionModel(assetsManager));
 		PlacedElements placedElements = data.getPlacedElements();
 		handlers.getMapFileHandler().init(assetsManager, cursorHandler, placedElements.getPlacedTiles());
-		Arrays.stream(EditModes.values()).forEach(mode -> placedElements.getPlacedObjects().put(mode, new ArrayList<>()));
+		Arrays.stream(EditModes.values()).forEach(mode -> placedElements.getPlacedObjects().put(mode, new HashSet<>()));
 	}
 
 

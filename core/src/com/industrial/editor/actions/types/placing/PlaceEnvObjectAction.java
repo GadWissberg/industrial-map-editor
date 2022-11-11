@@ -11,19 +11,19 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedEnvObject;
 import com.industrial.editor.model.elements.PlacedModelElement.PlacedModelElementParameters;
 
-import java.util.List;
+import java.util.Set;
 
 public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, EnvironmentObjectDefinition> {
 
 	private final EnvironmentObjectDefinition selectedEnvObject;
-	private final List<PlacedEnvObject> placedEnvObjects;
+	private final Set<PlacedEnvObject> placedEnvObjects;
 
-	public PlaceEnvObjectAction(final GameMap map,
-								final List<PlacedEnvObject> placedEnvObjects,
-								final MapNodeData node,
-								final EnvironmentObjectDefinition definition,
-								final GameAssetsManager assetsManager,
-								final Direction selectedObjectDirection) {
+	public PlaceEnvObjectAction(GameMap map,
+								Set<PlacedEnvObject> placedEnvObjects,
+								MapNodeData node,
+								EnvironmentObjectDefinition definition,
+								GameAssetsManager assetsManager,
+								Direction selectedObjectDirection) {
 		super(map, node, assetsManager, selectedObjectDirection, definition, placedEnvObjects);
 		this.selectedEnvObject = definition;
 		this.placedEnvObjects = placedEnvObjects;
@@ -54,7 +54,7 @@ public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, En
 		return new PlacedEnvObject(parameters, assetsManager);
 	}
 
-	private void applyOnMap() {
+	private void applyOnMap( ) {
 		int halfHeight = selectedEnvObject.getDepth() / 2;
 		int halfWidth = selectedEnvObject.getWidth() / 2;
 		for (int row = -halfHeight; row < Math.max(halfHeight, 1); row++) {
@@ -79,7 +79,7 @@ public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, En
 	}
 
 	@Override
-	public boolean isProcess() {
+	public boolean isProcess( ) {
 		return false;
 	}
 }

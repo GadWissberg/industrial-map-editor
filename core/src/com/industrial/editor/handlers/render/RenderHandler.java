@@ -66,9 +66,9 @@ public class RenderHandler implements Disposable {
 
 	private static <T extends PlacedDecalElement> void renderSimpleDecals(HandlersManager handlersManager,
 																		  Camera camera,
-																		  Map<EditModes, List<? extends PlacedElement>> placedObjects,
+																		  Map<EditModes, Set<? extends PlacedElement>> placedObjects,
 																		  EditModes mode) {
-		List<T> placed = (List<T>) placedObjects.get(mode);
+		Set<T> placed = (Set<T>) placedObjects.get(mode);
 		for (T placedObject : placed) {
 			handlersManager.getRenderHandler().renderDecal(placedObject.getDecal(), camera);
 		}
@@ -113,14 +113,14 @@ public class RenderHandler implements Disposable {
 	private void renderDecalPlacedElements(final PlacedElements placedElements,
 										   final HandlersManager handlersManager,
 										   final Camera camera) {
-		Map<EditModes, List<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
+		Map<EditModes, Set<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
 		renderCharacters(handlersManager, camera, placedObjects);
 		renderSimpleDecals(handlersManager, camera, placedObjects, EditModes.LIGHTS);
 		renderSimpleDecals(handlersManager, camera, placedObjects, EditModes.TRIGGERS);
 	}
 
-	private void renderCharacters(HandlersManager handlersManager, Camera camera, Map<EditModes, List<? extends PlacedElement>> placedObjects) {
-		List<PlacedCharacter> placedCharacters = (List<PlacedCharacter>) placedObjects.get(EditModes.CHARACTERS);
+	private void renderCharacters(HandlersManager handlersManager, Camera camera, Map<EditModes, Set<? extends PlacedElement>> placedObjects) {
+		Set<PlacedCharacter> placedCharacters = (Set<PlacedCharacter>) placedObjects.get(EditModes.CHARACTERS);
 		for (final PlacedCharacter character : placedCharacters) {
 			renderCharacter(character.getCharacterDecal(), character.getCharacterDecal().getSpriteDirection(), camera, handlersManager);
 		}
@@ -166,7 +166,7 @@ public class RenderHandler implements Disposable {
 	private void renderModelPlacedElements(final Set<MapNodeData> initializedTiles, final PlacedElements placedElements) {
 		renderTiles(initializedTiles);
 		renderEnvObjects(placedElements);
-		List<PlacedPickup> placedPickups = (List<PlacedPickup>) placedElements.getPlacedObjects().get(EditModes.PICKUPS);
+		Set<PlacedPickup> placedPickups = (Set<PlacedPickup>) placedElements.getPlacedObjects().get(EditModes.PICKUPS);
 		for (final PlacedPickup pickup : placedPickups) {
 			renderPickup(pickup.getModelInstance());
 		}
@@ -227,8 +227,8 @@ public class RenderHandler implements Disposable {
 	}
 
 	private void renderEnvObjects(final PlacedElements placedElements) {
-		Map<EditModes, List<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
-		List<PlacedEnvObject> placedEnvObjects = (List<PlacedEnvObject>) placedObjects.get(EditModes.ENVIRONMENT);
+		Map<EditModes, Set<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
+		Set<PlacedEnvObject> placedEnvObjects = (Set<PlacedEnvObject>) placedObjects.get(EditModes.ENVIRONMENT);
 		for (final PlacedEnvObject placedEnvObject : placedEnvObjects) {
 			renderEnvObject(
 					(EnvironmentObjectDefinition) placedEnvObject.getDefinition(),

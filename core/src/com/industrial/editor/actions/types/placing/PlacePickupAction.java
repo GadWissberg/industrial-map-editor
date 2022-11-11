@@ -9,16 +9,16 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedModelElement.PlacedModelElementParameters;
 import com.industrial.editor.model.elements.PlacedPickup;
 
-import java.util.List;
+import java.util.Set;
 
 public class PlacePickupAction extends PlaceElementAction<PlacedPickup, ItemDefinition> {
 
-	public PlacePickupAction(final GameMap map,
-							 final List<PlacedPickup> placedPickups,
-							 final MapNodeData node,
-							 final ItemDefinition itemDefinition,
-							 final GameAssetsManager assetsManager,
-							 final Direction facingDirection) {
+	public PlacePickupAction(GameMap map,
+							 Set<PlacedPickup> placedPickups,
+							 MapNodeData node,
+							 ItemDefinition itemDefinition,
+							 GameAssetsManager assetsManager,
+							 Direction facingDirection) {
 		super(map, node, assetsManager, facingDirection, itemDefinition, placedPickups);
 	}
 

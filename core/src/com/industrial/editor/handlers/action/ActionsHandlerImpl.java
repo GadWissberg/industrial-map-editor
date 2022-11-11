@@ -106,7 +106,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		if (isCursorSelectionModelDisabled()) return;
 		executeAction(new PlaceEnvObjectAction(
 				data.map(),
-				(List<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
+				(Set<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
 				getOrCreateNode(),
 				(EnvironmentObjectDefinition) services.selectionHandler().getSelectedElement(),
 				am,
@@ -162,7 +162,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	@Override
 	public void defineSelectedEnvObject( ) {
 		MapNodeData mapNodeData = getMapNodeDataFromCursor();
-		List<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
+		Set<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
 		List<PlacedElement> elementsInTheNode = list.stream()
 				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
 				.collect(Collectors.toList());
@@ -177,7 +177,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	@Override
 	public void selectedNodeToPlaceLight( ) {
 		MapNodeData mapNodeData = getMapNodeDataFromCursor();
-		List<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
+		Set<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
 		Optional<? extends PlacedElement> lightInNode = list.stream()
 				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
 				.findFirst();
@@ -198,7 +198,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		GameMap map = data.map();
 		PlacePickupAction action = new PlacePickupAction(
 				map,
-				(List<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS),
+				(Set<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS),
 				map.getNodes()[row][col],
 				(ItemDefinition) services.selectionHandler().getSelectedElement(),
 				am,
@@ -216,7 +216,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		PlaceLightActionParameters parameters = new PlaceLightActionParameters(height, radius, intensity);
 		PlaceLightAction action = new PlaceLightAction(
 				map,
-				(List<PlacedLight>) data.placedElements().getPlacedObjects().get(EditModes.LIGHTS),
+				(Set<PlacedLight>) data.placedElements().getPlacedObjects().get(EditModes.LIGHTS),
 				map.getNodes()[row][col],
 				am,
 				parameters);
@@ -254,7 +254,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		GameMap map = data.map();
 		PlaceCharacterAction action = new PlaceCharacterAction(
 				map,
-				(List<PlacedCharacter>) data.placedElements().getPlacedObjects().get(EditModes.CHARACTERS),
+				(Set<PlacedCharacter>) data.placedElements().getPlacedObjects().get(EditModes.CHARACTERS),
 				map.getNodes()[row][col],
 				(CharacterDefinition) services.selectionHandler().getSelectedElement(),
 				am,
@@ -307,7 +307,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		GameMap map = data.map();
 		PlaceTriggerAction action = new PlaceTriggerAction(
 				map,
-				(List<PlacedTrigger>) data.placedElements().getPlacedObjects().get(EditModes.TRIGGERS),
+				(Set<PlacedTrigger>) data.placedElements().getPlacedObjects().get(EditModes.TRIGGERS),
 				map.getNodes()[row][col],
 				TriggersDefinitions.EXIT_MAP,
 				assetsManager);

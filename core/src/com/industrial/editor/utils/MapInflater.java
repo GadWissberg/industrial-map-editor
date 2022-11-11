@@ -238,10 +238,10 @@ public class MapInflater {
 		JsonElement jsonElement = input.get(mode.name().toLowerCase());
 		if (jsonElement == null) return;
 
-		List<? extends PlacedElement> placedElementsList = placedElements.getPlacedObjects().get(mode);
+		Set<? extends PlacedElement> placedElementsList = placedElements.getPlacedObjects().get(mode);
 		placedElementsList.clear();
 		inflateElements(
-				(List<PlacedElement>) placedElementsList,
+				(Set<PlacedElement>) placedElementsList,
 				mode,
 				jsonElement.getAsJsonArray(),
 				map);
@@ -250,14 +250,14 @@ public class MapInflater {
 	private void inflateCharacters(final JsonObject input,
 								   final PlacedElements placedElements) {
 		JsonObject charactersJsonObject = input.get(CHARACTERS).getAsJsonObject();
-		List<? extends PlacedElement> placedCharacters = placedElements.getPlacedObjects().get(EditModes.CHARACTERS);
+		Set<? extends PlacedElement> placedCharacters = placedElements.getPlacedObjects().get(EditModes.CHARACTERS);
 		placedCharacters.clear();
 		Arrays.stream(CharacterTypes.values()).forEach(type -> {
 			String typeName = type.name().toLowerCase();
 			if (charactersJsonObject.has(typeName)) {
 				JsonArray charactersArray = charactersJsonObject.get(typeName).getAsJsonArray();
 				inflateElements(
-						(List<PlacedElement>) placedCharacters,
+						(Set<PlacedElement>) placedCharacters,
 						EditModes.CHARACTERS,
 						charactersArray,
 						type.getDefinitions());
@@ -265,10 +265,10 @@ public class MapInflater {
 		});
 	}
 
-	private void inflateElements(final List<PlacedElement> placedElements,
-								 final EditModes mode,
-								 final JsonArray elementsJsonArray,
-								 final GameMap map) {
+	private void inflateElements(Set<PlacedElement> placedElements,
+								 EditModes mode,
+								 JsonArray elementsJsonArray,
+								 GameMap map) {
 		elementsJsonArray.forEach(jsonObject -> {
 			JsonObject json = jsonObject.getAsJsonObject();
 			PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
@@ -286,10 +286,10 @@ public class MapInflater {
 		});
 	}
 
-	private void inflateElements(final List<PlacedElement> placedElements,
-								 final EditModes mode,
-								 final JsonArray elementsJsonArray,
-								 final ElementDefinition[] defs) {
+	private void inflateElements(Set<PlacedElement> placedElements,
+								 EditModes mode,
+								 JsonArray elementsJsonArray,
+								 ElementDefinition[] defs) {
 		elementsJsonArray.forEach(characterJsonObject -> {
 			JsonObject json = characterJsonObject.getAsJsonObject();
 			PlacedElementParameters parameters = inflateElementParameters(defs, json, map);

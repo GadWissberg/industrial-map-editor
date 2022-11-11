@@ -9,7 +9,7 @@ import java.util.*;
 @Getter
 public class PlacedElements {
 	private final Set<MapNodeData> placedTiles = new HashSet<>();
-	private final Map<EditModes, List<? extends PlacedElement>> placedObjects = new HashMap<>();
+	private final Map<EditModes, Set<? extends PlacedElement>> placedObjects = new HashMap<>();
 
 	public void clear( ) {
 		placedTiles.clear();

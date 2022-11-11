@@ -7,15 +7,15 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedElement.PlacedElementParameters;
 import com.industrial.editor.model.elements.PlacedLight;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PlaceLightAction extends PlaceDecalElementAction<PlacedLight> {
 
 	private final PlaceLightActionParameters parameters;
 
 	public PlaceLightAction(GameMap map,
-							List<PlacedLight> placedElements,
+							Set<PlacedLight> placedElements,
 							MapNodeData node,
 							GameAssetsManager assetsManager,
 							PlaceLightActionParameters parameters) {

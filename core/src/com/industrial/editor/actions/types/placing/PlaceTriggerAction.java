@@ -8,12 +8,12 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedElement.PlacedElementParameters;
 import com.industrial.editor.model.elements.PlacedTrigger;
 
-import java.util.List;
+import java.util.Set;
 
 public class PlaceTriggerAction extends PlaceDecalElementAction<PlacedTrigger> {
 
 	public PlaceTriggerAction(GameMap map,
-							  List<PlacedTrigger> placedElements,
+							  Set<PlacedTrigger> placedElements,
 							  MapNodeData node,
 							  ElementDefinition selectedCharacter,
 							  GameAssetsManager assetsManager) {

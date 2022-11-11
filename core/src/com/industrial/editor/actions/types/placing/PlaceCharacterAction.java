@@ -12,14 +12,14 @@ import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedCharacter;
 import com.industrial.editor.model.elements.PlacedElement.PlacedElementParameters;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_Y;
 
 public class PlaceCharacterAction extends PlaceElementAction<PlacedCharacter, CharacterDefinition> {
 
 	public PlaceCharacterAction(final GameMap map,
-								final List<PlacedCharacter> placedElements,
+								final Set<PlacedCharacter> placedElements,
 								final MapNodeData node,
 								final CharacterDefinition selectedCharacter,
 								final GameAssetsManager assetsManager,

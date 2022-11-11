@@ -10,7 +10,7 @@ import com.industrial.editor.actions.PlaceElementAction;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedDecalElement;
 
-import java.util.List;
+import java.util.Set;
 
 public abstract class PlaceDecalElementAction<T extends PlacedDecalElement> extends PlaceElementAction<T, ElementDefinition> {
 	public PlaceDecalElementAction(GameMap map,
@@ -18,7 +18,7 @@ public abstract class PlaceDecalElementAction<T extends PlacedDecalElement> exte
 								   GameAssetsManager assetsManager,
 								   Direction elementDirection,
 								   ElementDefinition elementDefinition,
-								   List<T> placedElements) {
+								   Set<T> placedElements) {
 		super(map, node, assetsManager, elementDirection, elementDefinition, placedElements);
 	}
 

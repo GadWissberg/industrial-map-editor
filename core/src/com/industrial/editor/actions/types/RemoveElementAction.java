@@ -12,6 +12,7 @@ import com.industrial.editor.model.elements.PlacedElements;
 import com.industrial.editor.model.node.FlatNode;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RemoveElementAction extends MappingAction implements AnswerSubscriber<PlacedElement> {
@@ -45,7 +46,7 @@ public class RemoveElementAction extends MappingAction implements AnswerSubscrib
 	}
 
 	private void removePlacedObject(final MapEditorEventsNotifier eventsNotifier) {
-		List<? extends PlacedElement> placedElementsList = this.placedElements.getPlacedObjects().get(mode);
+		Set<? extends PlacedElement> placedElementsList = this.placedElements.getPlacedObjects().get(mode);
 		List<? extends PlacedElement> elementsInTheNode = placedElementsList.stream()
 				.filter(placedElement -> node.equals(placedElement.getNode()))
 				.collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class RemoveElementAction extends MappingAction implements AnswerSubscrib
 
 	@Override
 	public void onAnswerGiven(final PlacedElement data) {
-		List<? extends PlacedElement> placedElementsList = this.placedElements.getPlacedObjects().get(mode);
+		Set<? extends PlacedElement> placedElementsList = this.placedElements.getPlacedObjects().get(mode);
 		placedElementsList.remove(data);
 	}
 

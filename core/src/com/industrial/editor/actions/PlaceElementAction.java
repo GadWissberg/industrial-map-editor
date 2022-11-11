@@ -9,15 +9,15 @@ import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedElement;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class PlaceElementAction<T extends PlacedElement, S extends ElementDefinition> extends MappingAction {
 
 	protected final GameAssetsManager assetsManager;
 	protected final Direction elementDirection;
 	protected final S elementDefinition;
-	protected final List<T> placedElements;
+	protected final Set<T> placedElements;
 	protected final MapNodeData node;
 
 	public PlaceElementAction(final GameMap map,
@@ -25,7 +25,7 @@ public abstract class PlaceElementAction<T extends PlacedElement, S extends Elem
 							  final GameAssetsManager assetsManager,
 							  final Direction elementDirection,
 							  final S elementDefinition,
-							  final List<T> placedElements) {
+							  final Set<T> placedElements) {
 		super(map);
 		this.node = node;
 		this.assetsManager = assetsManager;
