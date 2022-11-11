@@ -40,7 +40,8 @@ public enum EditModes implements EditorMode {
 			ElementTools.values(),
 			new EnvOnTouchDownEventLeft(),
 			(jsonObject, def) -> {
-				String envType = ((EnvironmentObjectDefinition) def).getEnvironmentObjectType().name().toLowerCase();
+				EnvironmentObjectDefinition definition = (EnvironmentObjectDefinition) def.getDefinition();
+				String envType = definition.getEnvironmentObjectType().name().toLowerCase();
 				jsonObject.addProperty(MapJsonKeys.ENV_TYPE, envType);
 			}),
 
@@ -52,7 +53,12 @@ public enum EditModes implements EditorMode {
 	LIGHTS("Lights Mode",
 			true,
 			new LightsOnTouchDownEventLeft(),
-			true),
+			true,
+			(jsonObject, placedElement) -> {
+				PlacedLight placedLight = (PlacedLight) placedElement;
+				jsonObject.addProperty(MapJsonKeys.RADIUS, placedLight.getRadius());
+				jsonObject.addProperty(MapJsonKeys.INTENSITY, placedLight.getIntensity());
+			}),
 
 	TRIGGERS("Triggers Mode",
 			true,
@@ -72,8 +78,16 @@ public enum EditModes implements EditorMode {
 	EditModes(String displayName,
 			  boolean decalCursor,
 			  OnTouchDownLeftEvent onTouchDownLeftEvent,
-			  boolean heightDefinedByNode) {
-		this(displayName, decalCursor, null, onTouchDownLeftEvent, heightDefinedByNode);
+			  boolean heightDefinedByNode,
+			  AdditionalDeflationProcess additionalDeflationProcess) {
+		this(displayName,
+				decalCursor,
+				null, null,
+				false,
+				null,
+				onTouchDownLeftEvent,
+				additionalDeflationProcess,
+				heightDefinedByNode);
 	}
 
 	EditModes(String displayName,

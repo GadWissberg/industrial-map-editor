@@ -100,7 +100,7 @@ public class MapDeflater {
 			jsonObject.addProperty(DIRECTION, e.getFacingDirection().ordinal());
 		}
 		Optional.ofNullable(e.getDefinition()).ifPresent(d -> jsonObject.addProperty(TYPE, d.name()));
-		Optional.ofNullable(additionalDeflationProcess).ifPresent(a -> a.run(jsonObject, e.getDefinition()));
+		Optional.ofNullable(additionalDeflationProcess).ifPresent(a -> a.run(jsonObject, e));
 		return jsonObject;
 	}
 

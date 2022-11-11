@@ -1,13 +1,15 @@
 package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
 import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
+import com.gadarts.industrial.shared.model.env.LightConstants;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.model.elements.PlacedLight;
 import com.industrial.editor.model.node.FlatNode;
 
 import javax.swing.*;
 
-import static com.industrial.editor.model.elements.PlacedLight.*;
+import static com.gadarts.industrial.shared.model.env.LightConstants.DEFAULT_LIGHT_HEIGHT;
+import static com.gadarts.industrial.shared.model.env.LightConstants.DEFAULT_LIGHT_RADIUS;
 
 public class PlaceLightDialog extends DialogPane {
 	static final float STEP = 0.1f;
@@ -44,7 +46,7 @@ public class PlaceLightDialog extends DialogPane {
 
 	private JSpinner addIntensitySpinner( ) {
 		return addSpinnerWithLabel(LABEL_INTENSITY, GuiUtils.createSpinner(
-				lightInNode != null ? lightInNode.getIntensity() : DEFAULT_LIGHT_INTENSITY,
+				lightInNode != null ? lightInNode.getIntensity() : LightConstants.DEFAULT_LIGHT_INTENSITY,
 				0,
 				MAX_LIGHT_INTENSITY,
 				STEP,

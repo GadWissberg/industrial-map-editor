@@ -9,15 +9,17 @@ import lombok.Getter;
 
 @Getter
 public class PlacedLight extends PlacedDecalElement {
-	public static final float DEFAULT_LIGHT_HEIGHT = 1.9F;
-	public static final float DEFAULT_LIGHT_RADIUS = 4;
-	public static final float DEFAULT_LIGHT_INTENSITY = 0.3F;
 	private float intensity;
 	private float radius;
 
 	public PlacedLight(PlacedElementParameters params,
 					   GameAssetsManager gameAssetsManager) {
 		super(params, gameAssetsManager, Assets.UiTextures.BULB);
+	}
+
+	@Override
+	public String toString( ) {
+		return "Light";
 	}
 
 	public PlacedLight set(PlaceLightActionParameters parameters) {

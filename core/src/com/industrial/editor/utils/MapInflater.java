@@ -9,6 +9,7 @@ import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;
 import com.gadarts.industrial.shared.model.characters.Direction;
+import com.gadarts.industrial.shared.model.env.LightConstants;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
@@ -39,6 +40,7 @@ import java.util.stream.IntStream;
 import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSING;
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
+import static com.gadarts.industrial.shared.model.env.LightConstants.*;
 import static com.industrial.editor.model.elements.PlacedLight.*;
 
 /**
