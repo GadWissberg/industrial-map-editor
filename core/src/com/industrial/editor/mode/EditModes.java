@@ -53,7 +53,7 @@ public enum EditModes implements EditorMode {
 	LIGHTS("Lights Mode",
 			true,
 			new LightsOnTouchDownEventLeft(),
-			true,
+			false,
 			(jsonObject, placedElement) -> {
 				PlacedLight placedLight = (PlacedLight) placedElement;
 				jsonObject.addProperty(MapJsonKeys.RADIUS, placedLight.getRadius());
