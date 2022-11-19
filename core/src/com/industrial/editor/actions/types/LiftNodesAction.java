@@ -60,11 +60,12 @@ public class LiftNodesAction extends MappingAction {
 
 	private void adjustWallBetweenEastAndWestNodes(MapNodeData westernNode,
 												   MapNodeData easternNode) {
-		WallCreator wallCreator = params.wallCreator();
 		if (westernNode.getHeight() > easternNode.getHeight()) {
-			wallCreator.adjustWestWall(westernNode, easternNode);
+			westernNode.getWalls().setEastWall(null);
+			params.wallCreator().adjustWestWall(westernNode, easternNode);
 		} else if (westernNode.getHeight() < easternNode.getHeight()) {
-			wallCreator.adjustEastWall(westernNode, easternNode);
+			easternNode.getWalls().setWestWall(null);
+			params.wallCreator().adjustEastWall(westernNode, easternNode);
 		} else {
 			westernNode.getWalls().setEastWall(null);
 			easternNode.getWalls().setWestWall(null);
@@ -73,11 +74,12 @@ public class LiftNodesAction extends MappingAction {
 
 	private void adjustWallBetweenNorthAndSouthNodes(MapNodeData northernNode,
 													 MapNodeData southernNode) {
-		WallCreator wallCreator = params.wallCreator();
 		if (northernNode.getHeight() > southernNode.getHeight()) {
-			wallCreator.adjustNorthWall(southernNode, northernNode);
+			northernNode.getWalls().setSouthWall(null);
+			params.wallCreator().adjustNorthWall(southernNode, northernNode);
 		} else if (northernNode.getHeight() < southernNode.getHeight()) {
-			wallCreator.adjustSouthWall(southernNode, northernNode);
+			southernNode.getWalls().setNorthWall(null);
+			params.wallCreator().adjustSouthWall(southernNode, northernNode);
 		} else {
 			southernNode.getWalls().setNorthWall(null);
 			northernNode.getWalls().setSouthWall(null);
