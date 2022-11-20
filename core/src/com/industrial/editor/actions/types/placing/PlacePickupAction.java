@@ -30,7 +30,6 @@ public class PlacePickupAction extends PlaceElementAction<PlacedPickup, ItemDefi
 
 	@Override
 	protected void placeElementInCorrectHeight(final PlacedPickup element, final MapNodeData tile) {
-		element.getModelInstance().transform.translate(0, tile.getHeight(), 0);
 	}
 
 	@Override
