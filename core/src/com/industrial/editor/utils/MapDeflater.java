@@ -1,6 +1,5 @@
 package com.industrial.editor.utils;
 
-import com.gadarts.industrial.shared.assets.MapJsonKeys;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;

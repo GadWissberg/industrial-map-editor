@@ -183,7 +183,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				.findFirst();
 		services.eventsNotifier().selectedNodeToPlaceLight(
 				mapNodeData,
-				lightInNode.isPresent() ? (PlacedLight) lightInNode.get() : null);
+				(PlacedLight) lightInNode.orElse(null));
 	}
 
 	@Override

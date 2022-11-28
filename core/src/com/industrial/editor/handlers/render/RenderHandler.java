@@ -38,7 +38,6 @@ import com.industrial.editor.model.node.FlatNode;
 import com.industrial.editor.utils.Utils;
 
 import java.awt.*;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -198,7 +197,7 @@ public class RenderHandler implements Disposable {
 		if (highlighter != null && mode.getType() == ModeType.EDIT) {
 			Assets.SurfaceTextures selectedTile = selectionHandler.getSelectedTile();
 			boolean cursorAlwaysDisplayed = tool.isForceCursorDisplay();
-			if (((!cursorAlwaysDisplayed && (selectedElement != null || selectedTile != null)) || cursorAlwaysDisplayed)) {
+			if ((cursorAlwaysDisplayed || (selectedElement != null || selectedTile != null))) {
 				renderHandlerBatches.getModelBatch().render(highlighter);
 			}
 		}

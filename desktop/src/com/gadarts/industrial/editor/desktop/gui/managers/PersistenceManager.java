@@ -6,14 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.gadarts.industrial.editor.desktop.gui.Gui.*;
-import static javax.swing.SwingUtilities.getWindowAncestor;
 
 @Getter
 @Setter

@@ -3,7 +3,6 @@ package com.industrial.editor.model.elements;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.industrial.editor.actions.types.placing.PlaceLightActionParameters;
-import com.industrial.editor.model.node.FlatNode;
 import lombok.Getter;
 
 
