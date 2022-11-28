@@ -70,24 +70,32 @@ public class MapInflater {
 		this.map = data.getMap();
 		try (Reader reader = new FileReader(path)) {
 			JsonObject input = gson.fromJson(reader, JsonObject.class);
-			JsonObject nodesJsonObject = input.getAsJsonObject(NODES);
-			JsonArray nodesDataJson = nodesJsonObject.getAsJsonArray(NODES_DATA);
-			map.setNodes(inflateNodes(nodesJsonObject, initializedNodes, renderHandler));
-			nodesDataJson.forEach(nodeDataJson -> inflateNodeHeight(map, nodeDataJson.getAsJsonObject()));
-			nodesDataJson.forEach(nodeDataJson -> inflateWalls(nodeDataJson.getAsJsonObject(), map, wallCreator));
-			fillMissingTextures(map, wallCreator);
-			PlacedElements placedElements = data.getPlacedElements();
-			inflateCharacters(input, placedElements);
-			Arrays.stream(EditModes.values()).forEach(mode -> {
-				if (!mode.isSkipGenericElementLoading()) {
-					inflateElements(input, mode, placedElements, map);
-				}
-			});
+			inflateMapStructure(wallCreator, renderHandler, input);
+			inflateAllElements(data, input);
 			JsonElement ambient = input.get(AMBIENT);
 			Optional.ofNullable(ambient).ifPresent(a -> map.setAmbientLight(a.getAsFloat()));
 		} catch (final JsonSyntaxException e) {
 			throw new IOException(e.getMessage());
 		}
+	}
+
+	private void inflateMapStructure(WallCreator wallCreator, RenderHandler renderHandler, JsonObject input) {
+		JsonObject nodesJsonObject = input.getAsJsonObject(NODES);
+		JsonArray nodesDataJson = nodesJsonObject.getAsJsonArray(NODES_DATA);
+		map.setNodes(inflateNodes(nodesJsonObject, initializedNodes, renderHandler));
+		nodesDataJson.forEach(nodeDataJson -> inflateNodeHeight(map, nodeDataJson.getAsJsonObject()));
+		nodesDataJson.forEach(nodeDataJson -> inflateWalls(nodeDataJson.getAsJsonObject(), map, wallCreator));
+		fillMissingTextures(map, wallCreator);
+	}
+
+	private void inflateAllElements(MapRendererData data, JsonObject input) {
+		PlacedElements placedElements = data.getPlacedElements();
+		inflateCharacters(input, placedElements);
+		Arrays.stream(EditModes.values()).forEach(mode -> {
+			if (!mode.isSkipGenericElementLoading()) {
+				inflateElements(input, mode, placedElements, map);
+			}
+		});
 	}
 
 	private void fillMissingTextures(GameMap map, WallCreator wallCreator) {

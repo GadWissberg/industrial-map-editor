@@ -27,10 +27,18 @@ import java.util.stream.IntStream;
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.industrial.editor.MapRendererImpl.TARGET_VERSION;
 
-
+/**
+ * Serializes a map into a json file.
+ */
 public class MapDeflater {
 	private final Gson gson = new Gson();
 
+	/**
+	 * Serializes a map into a json.
+	 *
+	 * @param data The relevant map data.
+	 * @param path The file path.
+	 */
 	public void deflate(final MapRendererData data, String path) {
 		JsonObject output = new JsonObject();
 		GameMap map = data.getMap();

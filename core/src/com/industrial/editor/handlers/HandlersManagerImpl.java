@@ -30,7 +30,6 @@ import java.util.Optional;
 @Getter
 public class HandlersManagerImpl implements HandlersManager, Disposable {
 	private final HandlersManagerRelatedData handlersManagerRelatedData;
-	private final MapFileHandler mapFileHandler = new MapFileHandler();
 	private final ResourcesHandler resourcesHandler = new ResourcesHandler();
 	private final MapEditorEventsNotifier eventsNotifier;
 	private final LogicHandlers logicHandlers;
@@ -47,10 +46,15 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 
 	@Override
 	public void dispose( ) {
-		Optional.ofNullable(renderHandler).ifPresent(r -> r.dispose());
-		Optional.ofNullable(resourcesHandler).ifPresent(r -> r.dispose());
-		Optional.ofNullable(logicHandlers).ifPresent(r -> r.dispose());
-		Optional.ofNullable(axisModelHandler).ifPresent(r -> r.dispose());
+		Optional.ofNullable(renderHandler).ifPresent(RenderHandler::dispose);
+		Optional.of(resourcesHandler).ifPresent(ResourcesHandler::dispose);
+		Optional.ofNullable(logicHandlers).ifPresent(LogicHandlers::dispose);
+		Optional.of(axisModelHandler).ifPresent(AxisModelHandler::dispose);
+	}
+
+	@Override
+	public MapFileHandler getMapFileHandler( ) {
+		return resourcesHandler.getMapFileHandler();
 	}
 
 	@Override

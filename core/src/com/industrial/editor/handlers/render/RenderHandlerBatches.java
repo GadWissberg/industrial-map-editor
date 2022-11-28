@@ -13,14 +13,14 @@ public class RenderHandlerBatches implements Disposable {
 	@Getter
 	private DecalBatch decalBatch;
 
-	void createBatches(CameraGroupStrategy groupStrategy) {
-		this.decalBatch = new DecalBatch(DECALS_POOL_SIZE, groupStrategy);
-		this.modelBatch = new ModelBatch();
-	}
-
 	@Override
 	public void dispose( ) {
 		modelBatch.dispose();
 		decalBatch.dispose();
+	}
+
+	void createBatches(CameraGroupStrategy groupStrategy) {
+		this.decalBatch = new DecalBatch(DECALS_POOL_SIZE, groupStrategy);
+		this.modelBatch = new ModelBatch();
 	}
 }
