@@ -1,5 +1,6 @@
 package com.industrial.editor.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
@@ -9,12 +10,10 @@ import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.ElementDefinition;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.LightConstants;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
 import com.google.gson.*;
-import com.industrial.editor.actions.types.placing.PlaceLightAction;
 import com.industrial.editor.actions.types.placing.PlaceLightActionParameters;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
@@ -33,7 +32,6 @@ import java.awt.*;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.List;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -41,7 +39,6 @@ import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSIN
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 import static com.gadarts.industrial.shared.model.env.LightConstants.*;
-import static com.industrial.editor.model.elements.PlacedLight.*;
 
 /**
  * Deserializes map json.
@@ -271,19 +268,29 @@ public class MapInflater {
 								 GameMap map) {
 		elementsJsonArray.forEach(jsonObject -> {
 			JsonObject json = jsonObject.getAsJsonObject();
-			PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
-			Optional.ofNullable(mode.getCreationProcess()).ifPresentOrElse(
-					c -> placedElements.add(c.create(
-							parameters,
-							assetsManager)),
-					( ) -> {
-						float radius = json.has(RADIUS) ? json.get(RADIUS).getAsFloat() : DEFAULT_LIGHT_RADIUS;
-						float i = json.has(INTENSITY) ? json.get(INTENSITY).getAsFloat() : DEFAULT_LIGHT_INTENSITY;
-						placedElements.add(new PlacedLight(
-								new PlacedElementParameters(null, parameters.getNode(), parameters.getHeight()),
-								assetsManager).set(new PlaceLightActionParameters(parameters.getHeight(), radius, i)));
-					});
+			try {
+				PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
+				Optional.ofNullable(mode.getCreationProcess()).ifPresentOrElse(
+						c -> placedElements.add(c.create(
+								parameters,
+								assetsManager)),
+						( ) -> {
+							float radius = json.has(RADIUS) ? json.get(RADIUS).getAsFloat() : DEFAULT_LIGHT_RADIUS;
+							float i = json.has(INTENSITY) ? json.get(INTENSITY).getAsFloat() : DEFAULT_LIGHT_INTENSITY;
+							placedElements.add(new PlacedLight(
+									new PlacedElementParameters(null, parameters.getNode(), parameters.getHeight()),
+									assetsManager).set(new PlaceLightActionParameters(parameters.getHeight(), radius, i)));
+						});
+			} catch (NumberFormatException e) {
+				logInflationError(json, e);
+			}
 		});
+	}
+
+	private void logInflationError(JsonObject json, NumberFormatException e) {
+		String simpleName = this.getClass().getSimpleName();
+		String message = e.getMessage();
+		Gdx.app.log(simpleName, String.format("Failed to inflate an element: %s | Message: %s", json.toString(), message));
 	}
 
 	private void inflateElements(Set<PlacedElement> placedElements,
@@ -292,29 +299,34 @@ public class MapInflater {
 								 ElementDefinition[] defs) {
 		elementsJsonArray.forEach(characterJsonObject -> {
 			JsonObject json = characterJsonObject.getAsJsonObject();
-			PlacedElementParameters parameters = inflateElementParameters(defs, json, map);
-			PlacedElement placedElement = mode.getCreationProcess().create(parameters, assetsManager);
-			placedElements.add(placedElement);
+			try {
+				PlacedElementParameters parameters = inflateElementParameters(defs, json, map);
+				PlacedElement placedElement = mode.getCreationProcess().create(parameters, assetsManager);
+				placedElements.add(placedElement);
+			} catch (NumberFormatException e) {
+				logInflationError(json, e);
+			}
 		});
 	}
 
 	private PlacedElementParameters inflateElementParameters(final ElementDefinition[] definitions,
 															 final JsonObject json,
-															 final GameMap map) {
+															 final GameMap map) throws NumberFormatException {
 		Direction dir = json.has(DIRECTION) ? Direction.values()[json.get(DIRECTION).getAsInt()] : SOUTH;
 		float height = json.has(HEIGHT) ? json.get(HEIGHT).getAsFloat() : 0;
 		MapNodeData node = map.getNodes()[json.get(ROW).getAsInt()][json.get(COL).getAsInt()];
 		ElementDefinition definition = null;
 		if (definitions != null) {
+			JsonElement definitionJsonElement = json.get(TYPE);
 			try {
-				String asString = json.get(TYPE).getAsString();
+				String asString = definitionJsonElement.getAsString();
 				definition = Optional.of(Arrays.stream(definitions)
 								.filter(def -> def.name().equalsIgnoreCase(asString))
 								.findFirst())
 						.orElseThrow()
 						.get();
 			} catch (final Exception e) {
-				definition = definitions[json.get(TYPE).getAsInt()];
+				definition = definitions[definitionJsonElement.getAsInt()];
 			}
 		}
 		return new PlacedElementParameters(definition, dir, node, height);
