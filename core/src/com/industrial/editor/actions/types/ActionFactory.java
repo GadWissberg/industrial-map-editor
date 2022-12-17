@@ -1,6 +1,7 @@
 package com.industrial.editor.actions.types;
 
 import com.industrial.editor.model.GameMap;
+import com.industrial.editor.model.elements.PlacedElements;
 import com.industrial.editor.model.elements.PlacedEnvObject;
 
 /**
@@ -11,10 +12,13 @@ public final class ActionFactory {
 	/**
 	 * @param map
 	 * @param parameters
+	 * @param placedElements
 	 * @return An action that modifies the height of the given nodes.
 	 */
-	public static LiftNodesAction liftNodes(final GameMap map, final LiftNodesAction.Parameters parameters) {
-		return new LiftNodesAction(map, parameters);
+	public static LiftNodesAction liftNodes(GameMap map,
+											LiftNodesAction.Parameters parameters,
+											PlacedElements placedElements) {
+		return new LiftNodesAction(map, parameters, placedElements);
 	}
 
 	/**

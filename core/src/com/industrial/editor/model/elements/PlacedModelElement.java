@@ -1,6 +1,8 @@
 package com.industrial.editor.model.elements;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.model.Coords;
@@ -14,6 +16,7 @@ import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 
 @Getter
 public abstract class PlacedModelElement extends PlacedElement {
+	private static final Vector3 auxVector = new Vector3();
 	protected final ModelInstance modelInstance;
 
 	public PlacedModelElement(final PlacedModelElementParameters params, final GameAssetsManager assetsManager) {
@@ -22,6 +25,15 @@ public abstract class PlacedModelElement extends PlacedElement {
 		this.modelInstance = new ModelInstance(assetsManager.getModel(modelDefinition));
 		GeneralUtils.applyExplicitModelTexture(modelDefinition, modelInstance, assetsManager);
 		applyInitialTransformOnModelInstance(params, modelInstance);
+	}
+
+	@Override
+	public void setHeight(float height) {
+		super.setHeight(height);
+		Matrix4 transform = modelInstance.transform;
+		Vector3 translation = transform.getTranslation(auxVector);
+		translation.y = height;
+		transform.setTranslation(translation);
 	}
 
 	protected void applyInitialTransformOnModelInstance(PlacedModelElementParameters params,

@@ -1,6 +1,8 @@
 package com.industrial.editor.model.elements;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.GameAssetsManager;
 import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
 import com.gadarts.industrial.shared.model.GeneralUtils;
@@ -23,4 +25,5 @@ public class PlacedEnvObject extends PlacedModelElement {
 			this.appendixModelInstance = null;
 		}
 	}
+
 }

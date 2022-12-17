@@ -22,4 +22,11 @@ public abstract class PlacedDecalElement extends PlacedElement {
 		Coords coords = node.getCoords();
 		decal.setPosition(coords.getCol() + 0.5f, node.getHeight() + DECAL_Y, coords.getRow() + 0.5f);
 	}
+
+
+	@Override
+	public void setHeight(float height) {
+		super.setHeight(height);
+		decal.getPosition().y = height;
+	}
 }

@@ -145,7 +145,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	@SuppressWarnings("JavaDoc")
 	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
 		LiftNodesAction.Parameters params = new LiftNodesAction.Parameters(src, dst, value, services.wallCreator());
-		ActionFactory.liftNodes(data.map(), params).execute(services.eventsNotifier());
+		ActionFactory.liftNodes(data.map(), params, data.placedElements()).execute(services.eventsNotifier());
 	}
 
 	/**

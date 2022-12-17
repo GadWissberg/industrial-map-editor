@@ -4,12 +4,17 @@ import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.actions.MappingAction;
+import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.model.GameMap;
+import com.industrial.editor.model.elements.PlacedElement;
+import com.industrial.editor.model.elements.PlacedElements;
 import com.industrial.editor.model.node.FlatNode;
 import lombok.AccessLevel;
 import lombok.Setter;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 @Setter(AccessLevel.PACKAGE)
@@ -17,10 +22,12 @@ public class LiftNodesAction extends MappingAction {
 
 
 	private final Parameters params;
+	private final PlacedElements placedElements;
 
-	public LiftNodesAction(final GameMap map, final Parameters params) {
+	public LiftNodesAction(GameMap map, Parameters params, PlacedElements placedElements) {
 		super(map);
 		this.params = params;
+		this.placedElements = placedElements;
 	}
 
 
@@ -41,6 +48,23 @@ public class LiftNodesAction extends MappingAction {
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
 				IntStream.rangeClosed(minCol, maxCol).forEach(col ->
 						Optional.ofNullable(t[row][col]).ifPresent(n -> adjustWalls(t, row, col, n))));
+		Map<EditModes, Set<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
+		updateElementsHeight(placedObjects, EditModes.CHARACTERS);
+		updateElementsHeightWithRelativeHeight(placedObjects, EditModes.LIGHTS);
+		updateElementsHeightWithRelativeHeight(placedObjects, EditModes.ENVIRONMENT);
+		updateElementsHeight(placedObjects, EditModes.PICKUPS);
+		updateElementsHeight(placedObjects, EditModes.TRIGGERS);
+	}
+
+	private static void updateElementsHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects, EditModes mode) {
+		placedObjects.get(mode).forEach(character -> character.setHeight(character.getNode().getHeight()));
+	}
+
+	private static void updateElementsHeightWithRelativeHeight(
+			Map<EditModes,
+					Set<? extends PlacedElement>> placedObjects,
+			EditModes mode) {
+		placedObjects.get(mode).forEach(element -> element.setHeight(element.getNode().getHeight() + element.getHeight()));
 	}
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
