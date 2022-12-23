@@ -121,17 +121,22 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	private MapNodeData getOrCreateNode( ) {
-		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
-		ModelInstance modelInstance = cursorHandlerModelData.getCursorSelectionModel().getModelInstance();
-		Vector3 position = modelInstance.transform.getTranslation(auxVector);
+		CursorHandlerModelData data = services.cursorHandler().getCursorHandlerModelData();
+		Vector3 position = data.getCursorSelectionModel().getModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
 		int col = (int) position.x;
-		MapNodeData[][] nodes = data.map().getNodes();
-		MapNodeData node = nodes[row][col];
+		MapNodeData node = this.data.map().getNodes()[row][col];
 		if (node == null) {
-			node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
-			nodes[row][col] = node;
+			node = addNewNode(row, col);
 		}
+		return node;
+	}
+
+	private MapNodeData addNewNode(int row, int col) {
+		MapNodeData[][] nodes = data.map().getNodes();
+		MapNodeData node;
+		node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
+		nodes[row][col] = node;
 		return node;
 	}
 

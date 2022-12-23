@@ -23,8 +23,8 @@ public abstract class MappingProcess<T extends MappingProcess.FinishProcessParam
 	@Override
 	public abstract void execute(MapEditorEventsNotifier eventsNotifier);
 
-	abstract void finish(T params);
-
 	public abstract static class FinishProcessParameters {
 	}
+
+	abstract void finish(T params);
 }

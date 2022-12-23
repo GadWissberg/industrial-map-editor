@@ -8,6 +8,9 @@ import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
+/**
+ * A in-map placed element displayed by a decal.
+ */
 @Getter
 public abstract class PlacedDecalElement extends PlacedElement {
 	private static final float DECAL_Y = 0.5f;

@@ -29,9 +29,6 @@ public class FlatNode {
 		return this.row == row && this.col == col;
 	}
 
-	public boolean equals(final FlatNode node) {
-		return equals(node.getRow(), node.getCol());
-	}
 
 	public boolean equals(final MapNodeData node) {
 		return equals(node.getCoords().getRow(), node.getCoords().getCol());
