@@ -38,33 +38,40 @@ public class LiftNodesAction extends MappingAction {
 		int maxRow = Math.max(params.srcNode().getRow(), params.dstNode().getRow());
 		int maxCol = Math.max(params.srcNode().getCol(), params.dstNode().getCol());
 		MapNodeData[][] t = map.getNodes();
+		Map<EditModes, Set<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
 				IntStream.rangeClosed(minCol, maxCol).forEach(col ->
 						Optional.ofNullable(t[row][col]).ifPresent(n -> {
 							if (n.getTextureDefinition() != null) {
 								n.applyHeight(params.value());
+								updateElementsHeight(placedObjects, EditModes.CHARACTERS, n);
+								updateElementsHeightWithRelativeHeight(placedObjects, EditModes.LIGHTS, n);
+								updateElementsHeightWithRelativeHeight(placedObjects, EditModes.ENVIRONMENT, n);
+								updateElementsHeight(placedObjects, EditModes.PICKUPS, n);
+								updateElementsHeight(placedObjects, EditModes.TRIGGERS, n);
 							}
 						})));
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
 				IntStream.rangeClosed(minCol, maxCol).forEach(col ->
 						Optional.ofNullable(t[row][col]).ifPresent(n -> adjustWalls(t, row, col, n))));
-		Map<EditModes, Set<? extends PlacedElement>> placedObjects = placedElements.getPlacedObjects();
-		updateElementsHeight(placedObjects, EditModes.CHARACTERS);
-		updateElementsHeightWithRelativeHeight(placedObjects, EditModes.LIGHTS);
-		updateElementsHeightWithRelativeHeight(placedObjects, EditModes.ENVIRONMENT);
-		updateElementsHeight(placedObjects, EditModes.PICKUPS);
-		updateElementsHeight(placedObjects, EditModes.TRIGGERS);
 	}
 
-	private static void updateElementsHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects, EditModes mode) {
-		placedObjects.get(mode).forEach(character -> character.setHeight(character.getNode().getHeight()));
+	private static void updateElementsHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects,
+											 EditModes mode,
+											 MapNodeData node) {
+		placedObjects.get(mode)
+				.stream()
+				.filter(o -> o.getNode().equals(node))
+				.forEach(object -> object.setHeight(object.getNode().getHeight()));
 	}
 
-	private static void updateElementsHeightWithRelativeHeight(
-			Map<EditModes,
-					Set<? extends PlacedElement>> placedObjects,
-			EditModes mode) {
-		placedObjects.get(mode).forEach(element -> element.setHeight(element.getNode().getHeight() + element.getHeight()));
+	private void updateElementsHeightWithRelativeHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects,
+														EditModes mode,
+														MapNodeData n) {
+		placedObjects.get(mode)
+				.stream()
+				.filter(o -> o.getNode().equals(n))
+				.forEach(element -> element.setHeight(element.getNode().getHeight() + element.getHeight()));
 	}
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
