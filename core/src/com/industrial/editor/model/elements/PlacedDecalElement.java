@@ -23,13 +23,16 @@ public abstract class PlacedDecalElement extends PlacedElement {
 		decal = Utils.createSimpleDecal(gameAssetsManager.getTexture(decalTexture));
 		MapNodeData node = parameters.getNode();
 		Coords coords = node.getCoords();
-		decal.setPosition(coords.getCol() + 0.5f, node.getHeight() + DECAL_Y, coords.getRow() + 0.5f);
+		float x = coords.getCol() + 0.5f;
+		float y = node.getHeight() + parameters.getHeight() + DECAL_Y;
+		float z = coords.getRow() + 0.5f;
+		decal.setPosition(x, y, z);
 	}
 
 
 	@Override
 	public void setHeight(float height) {
 		super.setHeight(height);
-		decal.getPosition().y = height;
+		decal.getPosition().y = getNode().getHeight() + height;
 	}
 }

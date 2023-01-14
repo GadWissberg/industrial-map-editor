@@ -37,8 +37,10 @@ public class PlaceLightAction extends PlaceDecalElementAction<PlacedLight> {
 	}
 
 	private PlacedLight createLight(PlaceLightActionParameters parameters) {
-		return new PlacedLight(
-				new PlacedElementParameters(elementDefinition, this.node, this.parameters.height()),
+		return new PlacedLight(new PlacedElementParameters(
+				elementDefinition,
+				this.node,
+				this.parameters.height()),
 				assetsManager).set(parameters);
 	}
 

@@ -36,7 +36,7 @@ public abstract class PlaceDecalElementAction<T extends PlacedDecalElement> exte
 	protected void placeElementInCorrectHeight(T element, MapNodeData tile) {
 		Decal decal = element.getDecal();
 		Vector3 position = decal.getPosition();
-		decal.setPosition(position.x, tile.getHeight() + 0.5F, position.z);
+		decal.setPosition(position.x, decal.getPosition().y + 0.5F, position.z);
 	}
 
 }

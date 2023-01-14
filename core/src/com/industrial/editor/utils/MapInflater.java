@@ -279,15 +279,23 @@ public class MapInflater {
 			try {
 				PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
 				Optional.ofNullable(mode.getCreationProcess()).ifPresentOrElse(
-						c -> placedElements.add(c.create(
-								parameters,
-								assetsManager)),
+						c -> {
+							PlacedElement placedElement = c.create(parameters, assetsManager);
+							if (placedElement.getNode().getHeight() > placedElement.getHeight()) {
+								placedElement.setHeight(placedElement.getNode().getHeight());
+							}
+							placedElements.add(placedElement);
+						},
 						( ) -> {
 							float radius = json.has(RADIUS) ? json.get(RADIUS).getAsFloat() : DEFAULT_LIGHT_RADIUS;
 							float i = json.has(INTENSITY) ? json.get(INTENSITY).getAsFloat() : DEFAULT_LIGHT_INTENSITY;
-							placedElements.add(new PlacedLight(
+							PlacedLight placedLight = new PlacedLight(
 									new PlacedElementParameters(null, parameters.getNode(), parameters.getHeight()),
-									assetsManager).set(new PlaceLightActionParameters(parameters.getHeight(), radius, i)));
+									assetsManager).set(new PlaceLightActionParameters(parameters.getHeight(), radius, i));
+							if (placedLight.getNode().getHeight() > placedLight.getHeight()) {
+								placedLight.setHeight(placedLight.getNode().getHeight());
+							}
+							placedElements.add(placedLight);
 						});
 			} catch (NumberFormatException e) {
 				logInflationError(json, e);
@@ -310,6 +318,11 @@ public class MapInflater {
 			try {
 				PlacedElementParameters parameters = inflateElementParameters(defs, json, map);
 				PlacedElement placedElement = mode.getCreationProcess().create(parameters, assetsManager);
+				MapNodeData node = placedElement.getNode();
+				float nodeHeight = node.getHeight();
+				if (placedElement.getHeight() < nodeHeight) {
+					placedElement.setHeight(nodeHeight);
+				}
 				placedElements.add(placedElement);
 			} catch (NumberFormatException e) {
 				logInflationError(json, e);

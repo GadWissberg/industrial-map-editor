@@ -41,7 +41,7 @@ public abstract class PlacedModelElement extends PlacedElement {
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
 		float height = params.getHeight();
-		modelInstance.transform.setTranslation(coords.getCol(), node.getHeight() + height, coords.getRow());
+		modelInstance.transform.setTranslation(coords.getCol(), height, coords.getRow());
 	}
 
 	@Getter

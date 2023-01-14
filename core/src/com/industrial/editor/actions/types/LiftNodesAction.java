@@ -17,6 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import static com.industrial.editor.mode.EditModes.*;
+
 @Setter(AccessLevel.PACKAGE)
 public class LiftNodesAction extends MappingAction {
 
@@ -43,12 +45,13 @@ public class LiftNodesAction extends MappingAction {
 				IntStream.rangeClosed(minCol, maxCol).forEach(col ->
 						Optional.ofNullable(t[row][col]).ifPresent(n -> {
 							if (n.getTextureDefinition() != null) {
+								float originalNodeHeight = n.getHeight();
 								n.applyHeight(params.value());
-								updateElementsHeight(placedObjects, EditModes.CHARACTERS, n);
-								updateElementsHeightWithRelativeHeight(placedObjects, EditModes.LIGHTS, n);
-								updateElementsHeightWithRelativeHeight(placedObjects, EditModes.ENVIRONMENT, n);
-								updateElementsHeight(placedObjects, EditModes.PICKUPS, n);
-								updateElementsHeight(placedObjects, EditModes.TRIGGERS, n);
+								updateElementsHeight(placedObjects, CHARACTERS, n, originalNodeHeight);
+								updateElementsHeight(placedObjects, PICKUPS, n, originalNodeHeight);
+								updateElementsHeight(placedObjects, TRIGGERS, n, originalNodeHeight);
+								updateElementsHeight(placedObjects, LIGHTS, n, originalNodeHeight);
+								updateElementsHeight(placedObjects, ENVIRONMENT, n, originalNodeHeight);
 							}
 						})));
 		IntStream.rangeClosed(minRow, maxRow).forEach(row ->
@@ -58,20 +61,15 @@ public class LiftNodesAction extends MappingAction {
 
 	private static void updateElementsHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects,
 											 EditModes mode,
-											 MapNodeData node) {
+											 MapNodeData node,
+											 float originalNodeHeight) {
 		placedObjects.get(mode)
 				.stream()
 				.filter(o -> o.getNode().equals(node))
-				.forEach(object -> object.setHeight(object.getNode().getHeight()));
-	}
-
-	private void updateElementsHeightWithRelativeHeight(Map<EditModes, Set<? extends PlacedElement>> placedObjects,
-														EditModes mode,
-														MapNodeData n) {
-		placedObjects.get(mode)
-				.stream()
-				.filter(o -> o.getNode().equals(n))
-				.forEach(element -> element.setHeight(element.getNode().getHeight() + element.getHeight()));
+				.forEach(object -> {
+					float relativeHeight = Math.abs(object.getHeight() - originalNodeHeight);
+					object.setHeight(node.getHeight() + relativeHeight);
+				});
 	}
 
 	private void adjustWalls(final MapNodeData[][] t, final int row, final int col, final MapNodeData n) {
