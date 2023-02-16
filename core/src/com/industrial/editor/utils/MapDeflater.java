@@ -1,7 +1,7 @@
 package com.industrial.editor.utils;
 
 import com.gadarts.industrial.shared.model.Coords;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.NodeWalls;
@@ -83,7 +83,7 @@ public class MapDeflater {
 			JsonArray charactersJsonArray = new JsonArray();
 			charactersJsonObject.add(type.name().toLowerCase(), charactersJsonArray);
 			placedElements.getPlacedObjects().get(EditModes.CHARACTERS).stream()
-					.filter(character -> ((CharacterDefinition) character.getDefinition()).getCharacterType() == type)
+					.filter(character -> ((CharacterDeclaration) character.getDefinition()).getCharacterType() == type)
 					.forEach(character -> charactersJsonArray.add(createElementJsonObject(character, true)));
 		});
 		output.add(CHARACTERS, charactersJsonObject);
@@ -106,7 +106,7 @@ public class MapDeflater {
 		if (addFacingDirection) {
 			jsonObject.addProperty(DIRECTION, e.getFacingDirection().ordinal());
 		}
-		Optional.ofNullable(e.getDefinition()).ifPresent(d -> jsonObject.addProperty(TYPE, d.name()));
+		Optional.ofNullable(e.getDefinition()).ifPresent(d -> jsonObject.addProperty(TYPE, d.id()));
 		Optional.ofNullable(additionalDeflationProcess).ifPresent(a -> a.run(jsonObject, e));
 		return jsonObject;
 	}

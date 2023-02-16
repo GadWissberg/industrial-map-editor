@@ -9,13 +9,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.Declaration;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.CameraUtils;
 import com.gadarts.industrial.shared.model.GeneralUtils;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
+import com.gadarts.industrial.shared.model.ModelElementDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.handlers.HandlersManager;
 import com.industrial.editor.handlers.HandlersManagerImpl;
 import com.industrial.editor.handlers.cursor.CursorHandler;
@@ -69,7 +70,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		handlers = new HandlersManagerImpl(data);
 		handlers.getResourcesHandler().init(assetsLocation);
 		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
-		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		cursorHandler.getCursorHandlerModelData().setCursorSelectionModel(new CursorSelectionModel(assetsManager));
 		PlacedElements placedElements = data.getPlacedElements();
 		handlers.getMapFileHandler().init(assetsManager, cursorHandler, placedElements.getPlacedTiles());
@@ -79,7 +80,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 
 	@Override
 	public void create( ) {
-		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		wallCreator = new WallCreator(assetsManager);
 		camera = createCamera();
 		handlers.onCreate(camera, wallCreator, data.getMap().getDimension());
@@ -118,7 +119,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 
 
 	@Override
-	public void onTreeCharacterSelected(final CharacterDefinition definition) {
+	public void onTreeCharacterSelected(final CharacterDeclaration definition) {
 		handlers.onTreeCharacterSelected(definition);
 	}
 
@@ -128,12 +129,12 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	}
 
 	@Override
-	public void onTreeEnvSelected(final ModelElementDefinition env) {
+	public void onTreeEnvSelected(final ModelElementDeclaration env) {
 		handlers.onTreeEnvSelected(env);
 	}
 
 	@Override
-	public void onTreePickupSelected(final ItemDefinition definition) {
+	public void onTreePickupSelected(final ItemDeclaration definition) {
 		handlers.onTreePickupSelected(definition);
 	}
 
@@ -220,8 +221,14 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 
 	@Override
 	public void onLightPlaced(FlatNode node, float height, float radius, float intensity) {
-		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		handlers.getLogicHandlers().getActionsHandler().placeLight(assetsManager, node, height, radius, intensity);
+	}
+
+	@Override
+	public Declaration getDeclaration(Assets.Declarations declaration) {
+		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		return assetsManager.getDeclaration(declaration);
 	}
 
 
@@ -231,7 +238,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 			handlers.getLogicHandlers().getCursorHandler().setLastMouseTouchPosition(screenX, screenY);
 		}
 		Set<MapNodeData> placedTiles = data.getPlacedElements().getPlacedTiles();
-		GameAssetsManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
+		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		return handlers.getLogicHandlers().getActionsHandler().onTouchDown(assetsManager, placedTiles, button);
 	}
 

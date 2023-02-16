@@ -1,7 +1,7 @@
 package com.industrial.editor.model.elements;
 
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.industrial.editor.actions.types.placing.PlaceLightActionParameters;
 import lombok.Getter;
 
@@ -12,8 +12,8 @@ public class PlacedLight extends PlacedDecalElement {
 	private float radius;
 
 	public PlacedLight(PlacedElementParameters params,
-					   GameAssetsManager gameAssetsManager) {
-		super(params, gameAssetsManager, Assets.UiTextures.BULB);
+					   GameAssetManager GameAssetManager) {
+		super(params, GameAssetManager, Assets.UiTextures.BULB);
 	}
 
 	@Override

@@ -8,14 +8,14 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.TriggersDefinitions;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.actions.types.placing.*;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapRendererImpl;
@@ -70,7 +70,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void beginTilePlacingProcess(final GameAssetsManager assetsManager,
+	public void beginTilePlacingProcess(final GameAssetManager assetsManager,
 										final Set<MapNodeData> initializedTiles) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
@@ -88,7 +88,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	 * @return Whether an action is taken in response to this event.
 	 */
 	@SuppressWarnings("JavaDoc")
-	public boolean onTouchDown(final GameAssetsManager assetsManager,
+	public boolean onTouchDown(final GameAssetManager assetsManager,
 							   final Set<MapNodeData> initializedTiles,
 							   final int button) {
 		if (button == Input.Buttons.LEFT) {
@@ -102,13 +102,13 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placeEnvObject(final GameAssetsManager am) {
+	public void placeEnvObject(final GameAssetManager am) {
 		if (isCursorSelectionModelDisabled()) return;
 		executeAction(new PlaceEnvObjectAction(
 				data.map(),
 				(Set<PlacedEnvObject>) data.placedElements().getPlacedObjects().get(EditModes.ENVIRONMENT),
 				getOrCreateNode(),
-				(EnvironmentObjectDefinition) services.selectionHandler().getSelectedElement(),
+				(EnvironmentObjectDeclaration) services.selectionHandler().getSelectedElement(),
 				am,
 				services.cursorHandler().getCursorHandlerModelData().getCursorSelectionModel().getFacingDirection()));
 	}
@@ -192,7 +192,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placePickup(final GameAssetsManager am) {
+	public void placePickup(final GameAssetManager am) {
 		if (services.selectionHandler().getSelectedElement() == null) return;
 
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
@@ -205,14 +205,14 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				map,
 				(Set<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS),
 				map.getNodes()[row][col],
-				(ItemDefinition) services.selectionHandler().getSelectedElement(),
+				(ItemDeclaration) services.selectionHandler().getSelectedElement(),
 				am,
 				cursorSelectionModel.getFacingDirection());
 		executeAction(action);
 	}
 
 	@Override
-	public void placeLight(final GameAssetsManager am, FlatNode node, float height, float radius, float intensity) {
+	public void placeLight(final GameAssetManager am, FlatNode node, float height, float radius, float intensity) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
@@ -250,7 +250,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placeCharacter(final GameAssetsManager am) {
+	public void placeCharacter(final GameAssetManager am) {
 		CursorHandler cursorHandler = services.cursorHandler();
 		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
@@ -261,7 +261,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				map,
 				(Set<PlacedCharacter>) data.placedElements().getPlacedObjects().get(EditModes.CHARACTERS),
 				map.getNodes()[row][col],
-				(CharacterDefinition) services.selectionHandler().getSelectedElement(),
+				(CharacterDeclaration) services.selectionHandler().getSelectedElement(),
 				am,
 				cursorHandler.getCursorCharacterDecal().getSpriteDirection());
 		executeAction(action);
@@ -304,7 +304,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placeTrigger(GameAssetsManager assetsManager) {
+	public void placeTrigger(GameAssetManager assetsManager) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
@@ -319,7 +319,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		executeAction(action);
 	}
 
-	private PlaceTilesProcess createPlaceTilesProcess(final GameAssetsManager assetsManager,
+	private PlaceTilesProcess createPlaceTilesProcess(final GameAssetManager assetsManager,
 													  final Set<MapNodeData> initializedTiles,
 													  final Vector3 position) {
 		return new PlaceTilesProcess(
@@ -329,7 +329,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				data.map());
 	}
 
-	private void onLeftClick(GameAssetsManager assetsManager, Set<MapNodeData> initializedTiles) {
+	private void onLeftClick(GameAssetManager assetsManager, Set<MapNodeData> initializedTiles) {
 		EditorMode mode = MapRendererImpl.getMode();
 		if (mode.getClass().equals(EditModes.class)) {
 			mode.onTouchDownLeft(
@@ -432,7 +432,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 								   MapNodeData neighborNode) {
 		Assets.SurfaceTextures texture = wallDefinition.getTexture();
 		wall.setDefinition(texture != null ? texture : wall.getDefinition());
-		GameAssetsManager assetsManager = services.assetsManager();
+		GameAssetManager assetsManager = services.assetsManager();
 		Optional.ofNullable(texture)
 				.ifPresent(tex -> {
 					textureAtt.textureDescription.texture = assetsManager.getTexture(texture);

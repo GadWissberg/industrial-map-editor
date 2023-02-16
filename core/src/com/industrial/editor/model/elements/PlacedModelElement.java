@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.GeneralUtils;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
+import com.gadarts.industrial.shared.model.ModelElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public abstract class PlacedModelElement extends PlacedElement {
 	private static final Vector3 auxVector = new Vector3();
 	protected final ModelInstance modelInstance;
 
-	public PlacedModelElement(final PlacedModelElementParameters params, final GameAssetsManager assetsManager) {
+	public PlacedModelElement(final PlacedModelElementParameters params, final GameAssetManager assetsManager) {
 		super(params);
 		Assets.Models modelDefinition = params.getModelDefinition().getModelDefinition();
 		this.modelInstance = new ModelInstance(assetsManager.getModel(modelDefinition));
@@ -47,9 +47,9 @@ public abstract class PlacedModelElement extends PlacedElement {
 	@Getter
 	public static class PlacedModelElementParameters extends PlacedElementParameters {
 
-		private final ModelElementDefinition modelDefinition;
+		private final ModelElementDeclaration modelDefinition;
 
-		public PlacedModelElementParameters(final ModelElementDefinition definition,
+		public PlacedModelElementParameters(final ModelElementDeclaration definition,
 											final Direction facingDirection,
 											final MapNodeData node,
 											final float height) {
@@ -57,14 +57,14 @@ public abstract class PlacedModelElement extends PlacedElement {
 			this.modelDefinition = definition;
 		}
 
-		public PlacedModelElementParameters(final ModelElementDefinition definition,
+		public PlacedModelElementParameters(final ModelElementDeclaration definition,
 											final MapNodeData node,
 											final float height) {
 			this(definition, SOUTH, node, height);
 		}
 
 		public PlacedModelElementParameters(final PlacedElementParameters params) {
-			this((ModelElementDefinition) params.getDefinition(), params.getFacingDirection(), params.getNode(), params.getHeight());
+			this((ModelElementDeclaration) params.getDeclaration(), params.getFacingDirection(), params.getNode(), params.getHeight());
 		}
 	}
 }

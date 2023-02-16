@@ -1,15 +1,16 @@
 package com.gadarts.industrial.editor.desktop.gui.dialogs;
 
 import com.gadarts.industrial.editor.desktop.gui.GuiUtils;
-import com.gadarts.industrial.shared.model.env.LightConstants;
+import com.gadarts.industrial.shared.model.env.light.LightConstants;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.model.elements.PlacedLight;
 import com.industrial.editor.model.node.FlatNode;
 
 import javax.swing.*;
 
-import static com.gadarts.industrial.shared.model.env.LightConstants.DEFAULT_LIGHT_HEIGHT;
-import static com.gadarts.industrial.shared.model.env.LightConstants.DEFAULT_LIGHT_RADIUS;
+import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_HEIGHT;
+import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_RADIUS;
+
 
 public class PlaceLightDialog extends DialogPane {
 	static final float STEP = 0.1f;

@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ModelElementDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.mode.EditModes;
@@ -167,7 +167,7 @@ public class CursorHandler implements Disposable {
 	 * @param tileModel
 	 */
 	@SuppressWarnings("JavaDoc")
-	public void createCursors(final GameAssetsManager assetsManager, final Model tileModel) {
+	public void createCursors(final GameAssetManager assetsManager, final Model tileModel) {
 		cursorHandlerModelData.createCursors(tileModel);
 		createCursorSimpleDecal(assetsManager);
 	}
@@ -178,7 +178,7 @@ public class CursorHandler implements Disposable {
 	 * @param modelBatch
 	 */
 	@SuppressWarnings("JavaDoc")
-	public void renderModelCursorFloorGrid(final ModelElementDefinition selectedElement, final ModelBatch modelBatch) {
+	public void renderModelCursorFloorGrid(final ModelElementDeclaration selectedElement, final ModelBatch modelBatch) {
 		ModelInstance cursorTileModelInstance = cursorHandlerModelData.getCursorTileModelInstance();
 		Vector3 originalPosition = cursorTileModelInstance.transform.getTranslation(auxVector3_1);
 		Vector3 cursorPosition = highlighter.transform.getTranslation(auxVector3_3);
@@ -189,7 +189,7 @@ public class CursorHandler implements Disposable {
 	}
 
 	private void renderModelCursorFloorGridCells(final Vector3 cursorPosition,
-												 final ModelElementDefinition def,
+												 final ModelElementDeclaration def,
 												 final Direction facingDirection,
 												 final ModelBatch modelBatch) {
 		int halfWidth = def.getWidth() / 2;
@@ -215,7 +215,7 @@ public class CursorHandler implements Disposable {
 		}
 	}
 
-	private void createCursorCharacterDecal(final GameAssetsManager assetsManager, CharacterDefinition definition) {
+	private void createCursorCharacterDecal(final GameAssetManager assetsManager, CharacterDeclaration definition) {
 		cursorCharacterDecal = Utils.createCharacterDecal(
 				assetsManager,
 				definition,
@@ -225,7 +225,7 @@ public class CursorHandler implements Disposable {
 		cursorCharacterDecal.getDecal().setColor(color.r, color.g, color.b, CURSOR_OPACITY);
 	}
 
-	private void createCursorSimpleDecal(final GameAssetsManager assetsManager) {
+	private void createCursorSimpleDecal(final GameAssetManager assetsManager) {
 		Texture bulb = assetsManager.getTexture(Assets.UiTextures.BULB);
 		cursorSimpleDecal = Utils.createSimpleDecal(bulb);
 		Color color = cursorSimpleDecal.getColor();
@@ -236,11 +236,11 @@ public class CursorHandler implements Disposable {
 	public void dispose( ) {
 	}
 
-	public void initializeCursorCharacterDecal(GameAssetsManager assetsManager, CharacterDefinition definition) {
+	public void initializeCursorCharacterDecal(GameAssetManager assetsManager, CharacterDeclaration definition) {
 		createCursorCharacterDecal(assetsManager, definition);
 	}
 
-	public void onEditModeSet(EditModes mode, GameAssetsManager assetsManager) {
+	public void onEditModeSet(EditModes mode, GameAssetManager assetsManager) {
 		if (mode.isDecalCursor()) {
 			Optional.ofNullable(modesToDecal.get(mode)).ifPresent(decal -> {
 				Texture decalTexture = assetsManager.getTexture(decal);

@@ -1,13 +1,14 @@
 package com.gadarts.industrial.editor.desktop.gui;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
+import com.gadarts.industrial.editor.desktop.DesktopLauncher;
 import com.gadarts.industrial.editor.desktop.gui.dialogs.*;
 import com.gadarts.industrial.editor.desktop.gui.managers.ManagersImpl;
 import com.gadarts.industrial.editor.desktop.gui.menu.MenuItemProperties;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.MenuItemDefinition;
 import com.gadarts.industrial.editor.desktop.gui.menu.definitions.Menus;
-import com.gadarts.industrial.editor.desktop.DesktopLauncher;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.industrial.editor.DefaultSettings;
 import com.industrial.editor.MapManagerEventsSubscriber;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.actions.ActionAnswer;
@@ -33,16 +34,14 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
 
 public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	public static final String FOLDER_TOOLBAR_BUTTONS = "toolbar_buttons";
-	public static final int WIDTH = 1280;
+	public static final int WIDTH = 990;
 	public static final int HEIGHT = 720;
 	public static final int MENU_ITEM_IMAGE_SIZE = 16;
 	public static final int MENU_LABEL_PAD = 4;
@@ -64,7 +63,8 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	private final MapRenderer mapRenderer;
 	private final File assetsFolderLocation;
 	private final ManagersImpl managers;
-	private final Map<String, ButtonGroup> menuItemGroups = new HashMap<>();
+	private JPanel mainPanel;
+	private JPanel entitiesPanel;
 
 	public Gui(final LwjglAWTCanvas lwjgl, final MapRenderer mapRenderer, final Properties properties) {
 		super(String.format(WINDOW_HEADER, PROGRAM_TILE, DEFAULT_MAP_NAME));
@@ -123,12 +123,6 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 		menuItem.setBorder(new EmptyBorder(MENU_LABEL_PAD, MENU_LABEL_PAD, MENU_LABEL_PAD, MENU_LABEL_PAD));
 	}
 
-	private ButtonGroup addMenuItemsGroup(String buttonGroupName) {
-		ButtonGroup buttonGroup = new ButtonGroup();
-		menuItemGroups.put(buttonGroupName, buttonGroup);
-		return buttonGroup;
-	}
-
 	private void applyIconToMenuItem(MenuItemDefinition item, JMenuItem menuItem) {
 		if (item.getMenuItemProperties().getIcon() != null) {
 			try {
@@ -149,7 +143,10 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 
 	private JPanel createEntitiesPanel( ) {
 		EditorCardLayout entitiesLayout = new EditorCardLayout();
-		return new JPanel(entitiesLayout);
+		JPanel jPanel = new JPanel(entitiesLayout);
+		Canvas canvas = lwjgl.getCanvas();
+		jPanel.setPreferredSize(new Dimension(WIDTH - DefaultSettings.MAP_RENDERER_WIDTH, DefaultSettings.MAP_RENDERER_HEIGHT));
+		return jPanel;
 	}
 
 	private void defineWindow( ) {
@@ -163,12 +160,11 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 
 
 	private void addWindowComponents( ) {
-		JPanel mainPanel = new JPanel(new BorderLayout());
-		JPanel entitiesPanel = createEntitiesPanel();
+		mainPanel = new JPanel(new BorderLayout());
+		entitiesPanel = createEntitiesPanel();
 		JSplitPane splitPane = createSplitPane(lwjgl.getCanvas(), entitiesPanel);
 		mainPanel.add(splitPane);
 		addMenuBar();
-		managers.onApplicationStart(mainPanel, this, entitiesPanel, assetsFolderLocation);
 		getContentPane().add(mainPanel);
 	}
 
@@ -229,6 +225,7 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 
 	@Override
 	public void onMapRendererIsReady( ) {
+		managers.onApplicationStart(mainPanel, this, entitiesPanel, assetsFolderLocation);
 		SwingUtilities.invokeLater(( ) -> managers.onMapRendererIsReady(mapRenderer, this));
 	}
 

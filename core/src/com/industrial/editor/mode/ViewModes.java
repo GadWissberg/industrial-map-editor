@@ -2,7 +2,7 @@ package com.industrial.editor.mode;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.SelectionHandler;
@@ -45,7 +45,7 @@ public enum ViewModes implements EditorMode {
 	@Override
 	public void onTouchDownLeft(final MappingProcess<? extends MappingProcess.FinishProcessParameters> currentProcess,
 								final ActionsHandler tool,
-								final GameAssetsManager actionsHandler,
+								final GameAssetManager actionsHandler,
 								final Set<MapNodeData> initializedTiles, SelectionHandler selectionHandler) {
 
 	}

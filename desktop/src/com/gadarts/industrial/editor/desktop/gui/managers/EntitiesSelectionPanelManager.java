@@ -8,20 +8,25 @@ import com.gadarts.industrial.editor.desktop.gui.tree.EditorTree;
 import com.gadarts.industrial.editor.desktop.gui.tree.ResourcesTreeCellRenderer;
 import com.gadarts.industrial.editor.desktop.gui.tree.TreeSection;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.characters.enemies.Enemies;
-import com.gadarts.industrial.shared.model.characters.player.PlayerDefinition;
-import com.gadarts.industrial.shared.model.env.DoorsDefinitions;
+import com.gadarts.industrial.shared.assets.Assets.Declarations;
+import com.gadarts.industrial.shared.assets.declarations.enemies.EnemiesDeclarations;
+import com.gadarts.industrial.shared.assets.declarations.weapons.PlayerWeaponsDeclarations;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.model.ElementType;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
+import com.gadarts.industrial.shared.model.ModelElementDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterTypes;
+import com.gadarts.industrial.shared.model.characters.player.PlayerDeclaration;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
 import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
-import com.gadarts.industrial.shared.model.pickups.PlayerWeaponsDefinitions;
+import com.gadarts.industrial.shared.model.env.door.DoorsDefinitions;
 import com.industrial.editor.MapRenderer;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.mode.tools.EditorTool;
 import com.industrial.editor.mode.tools.TilesTools;
+
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,6 +37,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,27 +59,27 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 			EditModes.CHARACTERS, new TreeSection[]{
 					new TreeSection(
 							"Player",
-							new CharacterDefinition[]{new PlayerDefinition()},
+							CharacterTypes.PLAYER,
 							TREE_SECTION_ICON_CHARACTER),
 					new TreeSection(
 							"Enemies",
-							Enemies.values(),
+							CharacterTypes.ENEMY,
 							TREE_SECTION_ICON_CHARACTER)
 			},
 			EditModes.PICKUPS, new TreeSection[]{
 					new TreeSection(
 							"Pickups",
-							PlayerWeaponsDefinitions.values(),
+							null,
 							TREE_SECTION_ICON_PICKUPS)
 			},
 			EditModes.ENVIRONMENT, new TreeSection[]{
 					new TreeSection(
 							"Things",
-							ThingsDefinitions.values(),
+							EnvironmentObjectType.THING,
 							TREE_SECTION_ICON_ENV),
 					new TreeSection(
 							"Doors",
-							DoorsDefinitions.values(),
+							EnvironmentObjectType.DOOR,
 							TREE_SECTION_ICON_DOOR)
 			});
 	private JPanel entitiesPanel;
@@ -105,10 +111,11 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 		entitiesLayout.show(entitiesPanel, EditModes.TILES.name() + "_" + TilesTools.BRUSH.name());
 	}
 
-	private DefaultMutableTreeNode createSectionNodeForTree(final String header, final ElementDefinition[] definitions) {
+	private DefaultMutableTreeNode createSectionNodeForTree(String header,
+															List<? extends ElementDeclaration> definitions) {
 		DefaultMutableTreeNode sectionNode = new DefaultMutableTreeNode(header);
-		Arrays.stream(definitions)
-				.filter(ElementDefinition::isCanBeSeenOnTheMap)
+		definitions.stream()
+				.filter(elementDeclaration -> !elementDeclaration.hiddenFromMap())
 				.forEach(def -> sectionNode.add(new DefaultMutableTreeNode(def, false)));
 		return sectionNode;
 	}
@@ -117,7 +124,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(mode.getDisplayName());
 		EditorTree tree = new EditorTree(top);
 		Arrays.stream(modeToTreeSections.get(mode)).forEach(modeSection -> {
-			top.add(createSectionNodeForTree(modeSection.header(), modeSection.definitions()));
+			top.add(createSectionNodeForTree(modeSection.header(), getDeclarationsForTreeSection(modeSection)));
 			tree.setCellRenderer(new ResourcesTreeCellRenderer(modeSection.entryIcon()));
 			tree.addTreeSelectionListener(e -> {
 				TreePath path = e.getPath();
@@ -158,15 +165,34 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 		return tree;
 	}
 
+	private List<? extends ElementDeclaration> getDeclarationsForTreeSection(TreeSection treeSection) {
+		List<? extends ElementDeclaration> result;
+		MapRenderer renderer = getMapRenderer();
+		ElementType elementType = treeSection.elementType();
+		if (elementType == CharacterTypes.ENEMY) {
+			result = ((EnemiesDeclarations) renderer.getDeclaration(Declarations.ENEMIES)).enemiesDeclarations();
+		} else if (elementType == CharacterTypes.PLAYER) {
+			result = List.of(new PlayerDeclaration());
+		} else if (elementType == EnvironmentObjectType.DOOR) {
+			result = List.of(DoorsDefinitions.values());
+		} else if (elementType == EnvironmentObjectType.THING) {
+			result = List.of(ThingsDefinitions.values());
+		} else {
+			PlayerWeaponsDeclarations d = (PlayerWeaponsDeclarations) renderer.getDeclaration(Declarations.PLAYER_WEAPONS);
+			result = d.playerWeaponsDeclarations();
+		}
+		return result;
+	}
+
 	private void leafSelected(DefaultMutableTreeNode node, EditModes mode) {
-		ElementDefinition definition = (ElementDefinition) node.getUserObject();
+		ElementDeclaration definition = (ElementDeclaration) node.getUserObject();
 		MapRenderer mapRenderer = getMapRenderer();
 		if (mode == EditModes.CHARACTERS) {
-			mapRenderer.onTreeCharacterSelected((CharacterDefinition) definition);
+			mapRenderer.onTreeCharacterSelected((CharacterDeclaration) definition);
 		} else if (mode == EditModes.PICKUPS) {
-			mapRenderer.onTreePickupSelected((ItemDefinition) definition);
+			mapRenderer.onTreePickupSelected((ItemDeclaration) definition);
 		} else if (mode == EditModes.ENVIRONMENT) {
-			mapRenderer.onTreeEnvSelected((ModelElementDefinition) definition);
+			mapRenderer.onTreeEnvSelected((ModelElementDeclaration) definition);
 		}
 	}
 

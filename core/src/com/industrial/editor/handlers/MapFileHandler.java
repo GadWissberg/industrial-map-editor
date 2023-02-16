@@ -1,7 +1,7 @@
 package com.industrial.editor.handlers;
 
 import com.gadarts.industrial.shared.WallCreator;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapRendererData;
 import com.industrial.editor.handlers.cursor.CursorHandler;
@@ -16,7 +16,7 @@ public class MapFileHandler {
 	private final MapDeflater deflater = new MapDeflater();
 	private MapInflater inflater;
 
-	public void init(final GameAssetsManager assetsManager,
+	public void init(final GameAssetManager assetsManager,
 					 final CursorHandler cursorHandler,
 					 final Set<MapNodeData> placedTiles) {
 		inflater = new MapInflater(assetsManager, cursorHandler, placedTiles);

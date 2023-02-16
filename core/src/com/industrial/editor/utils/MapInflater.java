@@ -3,13 +3,19 @@ package com.industrial.editor.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.WallCreator;
+import com.gadarts.industrial.shared.assets.Assets.Declarations;
 import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
+import com.gadarts.industrial.shared.assets.declarations.enemies.EnemiesDeclarations;
+import com.gadarts.industrial.shared.assets.declarations.weapons.PlayerWeaponsDeclarations;
 import com.gadarts.industrial.shared.model.Coords;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;
 import com.gadarts.industrial.shared.model.characters.Direction;
+import com.gadarts.industrial.shared.model.characters.player.PlayerDeclaration;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
@@ -33,19 +39,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
+import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.gadarts.industrial.shared.assets.Assets.Declarations.*;
 import static com.gadarts.industrial.shared.assets.Assets.SurfaceTextures.MISSING;
 import static com.gadarts.industrial.shared.assets.MapJsonKeys.*;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
-import static com.gadarts.industrial.shared.model.env.LightConstants.*;
+import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_INTENSITY;
+import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_RADIUS;
 
 /**
  * Deserializes map json.
  */
 @RequiredArgsConstructor
 public class MapInflater {
-	private final GameAssetsManager assetsManager;
+	private final GameAssetManager assetsManager;
 	private final CursorHandler cursorHandler;
 	private final Set<MapNodeData> initializedNodes;
 	private final Gson gson = new Gson();
@@ -257,17 +266,25 @@ public class MapInflater {
 		JsonObject charactersJsonObject = input.get(CHARACTERS).getAsJsonObject();
 		Set<? extends PlacedElement> placedCharacters = placedElements.getPlacedObjects().get(EditModes.CHARACTERS);
 		placedCharacters.clear();
-		Arrays.stream(CharacterTypes.values()).forEach(type -> {
-			String typeName = type.name().toLowerCase();
-			if (charactersJsonObject.has(typeName)) {
-				JsonArray charactersArray = charactersJsonObject.get(typeName).getAsJsonArray();
-				inflateElements(
-						(Set<PlacedElement>) placedCharacters,
-						EditModes.CHARACTERS,
-						charactersArray,
-						type.getDefinitions());
-			}
-		});
+		Set<PlacedElement> placed = (Set<PlacedElement>) placedCharacters;
+		inflateCharactersByType(charactersJsonObject, placed, List.of(new PlayerDeclaration()), CharacterTypes.PLAYER);
+		EnemiesDeclarations enemies = (EnemiesDeclarations) assetsManager.getDeclaration(ENEMIES);
+		inflateCharactersByType(charactersJsonObject, placed, enemies.enemiesDeclarations(), CharacterTypes.ENEMY);
+	}
+
+	private void inflateCharactersByType(JsonObject charactersJsonObject,
+										 Set<PlacedElement> placedCharacters,
+										 List<? extends CharacterDeclaration> declarations,
+										 CharacterTypes type) {
+		String typeName = type.name().toLowerCase();
+		if (charactersJsonObject.has(typeName)) {
+			JsonArray charactersArray = charactersJsonObject.get(typeName).getAsJsonArray();
+			inflateElements(
+					placedCharacters,
+					EditModes.CHARACTERS,
+					charactersArray,
+					declarations);
+		}
 	}
 
 	private void inflateElements(Set<PlacedElement> placedElements,
@@ -277,7 +294,7 @@ public class MapInflater {
 		elementsJsonArray.forEach(jsonObject -> {
 			JsonObject json = jsonObject.getAsJsonObject();
 			try {
-				PlacedElementParameters parameters = inflateElementParameters(mode.getDefinitions(), json, map);
+				PlacedElementParameters parameters = inflateElementParameters(getDeclarationsForMode(mode), json, map);
 				Optional.ofNullable(mode.getCreationProcess()).ifPresentOrElse(
 						c -> {
 							PlacedElement placedElement = c.create(parameters, assetsManager);
@@ -303,6 +320,20 @@ public class MapInflater {
 		});
 	}
 
+	private List<? extends ElementDeclaration> getDeclarationsForMode(EditModes mode) {
+		List<? extends ElementDeclaration> result = null;
+		if (mode == EditModes.CHARACTERS) {
+			EnemiesDeclarations declaration = (EnemiesDeclarations) assetsManager.getDeclaration(ENEMIES);
+			result = declaration.enemiesDeclarations();
+		} else if (mode == EditModes.ENVIRONMENT) {
+			result = EnvironmentObjectType.collectAndGetAllDefinitions();
+		} else if (mode == EditModes.PICKUPS) {
+			PlayerWeaponsDeclarations dec = (PlayerWeaponsDeclarations) assetsManager.getDeclaration(PLAYER_WEAPONS);
+			result = dec.playerWeaponsDeclarations();
+		}
+		return result;
+	}
+
 	private void logInflationError(JsonObject json, NumberFormatException e) {
 		String simpleName = this.getClass().getSimpleName();
 		String message = e.getMessage();
@@ -312,11 +343,11 @@ public class MapInflater {
 	private void inflateElements(Set<PlacedElement> placedElements,
 								 EditModes mode,
 								 JsonArray elementsJsonArray,
-								 ElementDefinition[] defs) {
+								 List<? extends ElementDeclaration> declarations) {
 		elementsJsonArray.forEach(characterJsonObject -> {
 			JsonObject json = characterJsonObject.getAsJsonObject();
 			try {
-				PlacedElementParameters parameters = inflateElementParameters(defs, json, map);
+				PlacedElementParameters parameters = inflateElementParameters(declarations, json, map);
 				PlacedElement placedElement = mode.getCreationProcess().create(parameters, assetsManager);
 				MapNodeData node = placedElement.getNode();
 				float nodeHeight = node.getHeight();
@@ -330,25 +361,21 @@ public class MapInflater {
 		});
 	}
 
-	private PlacedElementParameters inflateElementParameters(final ElementDefinition[] definitions,
-															 final JsonObject json,
-															 final GameMap map) throws NumberFormatException {
+	private PlacedElementParameters inflateElementParameters(List<? extends ElementDeclaration> declarations,
+															 JsonObject json,
+															 GameMap map) throws NumberFormatException {
 		Direction dir = json.has(DIRECTION) ? Direction.values()[json.get(DIRECTION).getAsInt()] : SOUTH;
 		float height = json.has(HEIGHT) ? json.get(HEIGHT).getAsFloat() : 0;
 		MapNodeData node = map.getNodes()[json.get(ROW).getAsInt()][json.get(COL).getAsInt()];
-		ElementDefinition definition = null;
-		if (definitions != null) {
+		ElementDeclaration definition = null;
+		if (declarations != null) {
 			JsonElement definitionJsonElement = json.get(TYPE);
-			try {
-				String asString = definitionJsonElement.getAsString();
-				definition = Optional.of(Arrays.stream(definitions)
-								.filter(def -> def.name().equalsIgnoreCase(asString))
-								.findFirst())
-						.orElseThrow()
-						.get();
-			} catch (final Exception e) {
-				definition = definitions[definitionJsonElement.getAsInt()];
-			}
+			String asString = definitionJsonElement.getAsString();
+			definition = Optional.of(declarations.stream()
+							.filter(def -> def.id().equalsIgnoreCase(asString))
+							.findFirst())
+					.orElseThrow()
+					.get();
 		}
 		return new PlacedElementParameters(definition, dir, node, height);
 	}

@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterTypes;
+import com.gadarts.industrial.shared.assets.Assets.Declarations;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.assets.declarations.enemies.EnemiesDeclarations;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.characters.SpriteType;
+import com.gadarts.industrial.shared.model.characters.player.PlayerDeclaration;
 import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
@@ -18,22 +20,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.FONT;
-import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.MELODY;
-import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.PARTICLES;
-import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.SHADER;
-import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.SOUND;
+import static com.gadarts.industrial.shared.assets.Assets.AssetsTypes.*;
 
 @Getter
 public class ResourcesHandler implements Disposable {
 	private final MapFileHandler mapFileHandler = new MapFileHandler();
 
-	private GameAssetsManager assetsManager;
+	private GameAssetManager assetsManager;
 
 	void initializeGameFiles( ) {
 		assetsManager.loadGameFiles(FONT, MELODY, SOUND, SHADER, PARTICLES);
-		Arrays.stream(CharacterTypes.values()).forEach(type ->
-				Arrays.stream(type.getDefinitions()).forEach(this::generateFramesMapForCharacter));
+		generateFramesMapForCharacter(new PlayerDeclaration());
+		EnemiesDeclarations enemies = (EnemiesDeclarations) assetsManager.getDeclaration(Declarations.ENEMIES);
+		enemies.enemiesDeclarations().forEach(this::generateFramesMapForCharacter);
 		postAssetsLoading();
 	}
 
@@ -46,21 +45,21 @@ public class ResourcesHandler implements Disposable {
 		textures.forEach(texture -> texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat));
 	}
 
-	private void generateFramesMapForCharacter(final CharacterDefinition characterDefinition) {
-		if (characterDefinition.getAtlasDefinition() == null) return;
-		TextureAtlas atlas = assetsManager.getAtlas(characterDefinition.getAtlasDefinition());
+	private void generateFramesMapForCharacter(final CharacterDeclaration characterDeclaration) {
+		if (characterDeclaration.getAtlasDefinition() == null) return;
+		TextureAtlas atlas = assetsManager.getAtlas(characterDeclaration.getAtlasDefinition());
 		HashMap<Direction, TextureAtlas.AtlasRegion> playerFrames = new HashMap<>();
 		Arrays.stream(Direction.values()).forEach(direction -> {
 			String name = SpriteType.IDLE.name() + "_0_" + direction.name();
 			playerFrames.put(direction, atlas.findRegion(name.toLowerCase()));
 		});
-		String format = String.format(Utils.FRAMES_KEY_CHARACTER, characterDefinition.name());
+		String format = String.format(Utils.FRAMES_KEY_CHARACTER, characterDeclaration.name());
 		assetsManager.addAsset(format, Map.class, playerFrames);
 	}
 
 
 	public void init(final String assetsLocation) {
-		assetsManager = new GameAssetsManager(assetsLocation.replace('\\', '/') + '/');
+		assetsManager = new GameAssetManager(assetsLocation.replace('\\', '/') + '/');
 	}
 
 	@Override

@@ -2,10 +2,12 @@ package com.industrial.editor;
 
 
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.model.ModelElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.Declaration;
+import com.gadarts.industrial.shared.assets.declarations.enemies.EnemiesDeclarations;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
+import com.gadarts.industrial.shared.model.ModelElementDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.ViewModes;
 import com.industrial.editor.mode.tools.EditorTool;
@@ -25,13 +27,13 @@ public interface MapRenderer {
 
 	void onEditModeSet(EditModes mode);
 
-	void onTreeCharacterSelected(CharacterDefinition definition);
+	void onTreeCharacterSelected(CharacterDeclaration definition);
 
 	void onSelectedObjectRotate(int direction);
 
-	void onTreeEnvSelected(ModelElementDefinition env);
+	void onTreeEnvSelected(ModelElementDeclaration env);
 
-	void onTreePickupSelected(ItemDefinition definition);
+	void onTreePickupSelected(ItemDeclaration definition);
 
 	void onViewModeSet(ViewModes mode);
 
@@ -60,4 +62,6 @@ public interface MapRenderer {
 	List<MapNodeData> getRegion(FlatNode src, FlatNode dst);
 
 	void onLightPlaced(FlatNode node, float height, float radius, float intensity);
+
+	Declaration getDeclaration(Assets.Declarations declaration);
 }

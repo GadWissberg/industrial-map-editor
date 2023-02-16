@@ -1,6 +1,6 @@
 package com.industrial.editor.actions.processes;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.model.GameMap;
@@ -16,11 +16,11 @@ import static com.gadarts.industrial.shared.model.map.MapNodesTypes.PASSABLE_NOD
 
 @Getter
 public class PlaceTilesProcess extends MappingProcess<PlaceTilesFinishProcessParameters> {
-	private final GameAssetsManager assetsManager;
+	private final GameAssetManager assetsManager;
 	private final Set<MapNodeData> initializedTiles;
 
 	public PlaceTilesProcess(final FlatNode srcNode,
-							 final GameAssetsManager assetsManager,
+							 final GameAssetManager assetsManager,
 							 final Set<MapNodeData> initializedTiles,
 							 final GameMap map) {
 		super(map, srcNode, true);

@@ -1,7 +1,7 @@
 package com.industrial.editor.model.elements;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.industrial.editor.utils.Utils;
 import com.industrial.editor.model.node.FlatNode;
 import lombok.Getter;
@@ -13,11 +13,11 @@ public class PlacedCharacter extends PlacedElement {
 
 	private final CharacterDecal characterDecal;
 
-	public PlacedCharacter(final PlacedElementParameters parameters, final GameAssetsManager assetsManager) {
+	public PlacedCharacter(final PlacedElementParameters parameters, final GameAssetManager assetsManager) {
 		super(parameters);
 		this.characterDecal = Utils.createCharacterDecal(
 				assetsManager,
-				(CharacterDefinition) parameters.getDefinition(),
+				(CharacterDeclaration) parameters.getDeclaration(),
 				new FlatNode(parameters.getNode()),
 				parameters.getFacingDirection());
 	}

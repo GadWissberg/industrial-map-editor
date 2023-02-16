@@ -2,8 +2,8 @@ package com.industrial.editor.actions.types.placing;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.PlaceElementAction;
@@ -12,12 +12,12 @@ import com.industrial.editor.model.elements.PlacedDecalElement;
 
 import java.util.Set;
 
-public abstract class PlaceDecalElementAction<T extends PlacedDecalElement> extends PlaceElementAction<T, ElementDefinition> {
+public abstract class PlaceDecalElementAction<T extends PlacedDecalElement> extends PlaceElementAction<T, ElementDeclaration> {
 	public PlaceDecalElementAction(GameMap map,
 								   MapNodeData node,
-								   GameAssetsManager assetsManager,
+								   GameAssetManager assetsManager,
 								   Direction elementDirection,
-								   ElementDefinition elementDefinition,
+								   ElementDeclaration elementDefinition,
 								   Set<T> placedElements) {
 		super(map, node, assetsManager, elementDirection, elementDefinition, placedElements);
 	}

@@ -1,9 +1,9 @@
 package com.industrial.editor.actions.types.placing;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.actions.PlaceElementAction;
 import com.industrial.editor.model.GameMap;
 import com.industrial.editor.model.elements.PlacedModelElement.PlacedModelElementParameters;
@@ -11,13 +11,13 @@ import com.industrial.editor.model.elements.PlacedPickup;
 
 import java.util.Set;
 
-public class PlacePickupAction extends PlaceElementAction<PlacedPickup, ItemDefinition> {
+public class PlacePickupAction extends PlaceElementAction<PlacedPickup, ItemDeclaration> {
 
 	public PlacePickupAction(GameMap map,
 							 Set<PlacedPickup> placedPickups,
 							 MapNodeData node,
-							 ItemDefinition itemDefinition,
-							 GameAssetsManager assetsManager,
+							 ItemDeclaration itemDefinition,
+							 GameAssetManager assetsManager,
 							 Direction facingDirection) {
 		super(map, node, assetsManager, facingDirection, itemDefinition, placedPickups);
 	}

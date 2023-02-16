@@ -3,6 +3,7 @@ package com.gadarts.industrial.editor.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.gadarts.industrial.editor.desktop.gui.Gui;
+import com.industrial.editor.DefaultSettings;
 import com.industrial.editor.MapRendererImpl;
 
 import java.awt.*;
@@ -13,25 +14,26 @@ import java.util.Properties;
 public class DesktopLauncher {
 
 	public static final String PROPERTIES_KEY_ASSETS_PATH = "assets.path";
-	private static final int WIDTH = 800;
-	private static final int HEIGHT = 600;
 	public static final String PROPERTIES_FILE_NAME = "settings.properties";
 
 	public static void main(final String[] arg) {
-		EventQueue.invokeLater(() -> {
+		EventQueue.invokeLater(( ) -> {
 			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 			config.samples = 3;
-			config.width = WIDTH;
-			config.height = HEIGHT;
+			config.width = DefaultSettings.MAP_RENDERER_WIDTH;
+			config.height = DefaultSettings.MAP_RENDERER_HEIGHT;
 			Properties properties = getProperties();
-			MapRendererImpl mapManager = new MapRendererImpl(WIDTH, HEIGHT, properties.getProperty(PROPERTIES_KEY_ASSETS_PATH));
+			MapRendererImpl mapManager = new MapRendererImpl(
+					DefaultSettings.MAP_RENDERER_WIDTH,
+					DefaultSettings.MAP_RENDERER_HEIGHT,
+					properties.getProperty(PROPERTIES_KEY_ASSETS_PATH));
 			LwjglAWTCanvas lwjgl = new LwjglAWTCanvas(mapManager, config);
 			Gui gui = new Gui(lwjgl, mapManager, properties);
 			mapManager.subscribeForEvents(gui);
 		});
 	}
 
-	private static Properties getProperties() {
+	private static Properties getProperties( ) {
 		Properties result = null;
 		try (InputStream input = new FileInputStream(PROPERTIES_FILE_NAME)) {
 			Properties prop = new Properties();
@@ -40,7 +42,7 @@ public class DesktopLauncher {
 		} catch (final IOException ignored) {
 		}
 
-		return Optional.ofNullable(result).orElseGet(() -> {
+		return Optional.ofNullable(result).orElseGet(( ) -> {
 			Properties props = null;
 			try (OutputStream output = new FileOutputStream(PROPERTIES_FILE_NAME)) {
 				props = new Properties();

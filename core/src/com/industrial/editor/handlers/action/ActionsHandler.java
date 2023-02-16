@@ -2,7 +2,7 @@ package com.industrial.editor.handlers.action;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.model.elements.PlacedEnvObject;
@@ -12,23 +12,23 @@ import com.industrial.editor.model.node.NodeWallsDefinitions;
 import java.util.Set;
 
 public interface ActionsHandler {
-	void beginTilePlacingProcess(final GameAssetsManager assetsManager, final Set<MapNodeData> initializedTiles);
+	void beginTilePlacingProcess(final GameAssetManager assetsManager, final Set<MapNodeData> initializedTiles);
 
 	boolean beginSelectingTileForLiftProcess(int direction, Set<MapNodeData> initializedTiles);
 
 	void beginSelectingTilesForWallTiling();
 
-	void placeEnvObject(GameAssetsManager assetsManager);
+	void placeEnvObject(GameAssetManager assetsManager);
 
 	void defineSelectedEnvObject();
 
 	void selectedNodeToPlaceLight( );
 
-	void placeLight(GameAssetsManager assetsManager, FlatNode node, float height, float radius, float intensity);
+	void placeLight(GameAssetManager assetsManager, FlatNode node, float height, float radius, float intensity);
 
-	void placeCharacter(GameAssetsManager assetsManager);
+	void placeCharacter(GameAssetManager assetsManager);
 
-	void placePickup(GameAssetsManager assetsManager);
+	void placePickup(GameAssetManager assetsManager);
 
 
 	MappingProcess<? extends MappingProcess.FinishProcessParameters> getCurrentProcess();
@@ -41,9 +41,9 @@ public interface ActionsHandler {
 
 	void onEnvObjectDefined(PlacedEnvObject element, float height);
 
-	boolean onTouchDown(GameAssetsManager assetsManager, Set<MapNodeData> placedTiles, int button);
+	boolean onTouchDown(GameAssetManager assetsManager, Set<MapNodeData> placedTiles, int button);
 
 	boolean onTouchUp(Assets.SurfaceTextures selectedTile, Model cursorTileModel);
 
-	void placeTrigger(GameAssetsManager assetsManager);
+	void placeTrigger(GameAssetManager assetsManager);
 }

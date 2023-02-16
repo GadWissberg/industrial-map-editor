@@ -1,6 +1,6 @@
 package com.industrial.editor.mode;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.SelectionHandler;
@@ -14,7 +14,7 @@ public interface EditorMode {
 
 	void onTouchDownLeft(MappingProcess<? extends MappingProcess.FinishProcessParameters> currentProcess,
 						 ActionsHandler tool,
-						 GameAssetsManager actionsHandler,
+						 GameAssetManager actionsHandler,
 						 Set<MapNodeData> initializedTiles, SelectionHandler selectionHandler);
 
 	String getDisplayName( );

@@ -1,6 +1,6 @@
 package com.industrial.editor.actions.types.placing;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.model.GameMap;
@@ -17,7 +17,7 @@ public class PlaceLightAction extends PlaceDecalElementAction<PlacedLight> {
 	public PlaceLightAction(GameMap map,
 							Set<PlacedLight> placedElements,
 							MapNodeData node,
-							GameAssetsManager assetsManager,
+							GameAssetManager assetsManager,
 							PlaceLightActionParameters parameters) {
 		super(map, node, assetsManager, Direction.SOUTH, null, placedElements);
 		this.parameters = parameters;

@@ -1,8 +1,8 @@
 package com.industrial.editor.actions;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.Coords;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
@@ -12,9 +12,9 @@ import com.industrial.editor.model.elements.PlacedElement;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class PlaceElementAction<T extends PlacedElement, S extends ElementDefinition> extends MappingAction {
+public abstract class PlaceElementAction<T extends PlacedElement, S extends ElementDeclaration> extends MappingAction {
 
-	protected final GameAssetsManager assetsManager;
+	protected final GameAssetManager assetsManager;
 	protected final Direction elementDirection;
 	protected final S elementDefinition;
 	protected final Set<T> placedElements;
@@ -22,7 +22,7 @@ public abstract class PlaceElementAction<T extends PlacedElement, S extends Elem
 
 	public PlaceElementAction(final GameMap map,
 							  final MapNodeData node,
-							  final GameAssetsManager assetsManager,
+							  final GameAssetManager assetsManager,
 							  final Direction elementDirection,
 							  final S elementDefinition,
 							  final Set<T> placedElements) {

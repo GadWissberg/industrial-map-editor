@@ -13,8 +13,8 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterUtils;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.characters.SpriteType;
@@ -34,8 +34,8 @@ public class Utils {
 	private final static Plane auxPlane = new Plane();
 	private static final Vector3 auxVector3_2 = new Vector3();
 
-	public static CharacterDecal createCharacterDecal(final GameAssetsManager assetsManager,
-													  final CharacterDefinition definition,
+	public static CharacterDecal createCharacterDecal(final GameAssetManager assetsManager,
+													  final CharacterDeclaration definition,
 													  final FlatNode node,
 													  final Direction selectedCharacterDirection) {
 		String idle = SpriteType.IDLE.name() + "_0_" + selectedCharacterDirection.name().toLowerCase();
@@ -50,9 +50,9 @@ public class Utils {
 	public static void applyFrameSeenFromCameraForCharacterDecal(final CharacterDecal characterDecal,
 																 final Direction facingDirection,
 																 final Camera camera,
-																 final GameAssetsManager assetsManager) {
+																 final GameAssetManager assetsManager) {
 		Direction dirSeenFromCamera = CharacterUtils.calculateDirectionSeenFromCamera(camera, facingDirection);
-		CharacterDefinition characterDefinition = characterDecal.getCharacterDefinition();
+		CharacterDeclaration characterDefinition = characterDecal.getCharacterDefinition();
 		String name = String.format(FRAMES_KEY_CHARACTER, characterDefinition.name());
 		HashMap<Direction, TextureAtlas.AtlasRegion> hashMap = assetsManager.get(name);
 		TextureAtlas.AtlasRegion textureRegion = hashMap.get(dirSeenFromCamera);
@@ -70,7 +70,7 @@ public class Utils {
 
 	public static void initializeNode(final MapNodeData tile,
 									  final Assets.SurfaceTextures selectedTile,
-									  final GameAssetsManager assetsManager) {
+									  final GameAssetManager assetsManager) {
 		tile.setTextureDefinition(selectedTile);
 		Material material = tile.getModelInstance().materials.get(0);
 		TextureAttribute textureAttribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);

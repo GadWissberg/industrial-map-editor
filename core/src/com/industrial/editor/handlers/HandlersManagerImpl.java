@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.MapRendererData;
@@ -59,7 +59,7 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 
 	@Override
 	public void onCreate(final OrthographicCamera camera, final WallCreator wallCreator, final Dimension levelSize) {
-		GameAssetsManager assetsManager = resourcesHandler.getAssetsManager();
+		GameAssetManager assetsManager = resourcesHandler.getAssetsManager();
 		resourcesHandler.initializeGameFiles();
 		renderHandler = new RenderHandler(assetsManager, this, camera);
 		renderHandler.init(levelSize);
@@ -71,16 +71,16 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 	}
 
 	@Override
-	public void onTreeCharacterSelected(final CharacterDefinition definition) {
+	public void onTreeCharacterSelected(final CharacterDeclaration definition) {
 		logicHandlers.onTreeCharacterSelected(definition);
 	}
 
-	public void onTreeEnvSelected(final ElementDefinition selectedElement) {
+	public void onTreeEnvSelected(final ElementDeclaration selectedElement) {
 		logicHandlers.onTreeEnvSelected(selectedElement);
 	}
 
 	@Override
-	public void onTreePickupSelected(final ItemDefinition definition) {
+	public void onTreePickupSelected(final ItemDeclaration definition) {
 		logicHandlers.onTreePickupSelected(definition);
 	}
 

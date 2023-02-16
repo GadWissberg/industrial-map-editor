@@ -2,7 +2,7 @@ package com.industrial.editor.model.elements;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.utils.Utils;
@@ -17,10 +17,10 @@ public abstract class PlacedDecalElement extends PlacedElement {
 	private final Decal decal;
 
 	public PlacedDecalElement(PlacedElementParameters parameters,
-							  GameAssetsManager gameAssetsManager,
+							  GameAssetManager GameAssetManager,
 							  Assets.UiTextures decalTexture) {
 		super(parameters);
-		decal = Utils.createSimpleDecal(gameAssetsManager.getTexture(decalTexture));
+		decal = Utils.createSimpleDecal(GameAssetManager.getTexture(decalTexture));
 		MapNodeData node = parameters.getNode();
 		Coords coords = node.getCoords();
 		float x = coords.getCol() + 0.5f;

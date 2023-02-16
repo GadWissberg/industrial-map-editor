@@ -1,7 +1,7 @@
 package com.industrial.editor.handlers;
 
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class SelectionHandler {
 	private Assets.SurfaceTextures selectedTile;
-	private ElementDefinition selectedElement;
+	private ElementDeclaration selectedElement;
 
 	public void onTileSelected(final Assets.SurfaceTextures texture) {
 		selectedTile = texture;

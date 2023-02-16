@@ -20,10 +20,11 @@ public class DefineEnvObjectAction extends MappingAction {
 
 	@Override
 	public void execute(final MapEditorEventsNotifier eventsNotifier) {
-		element.setHeight(height);
+		float actualHeight = Math.max(element.getNode().getHeight(), height);
+		element.setHeight(actualHeight);
 		Matrix4 transform = element.getModelInstance().transform;
 		Vector3 position = transform.getTranslation(auxVector);
-		transform.setTranslation(position.x, element.getNode().getHeight() + height, position.z);
+		transform.setTranslation(position.x, actualHeight, position.z);
 	}
 
 	@Override

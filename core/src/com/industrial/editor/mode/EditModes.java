@@ -1,12 +1,9 @@
 package com.industrial.editor.mode;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
-import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
-import com.gadarts.industrial.shared.model.pickups.PlayerWeaponsDefinitions;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.SelectionHandler;
 import com.industrial.editor.handlers.action.ActionsHandler;
@@ -33,19 +30,18 @@ public enum EditModes implements EditorMode {
 			new CharactersOnTouchDownLeftEvent()),
 
 	ENVIRONMENT("Environment Objects Mode",
-			EnvironmentObjectType.collectAndGetAllDefinitions().toArray(new EnvironmentObjectDefinition[0]),
 			(params, assetsManager) -> new PlacedEnvObject(
 					new PlacedModelElement.PlacedModelElementParameters(params),
 					assetsManager),
 			ElementTools.values(),
 			new EnvOnTouchDownEventLeft(),
 			(jsonObject, def) -> {
-				EnvironmentObjectDefinition definition = (EnvironmentObjectDefinition) def.getDefinition();
+				EnvironmentObjectDeclaration definition = (EnvironmentObjectDeclaration) def.getDefinition();
 				String envType = definition.getEnvironmentObjectType().name().toLowerCase();
 				jsonObject.addProperty(MapJsonKeys.ENV_TYPE, envType);
 			}),
 
-	PICKUPS("Pickups Mode", PlayerWeaponsDefinitions.values(),
+	PICKUPS("Pickups Mode",
 			(params, am) -> new PlacedPickup(new PlacedModelElement.PlacedModelElementParameters(params), am),
 			ElementTools.values(),
 			new PickupsOnTouchDownEventLeft()),
@@ -68,7 +64,6 @@ public enum EditModes implements EditorMode {
 	private final String displayName;
 	private final boolean decalCursor;
 	private final PlacedElementCreation creationProcess;
-	private final ElementDefinition[] definitions;
 	private final boolean skipGenericElementLoading;
 	private final EditorTool[] tools;
 	private final OnTouchDownLeftEvent onTouchDownLeft;
@@ -82,7 +77,7 @@ public enum EditModes implements EditorMode {
 			  AdditionalDeflationProcess additionalDeflationProcess) {
 		this(displayName,
 				decalCursor,
-				null, null,
+				null,
 				false,
 				null,
 				onTouchDownLeftEvent,
@@ -98,7 +93,6 @@ public enum EditModes implements EditorMode {
 		this(displayName,
 				decalCursor,
 				creation,
-				null,
 				false,
 				null,
 				onTouchDownLeftEvent,
@@ -107,7 +101,6 @@ public enum EditModes implements EditorMode {
 	}
 
 	EditModes(String displayName,
-			  ElementDefinition[] definitions,
 			  PlacedElementCreation creationProcess,
 			  EditorTool[] tools,
 			  OnTouchDownLeftEvent onTouchDownLeftEvent,
@@ -115,7 +108,6 @@ public enum EditModes implements EditorMode {
 		this(displayName,
 				false,
 				creationProcess,
-				definitions,
 				false,
 				tools,
 				onTouchDownLeftEvent,
@@ -130,7 +122,6 @@ public enum EditModes implements EditorMode {
 		this(displayName,
 				false,
 				null,
-				null,
 				skipGenericElementLoading,
 				tools,
 				onTouchDownLeftEvent,
@@ -139,14 +130,12 @@ public enum EditModes implements EditorMode {
 	}
 
 	EditModes(String displayName,
-			  ElementDefinition[] definitions,
 			  PlacedElementCreation creation,
 			  EditorTool[] tools,
 			  OnTouchDownLeftEvent onTouchDownLeftEvent) {
 		this(displayName,
 				false,
 				creation,
-				definitions,
 				false,
 				tools,
 				onTouchDownLeftEvent,
@@ -163,7 +152,6 @@ public enum EditModes implements EditorMode {
 		this(displayName,
 				decalCursor,
 				creation,
-				null,
 				skipGenericElementLoading,
 				tools,
 				onTouchDownLeftEvent,
@@ -175,7 +163,7 @@ public enum EditModes implements EditorMode {
 	@Override
 	public void onTouchDownLeft(MappingProcess<? extends MappingProcess.FinishProcessParameters> currentProcess,
 								ActionsHandler actionsHandler,
-								GameAssetsManager assetsManager,
+								GameAssetManager assetsManager,
 								Set<MapNodeData> initializedTiles,
 								SelectionHandler selectionHandler) {
 		onTouchDownLeft.run(currentProcess, actionsHandler, assetsManager, initializedTiles, selectionHandler);

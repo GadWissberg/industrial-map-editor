@@ -2,8 +2,8 @@ package com.industrial.editor.actions.types.placing;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
@@ -16,13 +16,13 @@ import java.util.Set;
 
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_Y;
 
-public class PlaceCharacterAction extends PlaceElementAction<PlacedCharacter, CharacterDefinition> {
+public class PlaceCharacterAction extends PlaceElementAction<PlacedCharacter, CharacterDeclaration> {
 
 	public PlaceCharacterAction(final GameMap map,
 								final Set<PlacedCharacter> placedElements,
 								final MapNodeData node,
-								final CharacterDefinition selectedCharacter,
-								final GameAssetsManager assetsManager,
+								final CharacterDeclaration selectedCharacter,
+								final GameAssetManager assetsManager,
 								final Direction selectedCharacterDirection) {
 		super(map, node, assetsManager, selectedCharacterDirection, selectedCharacter, placedElements);
 	}

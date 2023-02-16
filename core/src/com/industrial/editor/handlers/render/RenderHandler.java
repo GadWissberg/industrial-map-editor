@@ -13,10 +13,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectType;
 import com.gadarts.industrial.shared.model.env.ThingsDefinitions;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
@@ -48,14 +48,14 @@ public class RenderHandler implements Disposable {
 	private static final Matrix4 auxMatrix_2 = new Matrix4();
 	private static final Vector2 auxVector2_1 = new Vector2();
 
-	private final GameAssetsManager assetsManager;
+	private final GameAssetManager assetsManager;
 	private final HandlersManager handlersManager;
 	private final Camera camera;
 	private final RenderHandlerBatches renderHandlerBatches = new RenderHandlerBatches();
 	private final RenderHandlerAuxModels renderHandlerAuxModels = new RenderHandlerAuxModels();
 	private CameraGroupStrategy groupStrategy;
 
-	public RenderHandler(final GameAssetsManager assetsManager,
+	public RenderHandler(final GameAssetManager assetsManager,
 						 final HandlersManager handlersManager,
 						 final Camera camera) {
 		this.assetsManager = assetsManager;
@@ -82,7 +82,7 @@ public class RenderHandler implements Disposable {
 	public void draw(EditorMode mode,
 					 PlacedElements placedElements,
 					 Set<MapNodeData> initializedTiles,
-					 ElementDefinition selectedElement,
+					 ElementDeclaration selectedElement,
 					 EditorTool tool) {
 		int sam = Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0;
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -151,7 +151,7 @@ public class RenderHandler implements Disposable {
 	private void renderModels(Set<MapNodeData> initializedTiles,
 							  PlacedElements placedElements,
 							  EditorMode mode,
-							  ElementDefinition selectedElement,
+							  ElementDeclaration selectedElement,
 							  EditorTool tool) {
 		ModelBatch modelBatch = renderHandlerBatches.getModelBatch();
 		modelBatch.begin(camera);
@@ -191,7 +191,7 @@ public class RenderHandler implements Disposable {
 		}
 	}
 
-	public void renderCursor(final EditorMode mode, final ElementDefinition selectedElement, EditorTool tool) {
+	public void renderCursor(final EditorMode mode, final ElementDeclaration selectedElement, EditorTool tool) {
 		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getHighlighter();
 		SelectionHandler selectionHandler = handlersManager.getLogicHandlers().getSelectionHandler();
 		if (highlighter != null && mode.getType() == ModeType.EDIT) {
@@ -204,18 +204,18 @@ public class RenderHandler implements Disposable {
 		renderCursorObjectModel(selectedElement, mode);
 	}
 
-	private void renderCursorObjectModel(final ElementDefinition selectedElement, final EditorMode mode) {
+	private void renderCursorObjectModel(final ElementDeclaration selectedElement, final EditorMode mode) {
 		CursorHandler cursorHandler = handlersManager.getLogicHandlers().getCursorHandler();
 		if (selectedElement != null) {
 			if (mode == EditModes.ENVIRONMENT) {
-				renderCursorEnvObjectModel((EnvironmentObjectDefinition) selectedElement, cursorHandler);
+				renderCursorEnvObjectModel((EnvironmentObjectDeclaration) selectedElement, cursorHandler);
 			} else if (mode == EditModes.PICKUPS) {
 				renderPickup(cursorHandler.getCursorHandlerModelData().getCursorSelectionModel().getModelInstance());
 			}
 		}
 	}
 
-	private void renderCursorEnvObjectModel(EnvironmentObjectDefinition selectedElement, CursorHandler cursorHandler) {
+	private void renderCursorEnvObjectModel(EnvironmentObjectDeclaration selectedElement, CursorHandler cursorHandler) {
 		cursorHandler.renderModelCursorFloorGrid(selectedElement, renderHandlerBatches.getModelBatch());
 		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
 		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
@@ -230,7 +230,7 @@ public class RenderHandler implements Disposable {
 		Set<PlacedEnvObject> placedEnvObjects = (Set<PlacedEnvObject>) placedObjects.get(EditModes.ENVIRONMENT);
 		for (final PlacedEnvObject placedEnvObject : placedEnvObjects) {
 			renderEnvObject(
-					(EnvironmentObjectDefinition) placedEnvObject.getDefinition(),
+					(EnvironmentObjectDeclaration) placedEnvObject.getDefinition(),
 					placedEnvObject.getModelInstance(),
 					placedEnvObject.getFacingDirection(),
 					placedEnvObject.getAppendixModelInstance());
@@ -244,7 +244,7 @@ public class RenderHandler implements Disposable {
 		modelInstance.transform.set(originalTransform);
 	}
 
-	private void renderEnvObject(final EnvironmentObjectDefinition definition,
+	private void renderEnvObject(final EnvironmentObjectDeclaration definition,
 								 final ModelInstance modelInstance,
 								 final Direction facingDirection,
 								 ModelInstance appendixModelInstance) {
@@ -256,7 +256,7 @@ public class RenderHandler implements Disposable {
 		modelInstance.transform.set(originalTransform);
 	}
 
-	private void renderEnvAppendix(EnvironmentObjectDefinition definition,
+	private void renderEnvAppendix(EnvironmentObjectDeclaration definition,
 								   Direction facingDirection,
 								   ModelInstance appendixModelInstance) {
 		if (appendixModelInstance != null) {
@@ -267,13 +267,13 @@ public class RenderHandler implements Disposable {
 		}
 	}
 
-	private void rotateEnvObject(EnvironmentObjectDefinition definition, ModelInstance modelInstance, Direction facingDirection) {
+	private void rotateEnvObject(EnvironmentObjectDeclaration definition, ModelInstance modelInstance, Direction facingDirection) {
 		modelInstance.transform.translate(0.5f, 0, 0.5f);
 		modelInstance.transform.rotate(Vector3.Y, -1 * facingDirection.getDirection(auxVector2_1).angleDeg());
 		modelInstance.transform.translate(definition.getOffset(auxVector3_1));
 	}
 
-	private void handleSpecificEnvRender(EnvironmentObjectDefinition definition,
+	private void handleSpecificEnvRender(EnvironmentObjectDeclaration definition,
 										 ModelInstance modelInstance,
 										 Direction facingDirection,
 										 EnvironmentObjectType environmentObjectType) {
@@ -299,7 +299,7 @@ public class RenderHandler implements Disposable {
 
 	public void render(EditorMode mode,
 					   PlacedElements placedElements,
-					   ElementDefinition selectedElement,
+					   ElementDeclaration selectedElement,
 					   EditorTool tool) {
 		draw(mode, placedElements, placedElements.getPlacedTiles(), selectedElement, tool);
 	}

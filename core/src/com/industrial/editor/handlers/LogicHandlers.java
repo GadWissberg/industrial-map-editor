@@ -3,11 +3,11 @@ package com.industrial.editor.handlers;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
-import com.gadarts.industrial.shared.model.characters.CharacterDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
-import com.gadarts.industrial.shared.model.pickups.ItemDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.model.ItemDeclaration;
+import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.handlers.action.ActionHandlerRelatedData;
@@ -55,7 +55,7 @@ public class LogicHandlers implements Disposable {
 
 	public void onCreate(final HandlersManagerRelatedData handlersManagerRelatedData,
 						 final WallCreator wallCreator,
-						 final GameAssetsManager assetsManager,
+						 final GameAssetManager assetsManager,
 						 final RenderHandler renderHandler,
 						 final ResourcesHandler resourcesHandler) {
 		createActionsHandler(handlersManagerRelatedData, wallCreator, resourcesHandler);
@@ -67,7 +67,7 @@ public class LogicHandlers implements Disposable {
 		selectionHandler.onTileSelected(texture);
 	}
 
-	public void onTreeCharacterSelected(final CharacterDefinition definition) {
+	public void onTreeCharacterSelected(final CharacterDeclaration definition) {
 		Optional.ofNullable(cursorHandler.getCursorCharacterDecal()).ifPresentOrElse(
 				c -> cursorHandler.getCursorCharacterDecal().setCharacterDefinition(definition),
 				( ) -> cursorHandler.initializeCursorCharacterDecal(
@@ -77,15 +77,15 @@ public class LogicHandlers implements Disposable {
 		selectionHandler.setSelectedElement(definition);
 	}
 
-	public void onTreeEnvSelected(final ElementDefinition selected) {
+	public void onTreeEnvSelected(final ElementDeclaration selected) {
 		selectionHandler.setSelectedElement(selected);
 		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		CursorSelectionModel cursorSelectionModel = cursorHandler.getCursorHandlerModelData().getCursorSelectionModel();
-		cursorSelectionModel.setSelection(selected, ((EnvironmentObjectDefinition) selected).getModelDefinition());
+		cursorSelectionModel.setSelection(selected, ((EnvironmentObjectDeclaration) selected).getModelDefinition());
 		cursorHandler.applyOpacity();
 	}
 
-	public void onTreePickupSelected(final ItemDefinition selectedElement) {
+	public void onTreePickupSelected(final ItemDeclaration selectedElement) {
 		selectionHandler.setSelectedElement(selectedElement);
 		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
 		cursorHandler.setHighlighter(cursorHandlerModelData.getCursorTileModelInstance());

@@ -1,9 +1,9 @@
 package com.industrial.editor.actions.types.placing;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDefinition;
+import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.actions.PlaceElementAction;
@@ -13,16 +13,16 @@ import com.industrial.editor.model.elements.PlacedModelElement.PlacedModelElemen
 
 import java.util.Set;
 
-public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, EnvironmentObjectDefinition> {
+public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, EnvironmentObjectDeclaration> {
 
-	private final EnvironmentObjectDefinition selectedEnvObject;
+	private final EnvironmentObjectDeclaration selectedEnvObject;
 	private final Set<PlacedEnvObject> placedEnvObjects;
 
 	public PlaceEnvObjectAction(GameMap map,
 								Set<PlacedEnvObject> placedEnvObjects,
 								MapNodeData node,
-								EnvironmentObjectDefinition definition,
-								GameAssetsManager assetsManager,
+								EnvironmentObjectDeclaration definition,
+								GameAssetManager assetsManager,
 								Direction selectedObjectDirection) {
 		super(map, node, assetsManager, selectedObjectDirection, definition, placedEnvObjects);
 		this.selectedEnvObject = definition;

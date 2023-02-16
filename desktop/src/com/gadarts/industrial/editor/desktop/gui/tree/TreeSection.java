@@ -1,6 +1,6 @@
 package com.gadarts.industrial.editor.desktop.gui.tree;
 
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.model.ElementType;
 
-public record TreeSection(String header, ElementDefinition[] definitions, String entryIcon) {
+public record TreeSection(String header, ElementType elementType, String entryIcon) {
 }

@@ -1,7 +1,7 @@
 package com.industrial.editor.actions.types.placing;
 
-import com.gadarts.industrial.shared.assets.GameAssetsManager;
-import com.gadarts.industrial.shared.model.ElementDefinition;
+import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.model.GameMap;
@@ -15,8 +15,8 @@ public class PlaceTriggerAction extends PlaceDecalElementAction<PlacedTrigger> {
 	public PlaceTriggerAction(GameMap map,
 							  Set<PlacedTrigger> placedElements,
 							  MapNodeData node,
-							  ElementDefinition selectedCharacter,
-							  GameAssetsManager assetsManager) {
+							  ElementDeclaration selectedCharacter,
+							  GameAssetManager assetsManager) {
 		super(map, node, assetsManager, Direction.SOUTH, selectedCharacter, placedElements);
 	}
 
