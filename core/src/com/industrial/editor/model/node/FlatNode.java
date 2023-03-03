@@ -20,8 +20,8 @@ public class FlatNode {
 	}
 
 	public FlatNode(final MapNodeData node) {
-		this.row = node.getCoords().getRow();
-		this.col = node.getCoords().getCol();
+		this.row = node.getCoords().row();
+		this.col = node.getCoords().col();
 		this.height = node.getHeight();
 	}
 
@@ -31,6 +31,6 @@ public class FlatNode {
 
 
 	public boolean equals(final MapNodeData node) {
-		return equals(node.getCoords().getRow(), node.getCoords().getCol());
+		return equals(node.getCoords().row(), node.getCoords().col());
 	}
 }

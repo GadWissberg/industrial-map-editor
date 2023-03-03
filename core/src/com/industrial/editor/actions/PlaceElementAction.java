@@ -37,7 +37,7 @@ public abstract class PlaceElementAction<T extends PlacedElement, S extends Elem
 	@Override
 	public void execute(final MapEditorEventsNotifier eventsNotifier) {
 		Coords coords = node.getCoords();
-		MapNodeData tile = map.getNodes()[coords.getRow()][coords.getCol()];
+		MapNodeData tile = map.getNodes()[coords.row()][coords.col()];
 		T element = createElement(tile);
 		Optional.ofNullable(element).ifPresent(e -> {
 			placeElementInCorrectHeight(e, tile);

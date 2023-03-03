@@ -15,9 +15,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.ModelElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
+import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.gadarts.industrial.shared.utils.CameraUtils;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
@@ -28,7 +31,9 @@ import com.industrial.editor.utils.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import squidpony.squidmath.Coord3D;
 
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Optional;
 
@@ -102,16 +107,30 @@ public class CursorHandler implements Disposable {
 											  final OrthographicCamera camera,
 											  final GameMap map) {
 		if (highlighter != null) {
-			Vector3 collisionPoint = Utils.castRayTowardsPlane(screenX, screenY, camera);
-			updateCursorModelAndAdditionalsByCollisionPoint(map, collisionPoint);
+			ArrayDeque<squidpony.squidmath.Coord3D> coords = CameraUtils.findAllCoordsOnRay(screenX, screenY, camera);
+			MapNodeData result = findNearestNodeOnCameraLineOfSight(map.getNodes(), coords);
+			updateCursorModelAndAdditionalsByCollisionPoint(map, result);
 			return true;
 		}
 		return false;
 	}
 
-	private void updateCursorModelAndAdditionalsByCollisionPoint(final GameMap map, final Vector3 collisionPoint) {
-		int x = MathUtils.clamp((int) collisionPoint.x, 0, map.getNodes()[0].length - 1);
-		int z = MathUtils.clamp((int) collisionPoint.z, 0, map.getNodes().length - 1);
+	private MapNodeData findNearestNodeOnCameraLineOfSight(MapNodeData[][] map,
+														   ArrayDeque<Coord3D> coords) {
+		MapNodeData result = null;
+		for (Coord3D coord : coords) {
+			MapNodeData node = map[Math.max(coord.z, 0)][Math.max(coord.x, 0)];
+			if (node != null) {
+				result = node;
+			}
+		}
+		return result;
+	}
+
+	private void updateCursorModelAndAdditionalsByCollisionPoint(GameMap map, MapNodeData node) {
+		Coords coords = node.getCoords();
+		int x = MathUtils.clamp(coords.col(), 0, map.getNodes()[0].length - 1);
+		int z = MathUtils.clamp(coords.row(), 0, map.getNodes().length - 1);
 		float y = (map.getNodes()[z][x] != null ? map.getNodes()[z][x].getHeight() : 0) + 0.01f;
 		highlighter.transform.setTranslation(x, y, z);
 		updateCursorAdditionals(x, y, z, MapRendererImpl.getMode());

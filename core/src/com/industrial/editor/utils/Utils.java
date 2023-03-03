@@ -1,24 +1,21 @@
 package com.industrial.editor.utils;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
-import com.gadarts.industrial.shared.model.characters.CharacterUtils;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.characters.SpriteType;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.gadarts.industrial.shared.utils.CharacterUtils;
 import com.industrial.editor.actions.processes.ApplyActionOnTilesRegion;
 import com.industrial.editor.model.elements.CharacterDecal;
 import com.industrial.editor.model.node.FlatNode;
@@ -76,14 +73,6 @@ public class Utils {
 		TextureAttribute textureAttribute = (TextureAttribute) material.get(TextureAttribute.Diffuse);
 		textureAttribute.textureDescription.texture = assetsManager.getTexture(selectedTile);
 	}
-
-	public static Vector3 castRayTowardsPlane(final float screenX, final float screenY, final OrthographicCamera camera) {
-		Ray ray = camera.getPickRay(screenX, screenY);
-		auxPlane.set(Vector3.Zero, auxVector3_1.set(0, 1, 0));
-		Intersector.intersectRayPlane(ray, auxPlane, auxVector3_2);
-		return auxVector3_2;
-	}
-
 
 	public static void applyOnRegionOfTiles(final FlatNode srcNode,
 											final FlatNode dstNode,

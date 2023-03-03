@@ -30,7 +30,7 @@ public class ResourcesHandler implements Disposable {
 
 	void initializeGameFiles( ) {
 		assetsManager.loadGameFiles(FONT, MELODY, SOUND, SHADER, PARTICLES);
-		generateFramesMapForCharacter(new PlayerDeclaration());
+		generateFramesMapForCharacter(PlayerDeclaration.getInstance());
 		EnemiesDeclarations enemies = (EnemiesDeclarations) assetsManager.getDeclaration(Declarations.ENEMIES);
 		enemies.enemiesDeclarations().forEach(this::generateFramesMapForCharacter);
 		postAssetsLoading();

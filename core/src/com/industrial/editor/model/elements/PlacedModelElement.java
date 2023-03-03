@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.Coords;
-import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.ModelElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.gadarts.industrial.shared.utils.GeneralUtils;
 import lombok.Getter;
 
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
@@ -41,7 +41,7 @@ public abstract class PlacedModelElement extends PlacedElement {
 		MapNodeData node = params.getNode();
 		Coords coords = node.getCoords();
 		float height = params.getHeight();
-		modelInstance.transform.setTranslation(coords.getCol(), height, coords.getRow());
+		modelInstance.transform.setTranslation(coords.col(), height, coords.row());
 	}
 
 	@Getter

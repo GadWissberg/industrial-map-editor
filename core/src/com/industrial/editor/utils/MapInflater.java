@@ -120,32 +120,32 @@ public class MapInflater {
 	}
 
 	private void fillSouthWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
-		if (node.getCoords().getRow() == nodes.length - 1 || node.getWalls().getSouthWall() != null) return;
-		MapNodeData southNode = nodes[node.getCoords().getRow() + 1][node.getCoords().getCol()];
+		if (node.getCoords().row() == nodes.length - 1 || node.getWalls().getSouthWall() != null) return;
+		MapNodeData southNode = nodes[node.getCoords().row() + 1][node.getCoords().col()];
 		if (node.getHeight() < southNode.getHeight()) {
 			inflateSouthWall(node, wallCreator.getSouthWallModel(), MISSING, southNode, wallCreator);
 		}
 	}
 
 	private void fillNorthWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
-		if (node.getCoords().getRow() == 0 || node.getWalls().getNorthWall() != null) return;
-		MapNodeData northNode = nodes[node.getCoords().getRow() - 1][node.getCoords().getCol()];
+		if (node.getCoords().row() == 0 || node.getWalls().getNorthWall() != null) return;
+		MapNodeData northNode = nodes[node.getCoords().row() - 1][node.getCoords().col()];
 		if (node.getHeight() < northNode.getHeight()) {
 			inflateNorthWall(node, wallCreator.getNorthWallModel(), MISSING, northNode, wallCreator);
 		}
 	}
 
 	private void fillWestWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
-		if (node.getCoords().getCol() == 0 || node.getWalls().getWestWall() != null) return;
-		MapNodeData westNode = nodes[node.getCoords().getRow()][node.getCoords().getCol() - 1];
+		if (node.getCoords().col() == 0 || node.getWalls().getWestWall() != null) return;
+		MapNodeData westNode = nodes[node.getCoords().row()][node.getCoords().col() - 1];
 		if (node.getHeight() < westNode.getHeight()) {
 			inflateWestWall(node, wallCreator.getWestWallModel(), MISSING, westNode, wallCreator);
 		}
 	}
 
 	private void fillEastWallMissingTexture(WallCreator wallCreator, MapNodeData[][] nodes, MapNodeData node) {
-		if (node.getCoords().getCol() == nodes[0].length - 1 || node.getWalls().getEastWall() != null) return;
-		MapNodeData eastNode = nodes[node.getCoords().getRow()][node.getCoords().getCol() + 1];
+		if (node.getCoords().col() == nodes[0].length - 1 || node.getWalls().getEastWall() != null) return;
+		MapNodeData eastNode = nodes[node.getCoords().row()][node.getCoords().col() + 1];
 		if (node.getHeight() < eastNode.getHeight()) {
 			inflateEastWall(node, wallCreator.getEastWallModel(), MISSING, eastNode, wallCreator);
 		}
@@ -173,8 +173,8 @@ public class MapInflater {
 		Model westWallModel = wallCreator.getWestWallModel();
 		Model northWallModel = wallCreator.getNorthWallModel();
 		Model southWallModel = wallCreator.getSouthWallModel();
-		int row = coords.getRow();
-		int col = coords.getCol();
+		int row = coords.row();
+		int col = coords.col();
 		if (row > 0 && mapNodeData.getHeight() < nodes[row - 1][col].getHeight()) {
 			Optional.ofNullable(wallsJsonObject.get(MapJsonKeys.NORTH)).ifPresent(north -> {
 				SurfaceTextures texture = extractTextureName(north.getAsJsonObject());
@@ -267,7 +267,7 @@ public class MapInflater {
 		Set<? extends PlacedElement> placedCharacters = placedElements.getPlacedObjects().get(EditModes.CHARACTERS);
 		placedCharacters.clear();
 		Set<PlacedElement> placed = (Set<PlacedElement>) placedCharacters;
-		inflateCharactersByType(charactersJsonObject, placed, List.of(new PlayerDeclaration()), CharacterTypes.PLAYER);
+		inflateCharactersByType(charactersJsonObject, placed, List.of(PlayerDeclaration.getInstance()), CharacterTypes.PLAYER);
 		EnemiesDeclarations enemies = (EnemiesDeclarations) assetsManager.getDeclaration(ENEMIES);
 		inflateCharactersByType(charactersJsonObject, placed, enemies.enemiesDeclarations(), CharacterTypes.ENEMY);
 	}

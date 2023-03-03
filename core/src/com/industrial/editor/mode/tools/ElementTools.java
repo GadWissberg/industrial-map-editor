@@ -5,6 +5,6 @@ public enum ElementTools implements EditorTool {
 
 	@Override
 	public boolean isForceCursorDisplay( ) {
-		return false;
+		return true;
 	}
 }

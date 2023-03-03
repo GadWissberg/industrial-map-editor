@@ -9,7 +9,7 @@ import com.industrial.editor.utils.Utils;
 import lombok.Getter;
 
 /**
- * A in-map placed element displayed by a decal.
+ * An in-map placed element displayed by a decal.
  */
 @Getter
 public abstract class PlacedDecalElement extends PlacedElement {
@@ -23,9 +23,9 @@ public abstract class PlacedDecalElement extends PlacedElement {
 		decal = Utils.createSimpleDecal(GameAssetManager.getTexture(decalTexture));
 		MapNodeData node = parameters.getNode();
 		Coords coords = node.getCoords();
-		float x = coords.getCol() + 0.5f;
+		float x = coords.col() + 0.5f;
 		float y = node.getHeight() + parameters.getHeight() + DECAL_Y;
-		float z = coords.getRow() + 0.5f;
+		float z = coords.row() + 0.5f;
 		decal.setPosition(x, y, z);
 	}
 

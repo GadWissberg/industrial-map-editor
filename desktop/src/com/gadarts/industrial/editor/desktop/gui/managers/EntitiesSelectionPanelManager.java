@@ -172,7 +172,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 		if (elementType == CharacterTypes.ENEMY) {
 			result = ((EnemiesDeclarations) renderer.getDeclaration(Declarations.ENEMIES)).enemiesDeclarations();
 		} else if (elementType == CharacterTypes.PLAYER) {
-			result = List.of(new PlayerDeclaration());
+			result = List.of(PlayerDeclaration.getInstance());
 		} else if (elementType == EnvironmentObjectType.DOOR) {
 			result = List.of(DoorsDefinitions.values());
 		} else if (elementType == EnvironmentObjectType.THING) {

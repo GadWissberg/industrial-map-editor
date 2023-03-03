@@ -1,5 +1,5 @@
 buildscript {
-    
+
 
     repositories {
         mavenLocal()
@@ -9,7 +9,7 @@ buildscript {
         google()
     }
     dependencies {
-        
+
 
     }
 }
@@ -59,5 +59,6 @@ project(":core") {
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
         implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+        api 'com.squidpony:squidlib-util:3.0.6'
     }
 }

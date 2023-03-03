@@ -11,12 +11,12 @@ import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.Declaration;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
-import com.gadarts.industrial.shared.model.CameraUtils;
-import com.gadarts.industrial.shared.model.GeneralUtils;
 import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.ModelElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
+import com.gadarts.industrial.shared.utils.CameraUtils;
+import com.gadarts.industrial.shared.utils.GeneralUtils;
 import com.industrial.editor.handlers.HandlersManager;
 import com.industrial.editor.handlers.HandlersManagerImpl;
 import com.industrial.editor.handlers.cursor.CursorHandler;
@@ -37,7 +37,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-import static com.gadarts.industrial.shared.model.CameraUtils.*;
+import static com.gadarts.industrial.shared.utils.CameraUtils.*;
+
 
 /**
  * The world renderer.

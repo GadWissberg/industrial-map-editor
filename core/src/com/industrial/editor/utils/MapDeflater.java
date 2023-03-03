@@ -100,8 +100,8 @@ public class MapDeflater {
 		JsonObject jsonObject = new JsonObject();
 		MapNodeData node = e.getNode();
 		Coords coords = node.getCoords();
-		jsonObject.addProperty(ROW, coords.getRow());
-		jsonObject.addProperty(COL, coords.getCol());
+		jsonObject.addProperty(ROW, coords.row());
+		jsonObject.addProperty(COL, coords.col());
 		jsonObject.addProperty(HEIGHT, heightDefinedByNode ? node.getHeight() : e.getHeight());
 		if (addFacingDirection) {
 			jsonObject.addProperty(DIRECTION, e.getFacingDirection().ordinal());
@@ -147,8 +147,8 @@ public class MapDeflater {
 	private void addNodeData(final MapNodeData node, final JsonArray nodesDataJson) {
 		if (node.getHeight() > 0 || !node.getWalls().isEmpty()) {
 			JsonObject nodeDataJson = new JsonObject();
-			nodeDataJson.addProperty(ROW, node.getCoords().getRow());
-			nodeDataJson.addProperty(COL, node.getCoords().getCol());
+			nodeDataJson.addProperty(ROW, node.getCoords().row());
+			nodeDataJson.addProperty(COL, node.getCoords().col());
 			if (node.getHeight() > 0) {
 				nodeDataJson.addProperty(HEIGHT, node.getHeight());
 			}
