@@ -3,7 +3,6 @@ package com.industrial.editor.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.gadarts.industrial.shared.WallCreator;
-import com.gadarts.industrial.shared.assets.Assets.Declarations;
 import com.gadarts.industrial.shared.assets.Assets.SurfaceTextures;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
@@ -49,9 +48,6 @@ import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_INTENSITY;
 import static com.gadarts.industrial.shared.model.env.light.LightConstants.DEFAULT_LIGHT_RADIUS;
 
-/**
- * Deserializes map json.
- */
 @RequiredArgsConstructor
 public class MapInflater {
 	private final GameAssetManager assetsManager;
@@ -64,14 +60,6 @@ public class MapInflater {
 		return SurfaceTextures.valueOf(wallJsonObj.get(TEXTURE).getAsString());
 	}
 
-	/**
-	 * Deserializes map json into the given map object.
-	 *
-	 * @param data          The relevant map data.
-	 * @param wallCreator   The tool used to create walls.
-	 * @param renderHandler Stuff used for helping mapping.
-	 * @param path          The file path.
-	 */
 	public void inflateMap(final MapRendererData data,
 						   final WallCreator wallCreator,
 						   final RenderHandler renderHandler,

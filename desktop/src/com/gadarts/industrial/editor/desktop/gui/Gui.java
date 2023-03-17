@@ -41,13 +41,13 @@ import java.util.Properties;
 
 public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	public static final String FOLDER_TOOLBAR_BUTTONS = "toolbar_buttons";
-	public static final int WIDTH = 990;
+	public static final int WIDTH = 1028;
 	public static final int HEIGHT = 720;
 	public static final int MENU_ITEM_IMAGE_SIZE = 16;
 	public static final int MENU_LABEL_PAD = 4;
 	public static final String DEFAULT_MAP_NAME = "Unnamed map";
 	public static final String WINDOW_HEADER = "%s - %s";
-	public static final String PROGRAM_TILE = "Necronemes Map Editor";
+	public static final String PROGRAM_TILE = "Terror Effector Map Editor";
 	public static final String SETTINGS_KEY_LAST_OPENED_FILE = "last_opened_file";
 	public static final String SETTINGS_FILE = "settings.json";
 	public static final int MENU_SEPARATOR_HEIGHT = 10;
@@ -144,7 +144,6 @@ public class Gui extends JFrame implements MapManagerEventsSubscriber {
 	private JPanel createEntitiesPanel( ) {
 		EditorCardLayout entitiesLayout = new EditorCardLayout();
 		JPanel jPanel = new JPanel(entitiesLayout);
-		Canvas canvas = lwjgl.getCanvas();
 		jPanel.setPreferredSize(new Dimension(WIDTH - DefaultSettings.MAP_RENDERER_WIDTH, DefaultSettings.MAP_RENDERER_HEIGHT));
 		return jPanel;
 	}

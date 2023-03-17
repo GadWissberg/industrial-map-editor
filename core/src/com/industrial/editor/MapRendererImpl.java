@@ -40,19 +40,10 @@ import java.util.List;
 import static com.gadarts.industrial.shared.utils.CameraUtils.*;
 
 
-/**
- * The world renderer.
- */
 public class MapRendererImpl extends Editor implements MapRenderer {
 
-	/**
-	 * Camera's far.
-	 */
 	public static final float FAR = 200f;
 
-	/**
-	 * The rate of the cursor flicker animation.
-	 */
 	public static final Vector3 auxVector3_1 = new Vector3();
 	public static final int TARGET_VERSION = 5;
 	private static final float NEAR = 0.01f;
@@ -73,9 +64,8 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
 		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
 		cursorHandler.getCursorHandlerModelData().setCursorSelectionModel(new CursorSelectionModel(assetsManager));
-		PlacedElements placedElements = data.getPlacedElements();
-		handlers.getMapFileHandler().init(assetsManager, cursorHandler, placedElements.getPlacedTiles());
-		Arrays.stream(EditModes.values()).forEach(mode -> placedElements.getPlacedObjects().put(mode, new HashSet<>()));
+		handlers.getMapFileHandler().init(assetsManager, cursorHandler, data.getPlacedElements().getPlacedTiles());
+		Arrays.stream(EditModes.values()).forEach(mode -> data.getPlacedElements().getPlacedObjects().put(mode, new HashSet<>()));
 	}
 
 
@@ -213,9 +203,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		int startCol = Math.min(src.getCol(), dst.getCol());
 		int endCol = Math.max(src.getCol(), dst.getCol());
 		for (int row = startRow; row <= endRow; row++) {
-			for (int col = startCol; col <= endCol; col++) {
-				result.add(data.getMap().getNodes()[row][col]);
-			}
+			result.addAll(Arrays.asList(data.getMap().getNodes()[row]).subList(startCol, endCol + 1));
 		}
 		return result;
 	}
@@ -277,18 +265,10 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		return handlers.getLogicHandlers().getCursorHandler().updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
 	}
 
-	/**
-	 * Adds the given object as a listener to the renderer's events.
-	 *
-	 * @param subscriber
-	 */
 	public void subscribeForEvents(final MapManagerEventsSubscriber subscriber) {
 		handlers.getEventsNotifier().subscribeForEvents(subscriber);
 	}
 
-	/**
-	 * Initializes the input according to debug mode.
-	 */
 	void initializeInput( ) {
 		if (DefaultSettings.ENABLE_DEBUG_INPUT) {
 			CameraInputController processor = new CameraInputController(camera);

@@ -100,7 +100,7 @@ public class EntitiesSelectionPanelManager extends BaseManager {
 							sub.onTileSelected(texture);
 						});
 					}
-				});
+				}, 1, 128);
 				entitiesPanel.add(entitiesGallery, mode.name() + "_" + TilesTools.BRUSH.name());
 			} else if (entriesDisplayType == EntriesDisplayTypes.TREE) {
 				EditorTree resourcesTree = createResourcesTree(mode);

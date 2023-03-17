@@ -42,9 +42,6 @@ import static com.gadarts.industrial.shared.model.characters.Direction.NORTH;
 import static com.gadarts.industrial.shared.model.characters.Direction.SOUTH;
 
 
-/**
- * Responsible to handle the cursor's model.
- */
 @Getter
 @Setter
 public class CursorHandler implements Disposable {
@@ -75,11 +72,6 @@ public class CursorHandler implements Disposable {
 		}
 	}
 
-	/**
-	 * Takes step in the flicker effect.
-	 *
-	 * @param mode Current editor mode.
-	 */
 	public void updateCursorFlicker(final EditorMode mode) {
 		Material material;
 		if ((mode == EditModes.TILES || mode == EditModes.CHARACTERS)) {
@@ -92,16 +84,6 @@ public class CursorHandler implements Disposable {
 		material.set(blend);
 	}
 
-	/**
-	 * Moves the cursor's model according to the mouse.
-	 *
-	 * @param screenX
-	 * @param screenY
-	 * @param camera
-	 * @param map
-	 * @return Whether the cursor was moved.
-	 */
-	@SuppressWarnings("JavaDoc")
 	public boolean updateCursorByScreenCoords(final int screenX,
 											  final int screenY,
 											  final OrthographicCamera camera,
@@ -115,11 +97,65 @@ public class CursorHandler implements Disposable {
 		return false;
 	}
 
+	public void renderRectangleMarking(final int srcRow, final int srcCol, final ModelBatch modelBatch) {
+		Vector3 initialTilePos = highlighter.transform.getTranslation(auxVector3_1);
+		for (int i = Math.min((int) initialTilePos.x, srcCol); i <= Math.max((int) initialTilePos.x, srcCol); i++) {
+			for (int j = Math.min((int) initialTilePos.z, srcRow); j <= Math.max((int) initialTilePos.z, srcRow); j++) {
+				highlighter.transform.setTranslation(i, initialTilePos.y, j);
+				modelBatch.render(highlighter);
+			}
+		}
+		highlighter.transform.setTranslation(initialTilePos);
+	}
+
+	public void renderModelCursorFloorGrid(final ModelElementDeclaration selectedElement, final ModelBatch modelBatch) {
+		ModelInstance cursorTileModelInstance = cursorHandlerModelData.getCursorTileModelInstance();
+		Vector3 originalPosition = cursorTileModelInstance.transform.getTranslation(auxVector3_1);
+		Vector3 cursorPosition = highlighter.transform.getTranslation(auxVector3_3);
+		cursorPosition.y = CURSOR_Y;
+		Direction facingDirection = cursorHandlerModelData.getCursorSelectionModel().getFacingDirection();
+		renderModelCursorFloorGridCells(cursorPosition, selectedElement, facingDirection, modelBatch);
+		cursorTileModelInstance.transform.setTranslation(originalPosition);
+	}
+
+	public void createCursors(final GameAssetManager assetsManager, final Model tileModel) {
+		cursorHandlerModelData.createCursors(tileModel);
+		createCursorSimpleDecal(assetsManager);
+	}
+
+	@Override
+	public void dispose( ) {
+	}
+
+	public void initializeCursorCharacterDecal(GameAssetManager assetsManager, CharacterDeclaration definition) {
+		createCursorCharacterDecal(assetsManager, definition);
+	}
+
+	public void onEditModeSet(EditModes mode, GameAssetManager assetsManager) {
+		if (mode.isDecalCursor()) {
+			Optional.ofNullable(modesToDecal.get(mode)).ifPresent(decal -> {
+				Texture decalTexture = assetsManager.getTexture(decal);
+				cursorSimpleDecal = Utils.createSimpleDecal(decalTexture);
+			});
+		}
+		setHighlighter(getCursorHandlerModelData().getCursorTileModelInstance());
+	}
+
+	public void setLastMouseTouchPosition(int screenX, int screenY) {
+		lastMouseTouchPosition.set(screenX, screenY);
+	}
+
+	public Vector2 getLastMouseTouchPosition(Vector2 output) {
+		return output.set(lastMouseTouchPosition);
+	}
+
 	private MapNodeData findNearestNodeOnCameraLineOfSight(MapNodeData[][] map,
 														   ArrayDeque<Coord3D> coords) {
 		MapNodeData result = null;
 		for (Coord3D coord : coords) {
-			MapNodeData node = map[Math.max(coord.z, 0)][Math.max(coord.x, 0)];
+			int row = MathUtils.clamp(coord.z, 0, map.length - 1);
+			int col = MathUtils.clamp(coord.x, 0, map[0].length - 1);
+			MapNodeData node = map[row][col];
 			if (node != null) {
 				result = node;
 			}
@@ -134,25 +170,6 @@ public class CursorHandler implements Disposable {
 		float y = (map.getNodes()[z][x] != null ? map.getNodes()[z][x].getHeight() : 0) + 0.01f;
 		highlighter.transform.setTranslation(x, y, z);
 		updateCursorAdditionals(x, y, z, MapRendererImpl.getMode());
-	}
-
-	/**
-	 * Renders the tiles marking when tiling.
-	 *
-	 * @param srcRow     The row it started.
-	 * @param srcCol     The row it started.
-	 * @param modelBatch
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void renderRectangleMarking(final int srcRow, final int srcCol, final ModelBatch modelBatch) {
-		Vector3 initialTilePos = highlighter.transform.getTranslation(auxVector3_1);
-		for (int i = Math.min((int) initialTilePos.x, srcCol); i <= Math.max((int) initialTilePos.x, srcCol); i++) {
-			for (int j = Math.min((int) initialTilePos.z, srcRow); j <= Math.max((int) initialTilePos.z, srcRow); j++) {
-				highlighter.transform.setTranslation(i, initialTilePos.y, j);
-				modelBatch.render(highlighter);
-			}
-		}
-		highlighter.transform.setTranslation(initialTilePos);
 	}
 
 	private void updateCursorOfDecalMode(final int x, final float y, final int z, final EditorMode mode) {
@@ -179,33 +196,6 @@ public class CursorHandler implements Disposable {
 		updateCursorOfDecalMode(x, y, z, mode);
 	}
 
-	/**
-	 * Create the certain cursors types.
-	 *
-	 * @param assetsManager
-	 * @param tileModel
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void createCursors(final GameAssetManager assetsManager, final Model tileModel) {
-		cursorHandlerModelData.createCursors(tileModel);
-		createCursorSimpleDecal(assetsManager);
-	}
-
-
-	/**
-	 * @param selectedElement
-	 * @param modelBatch
-	 */
-	@SuppressWarnings("JavaDoc")
-	public void renderModelCursorFloorGrid(final ModelElementDeclaration selectedElement, final ModelBatch modelBatch) {
-		ModelInstance cursorTileModelInstance = cursorHandlerModelData.getCursorTileModelInstance();
-		Vector3 originalPosition = cursorTileModelInstance.transform.getTranslation(auxVector3_1);
-		Vector3 cursorPosition = highlighter.transform.getTranslation(auxVector3_3);
-		cursorPosition.y = CURSOR_Y;
-		Direction facingDirection = cursorHandlerModelData.getCursorSelectionModel().getFacingDirection();
-		renderModelCursorFloorGridCells(cursorPosition, selectedElement, facingDirection, modelBatch);
-		cursorTileModelInstance.transform.setTranslation(originalPosition);
-	}
 
 	private void renderModelCursorFloorGridCells(final Vector3 cursorPosition,
 												 final ModelElementDeclaration def,
@@ -249,31 +239,5 @@ public class CursorHandler implements Disposable {
 		cursorSimpleDecal = Utils.createSimpleDecal(bulb);
 		Color color = cursorSimpleDecal.getColor();
 		cursorSimpleDecal.setColor(color.r, color.g, color.b, CURSOR_OPACITY);
-	}
-
-	@Override
-	public void dispose( ) {
-	}
-
-	public void initializeCursorCharacterDecal(GameAssetManager assetsManager, CharacterDeclaration definition) {
-		createCursorCharacterDecal(assetsManager, definition);
-	}
-
-	public void onEditModeSet(EditModes mode, GameAssetManager assetsManager) {
-		if (mode.isDecalCursor()) {
-			Optional.ofNullable(modesToDecal.get(mode)).ifPresent(decal -> {
-				Texture decalTexture = assetsManager.getTexture(decal);
-				cursorSimpleDecal = Utils.createSimpleDecal(decalTexture);
-			});
-		}
-		setHighlighter(getCursorHandlerModelData().getCursorTileModelInstance());
-	}
-
-	public void setLastMouseTouchPosition(int screenX, int screenY) {
-		lastMouseTouchPosition.set(screenX, screenY);
-	}
-
-	public Vector2 getLastMouseTouchPosition(Vector2 output) {
-		return output.set(lastMouseTouchPosition);
 	}
 }

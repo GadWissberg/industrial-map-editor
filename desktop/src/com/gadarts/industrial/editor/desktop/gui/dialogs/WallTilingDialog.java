@@ -58,7 +58,7 @@ public class WallTilingDialog extends DialogPane {
 		try {
 			List<MapNodeData> nodes = mapRenderer.getRegion(src, dst);
 			float maxHeight = nodes.stream().max(
-							(o1, o2) -> o1.getHeight() > o2.getHeight() ? 1 : o1.getHeight() == o2.getHeight() ? 0 : -1)
+							(o1, o2) -> Float.compare(o1.getHeight(), o2.getHeight()))
 					.get()
 					.getHeight();
 			JPanel sectionsPanel = addSections(nodes, maxHeight);

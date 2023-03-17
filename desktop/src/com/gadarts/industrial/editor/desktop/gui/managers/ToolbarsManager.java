@@ -38,9 +38,9 @@ public class ToolbarsManager extends BaseManager {
 	public ToolbarsManager(MapRenderer mapRenderer, Managers managers) {
 		super(mapRenderer);
 		this.managers = managers;
-		Arrays.stream(EditModes.values()).filter(editModes -> editModes.getTools() != null).forEach(mode -> {
-			latestSelectedToolPerMode.put(mode, mode.getTools()[0]);
-		});
+		Arrays.stream(EditModes.values())
+				.filter(editModes -> editModes.getTools() != null)
+				.forEach(mode -> latestSelectedToolPerMode.put(mode, mode.getTools()[0]));
 	}
 
 	public void onApplicationStart(JPanel mainPanel, JFrame parent) {
@@ -132,7 +132,7 @@ public class ToolbarsManager extends BaseManager {
 		CardLayout subToolbarLayout = (CardLayout) subToolbarPanel.getLayout();
 		Optional.ofNullable(SubToolbarsDefinitions.findByMode(mode))
 				.ifPresentOrElse(sub -> subToolbarLayout.show(subToolbarPanel, sub.name()),
-						() -> subToolbarLayout.show(subToolbarPanel, SubToolbarsDefinitions.EMPTY.name()));
+						( ) -> subToolbarLayout.show(subToolbarPanel, SubToolbarsDefinitions.EMPTY.name()));
 	}
 
 

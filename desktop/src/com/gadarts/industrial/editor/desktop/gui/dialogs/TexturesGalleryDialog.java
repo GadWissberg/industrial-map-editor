@@ -22,7 +22,7 @@ public class TexturesGalleryDialog extends DialogPane {
 			Assets.SurfaceTextures texture = ((GalleryButton) itemEvent.getItem()).getTextureDefinition();
 			onTextureSelected.run(texture);
 			closeDialog();
-		}));
+		}, 3, 480));
 	}
 
 	@Override

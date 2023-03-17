@@ -3,7 +3,6 @@ package com.industrial.editor.handlers.action;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.WallCreator;
@@ -40,9 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Responsible for handling the actions.
- */
 public class ActionsHandlerImpl implements ActionsHandler {
 	private static final Vector3 auxVector = new Vector3();
 	private final ActionHandlerRelatedData data;

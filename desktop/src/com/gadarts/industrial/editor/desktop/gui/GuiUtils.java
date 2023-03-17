@@ -32,7 +32,7 @@ public final class GuiUtils {
 
 	public static GalleryButton createTextureImageButton(Assets.SurfaceTextures texture,
 														 ItemListener onClick,
-														 ImageIcon imageIcon) throws IOException {
+														 ImageIcon imageIcon) {
 		GalleryButton button = new GalleryButton(texture, imageIcon);
 		button.setPreferredSize(new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight()));
 		button.setMaximumSize(new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight() + 40));
@@ -48,8 +48,8 @@ public final class GuiUtils {
 		return imageIcon;
 	}
 
-	public static JScrollPane createEntitiesGallery(final File assetsFolderLoc, final ItemListener onClick) {
-		GridLayout layout = new GridLayout(0, 3);
+	public static JScrollPane createEntitiesGallery(File assetsFolderLoc, ItemListener onClick, int cols, int width) {
+		GridLayout layout = new GridLayout(0, cols);
 		JPanel gallery = new JPanel(layout);
 		JScrollPane jScrollPane = new JScrollPane(gallery);
 
@@ -65,10 +65,10 @@ public final class GuiUtils {
 			}
 		});
 
-		gallery.setPreferredSize(new Dimension(GALLERY_VIEW_WIDTH, gallery.getPreferredSize().height));
+		gallery.setPreferredSize(new Dimension(width, gallery.getPreferredSize().height));
 		jScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		jScrollPane.setPreferredSize(new Dimension(jScrollPane.getPreferredSize().width, 480));
+		jScrollPane.setPreferredSize(new Dimension(width, 480));
 		return jScrollPane;
 	}
 

@@ -3,7 +3,6 @@ package com.industrial.editor;
 
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.Declaration;
-import com.gadarts.industrial.shared.assets.declarations.enemies.EnemiesDeclarations;
 import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.ModelElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
