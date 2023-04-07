@@ -13,7 +13,6 @@ public class CharacterDecal {
 
 	private final Decal decal;
 
-	@Setter
 	private CharacterDeclaration characterDefinition;
 
 	@Setter

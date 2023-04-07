@@ -8,7 +8,6 @@ import com.gadarts.industrial.shared.model.ElementDeclaration;
 import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
-import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.handlers.action.ActionHandlerRelatedData;
 import com.industrial.editor.handlers.action.ActionHandlerRelatedServices;
@@ -16,11 +15,10 @@ import com.industrial.editor.handlers.action.ActionsHandler;
 import com.industrial.editor.handlers.action.ActionsHandlerImpl;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
+import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.handlers.render.RenderHandler;
 import com.industrial.editor.model.GameMap;
 import lombok.Getter;
-
-import java.util.Optional;
 
 @Getter
 public class LogicHandlers implements Disposable {
@@ -67,14 +65,10 @@ public class LogicHandlers implements Disposable {
 		selectionHandler.onTileSelected(texture);
 	}
 
-	public void onTreeCharacterSelected(final CharacterDeclaration definition) {
-		Optional.ofNullable(cursorHandler.getCursorCharacterDecal()).ifPresentOrElse(
-				c -> cursorHandler.getCursorCharacterDecal().setCharacterDefinition(definition),
-				( ) -> cursorHandler.initializeCursorCharacterDecal(
-						resourcesHandler.getAssetsManager(),
-						definition));
+	public void onTreeCharacterSelected(final CharacterDeclaration declaration) {
+		cursorHandler.initializeCursorCharacterDecal(resourcesHandler.getAssetsManager(), declaration);
 		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
-		selectionHandler.setSelectedElement(definition);
+		selectionHandler.setSelectedElement(declaration);
 	}
 
 	public void onTreeEnvSelected(final ElementDeclaration selected) {
