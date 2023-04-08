@@ -42,6 +42,10 @@ public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, En
 
 	@Override
 	protected void placeElementInCorrectHeight(final PlacedEnvObject element, final MapNodeData tile) {
+		float tileHeight = tile.getHeight();
+		if (element.getHeight() < tileHeight) {
+			element.setHeight(tileHeight);
+		}
 	}
 
 	@Override
