@@ -18,7 +18,7 @@ public class PlaceLightDialog extends DialogPane {
 	private static final String LABEL_RADIUS = "Radius: ";
 	private static final String LABEL_INTENSITY = "Intensity: ";
 	private static final int MAX_LIGHT_HEIGHT = 4;
-	private static final int MAX_LIGHT_RADIUS = 6;
+	private static final int MAX_LIGHT_RADIUS = 9;
 	private static final int MAX_LIGHT_INTENSITY = 2;
 	private final MapRenderer mapRenderer;
 	private final FlatNode node;
