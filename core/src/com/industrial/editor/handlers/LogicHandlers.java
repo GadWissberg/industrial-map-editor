@@ -61,19 +61,19 @@ public class LogicHandlers implements Disposable {
 	}
 
 	public void onTileSelected(final Assets.SurfaceTextures texture) {
-		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
+		cursorHandler.getCursorHandlerModelData().setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		selectionHandler.onTileSelected(texture);
 	}
 
 	public void onTreeCharacterSelected(final CharacterDeclaration declaration) {
 		cursorHandler.initializeCursorCharacterDecal(resourcesHandler.getAssetsManager(), declaration);
-		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
+		cursorHandler.getCursorHandlerModelData().setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		selectionHandler.setSelectedElement(declaration);
 	}
 
 	public void onTreeEnvSelected(final ElementDeclaration selected) {
 		selectionHandler.setSelectedElement(selected);
-		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
+		cursorHandler.getCursorHandlerModelData().setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		CursorSelectionModel cursorSelectionModel = cursorHandler.getCursorHandlerModelData().getCursorSelectionModel();
 		cursorSelectionModel.setSelection(selected, ((EnvironmentObjectDeclaration) selected).getModelDefinition());
 		cursorHandler.applyOpacity();
@@ -82,7 +82,7 @@ public class LogicHandlers implements Disposable {
 	public void onTreePickupSelected(final ItemDeclaration selectedElement) {
 		selectionHandler.setSelectedElement(selectedElement);
 		CursorHandlerModelData cursorHandlerModelData = cursorHandler.getCursorHandlerModelData();
-		cursorHandler.setHighlighter(cursorHandlerModelData.getCursorTileModelInstance());
+		cursorHandler.getCursorHandlerModelData().setHighlighter(cursorHandlerModelData.getCursorTileModelInstance());
 		Assets.Models modelDefinition = selectedElement.getModelDefinition();
 		cursorHandlerModelData.getCursorSelectionModel().setSelection(selectedElement, modelDefinition);
 		cursorHandler.applyOpacity();

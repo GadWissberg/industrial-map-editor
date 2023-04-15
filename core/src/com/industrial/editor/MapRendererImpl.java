@@ -307,7 +307,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		}
 		camera.update();
 		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
-		if (cursorHandler.getHighlighter() != null) {
+		if (cursorHandler.getCursorHandlerModelData().getHighlighter() != null) {
 			cursorHandler.updateCursorFlicker(mode);
 		}
 	}

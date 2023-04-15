@@ -11,6 +11,7 @@ import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.model.ItemDeclaration;
 import com.gadarts.industrial.shared.model.TriggersDefinitions;
 import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
@@ -53,11 +54,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		this.services = services;
 	}
 
-	/**
-	 * Executes the given action/process.
-	 *
-	 * @param mappingAction The action to execute.
-	 */
 	public void executeAction(final MappingAction mappingAction) {
 		mappingAction.execute(services.eventsNotifier());
 		if (mappingAction.isProcess()) {
@@ -75,15 +71,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		placeTilesProcess.execute(services.eventsNotifier());
 	}
 
-	/**
-	 * Called when the mouse is pressed.
-	 *
-	 * @param assetsManager
-	 * @param initializedTiles
-	 * @param button
-	 * @return Whether an action is taken in response to this event.
-	 */
-	@SuppressWarnings("JavaDoc")
 	public boolean onTouchDown(final GameAssetManager assetsManager,
 							   final Set<MapNodeData> initializedTiles,
 							   final int button) {
@@ -136,26 +123,11 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		return node;
 	}
 
-	/**
-	 * Called when tiles height was changed.
-	 *
-	 * @param src
-	 * @param dst
-	 * @param value
-	 */
-	@SuppressWarnings("JavaDoc")
 	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
 		LiftNodesAction.Parameters params = new LiftNodesAction.Parameters(src, dst, value, services.wallCreator());
 		ActionFactory.liftNodes(data.map(), params, data.placedElements()).execute(services.eventsNotifier());
 	}
 
-	/**
-	 * Called when an environment object was defined.
-	 *
-	 * @param element
-	 * @param height
-	 */
-	@SuppressWarnings("JavaDoc")
 	public void onEnvObjectDefined(final PlacedEnvObject element, final float height) {
 		ActionFactory.defineEnvObject(data.map(), element, height).execute(services.eventsNotifier());
 	}
@@ -164,15 +136,18 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	public void defineSelectedEnvObject( ) {
 		MapNodeData mapNodeData = getMapNodeDataFromCursor();
 		Set<? extends PlacedElement> list = this.data.placedElements().getPlacedObjects().get(MapRendererImpl.getMode());
-		List<PlacedElement> elementsInTheNode = list.stream()
-				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
-				.collect(Collectors.toList());
-		int size = elementsInTheNode.size();
-		if (size == 1) {
+		List<PlacedElement> elementsInTheNode = fetchElementsFromNode(mapNodeData, list);
+		if (elementsInTheNode.size() == 1) {
 			services.eventsNotifier().selectedEnvObjectToDefine((PlacedEnvObject) elementsInTheNode.get(0));
-		} else if (size > 1) {
+		} else if (elementsInTheNode.size() > 1) {
 			defineSelectedEnvObjectsInNode(mapNodeData, elementsInTheNode);
 		}
+	}
+
+	private static List<PlacedElement> fetchElementsFromNode(MapNodeData mapNodeData, Set<? extends PlacedElement> list) {
+		return list.stream()
+				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -191,20 +166,13 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	public void placePickup(final GameAssetManager am) {
 		if (services.selectionHandler().getSelectedElement() == null) return;
 
-		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
-		CursorSelectionModel cursorSelectionModel = cursorHandlerModelData.getCursorSelectionModel();
+		CursorSelectionModel cursorSelectionModel = services.cursorHandler().getCursorHandlerModelData().getCursorSelectionModel();
 		Vector3 position = cursorSelectionModel.getModelInstance().transform.getTranslation(auxVector);
-		int row = (int) position.z;
-		int col = (int) position.x;
-		GameMap map = data.map();
-		PlacePickupAction action = new PlacePickupAction(
-				map,
-				(Set<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS),
-				map.getNodes()[row][col],
-				(ItemDeclaration) services.selectionHandler().getSelectedElement(),
-				am,
-				cursorSelectionModel.getFacingDirection());
-		executeAction(action);
+		Set<PlacedPickup> placedPickups = (Set<PlacedPickup>) data.placedElements().getPlacedObjects().get(EditModes.PICKUPS);
+		MapNodeData node = data.map().getNodes()[(int) position.z][(int) position.x];
+		ItemDeclaration selectedElement = (ItemDeclaration) services.selectionHandler().getSelectedElement();
+		Direction facingDirection = cursorSelectionModel.getFacingDirection();
+		executeAction(new PlacePickupAction(data.map(), placedPickups, node, selectedElement, am, facingDirection));
 	}
 
 	@Override
@@ -348,7 +316,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	private MapNodeData getMapNodeDataFromCursor( ) {
-		Vector3 cursorPosition = services.cursorHandler().getHighlighter().transform.getTranslation(auxVector);
+		Vector3 cursorPosition = services.cursorHandler().getCursorHandlerModelData().getHighlighter().transform.getTranslation(auxVector);
 		int row = (int) cursorPosition.z;
 		int col = (int) cursorPosition.x;
 		return data.map().getNodes()[row][col];

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
@@ -25,11 +24,9 @@ import java.util.HashMap;
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_SCALE;
 import static com.gadarts.industrial.shared.model.characters.CharacterTypes.BILLBOARD_Y;
 
-public class Utils {
+public final class Utils {
 	public static final String FRAMES_KEY_CHARACTER = "frames/%s";
 	public static final Vector3 auxVector3_1 = new Vector3();
-	private final static Plane auxPlane = new Plane();
-	private static final Vector3 auxVector3_2 = new Vector3();
 
 	public static CharacterDecal createCharacterDecal(final GameAssetManager assetsManager,
 													  final CharacterDeclaration definition,

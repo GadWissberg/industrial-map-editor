@@ -13,6 +13,8 @@ public class CursorHandlerModelData {
 
 	private ModelInstance cursorTileModelInstance;
 	private Model cursorTileModel;
+	@Setter
+	private ModelInstance highlighter;
 
 	@Setter
 	private CursorSelectionModel cursorSelectionModel;

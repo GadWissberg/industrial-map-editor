@@ -36,6 +36,11 @@ public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, En
 	}
 
 	@Override
+	public boolean isProcess( ) {
+		return false;
+	}
+
+	@Override
 	protected void addElementToList(final PlacedEnvObject element) {
 		placedEnvObjects.add(element);
 	}
@@ -80,10 +85,5 @@ public class PlaceEnvObjectAction extends PlaceElementAction<PlacedEnvObject, En
 				nodes[currentRow][currentCol].setMapNodeType(selectedEnvObject.getNodeType());
 			}
 		}
-	}
-
-	@Override
-	public boolean isProcess( ) {
-		return false;
 	}
 }

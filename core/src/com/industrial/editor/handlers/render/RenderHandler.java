@@ -100,7 +100,7 @@ public class RenderHandler implements Disposable {
 							  EditorMode mode,
 							  PlacedElements placedElements) {
 		Gdx.gl.glDepthMask(false);
-		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getHighlighter();
+		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getCursorHandlerModelData().getHighlighter();
 		if (highlighter != null && mode.getClass().equals(EditModes.class) && ((EditModes) mode).isDecalCursor()) {
 			renderCursorOfDecalMode(handlersManager, mode, camera);
 		}
@@ -192,7 +192,7 @@ public class RenderHandler implements Disposable {
 	}
 
 	public void renderCursor(final EditorMode mode, final ElementDeclaration selectedElement, EditorTool tool) {
-		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getHighlighter();
+		ModelInstance highlighter = handlersManager.getLogicHandlers().getCursorHandler().getCursorHandlerModelData().getHighlighter();
 		SelectionHandler selectionHandler = handlersManager.getLogicHandlers().getSelectionHandler();
 		if (highlighter != null && mode.getType() == ModeType.EDIT) {
 			Assets.SurfaceTextures selectedTile = selectionHandler.getSelectedTile();

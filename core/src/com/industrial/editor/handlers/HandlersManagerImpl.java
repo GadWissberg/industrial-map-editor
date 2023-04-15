@@ -118,7 +118,7 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 	public void onModeSet(final EditorMode mode) {
 		logicHandlers.getSelectionHandler().setSelectedElement(null);
 		if (mode.getType() != ModeType.EDIT) {
-			logicHandlers.getCursorHandler().setHighlighter(null);
+			logicHandlers.getCursorHandler().getCursorHandlerModelData().setHighlighter(null);
 		}
 		MapRendererImpl.mode = mode;
 	}
@@ -127,7 +127,7 @@ public class HandlersManagerImpl implements HandlersManager, Disposable {
 	public void onToolSet(final EditorTool tool) {
 		logicHandlers.getSelectionHandler().setSelectedElement(null);
 		CursorHandler cursorHandler = logicHandlers.getCursorHandler();
-		cursorHandler.setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
+		cursorHandler.getCursorHandlerModelData().setHighlighter(cursorHandler.getCursorHandlerModelData().getCursorTileModelInstance());
 		MapRendererImpl.tool = tool;
 	}
 

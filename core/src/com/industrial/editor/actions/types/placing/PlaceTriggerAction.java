@@ -29,8 +29,4 @@ public class PlaceTriggerAction extends PlaceDecalElementAction<PlacedTrigger> {
 		return result;
 	}
 
-	@Override
-	public boolean isProcess( ) {
-		return false;
-	}
 }
