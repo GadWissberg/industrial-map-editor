@@ -96,33 +96,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				services.cursorHandler().getCursorHandlerModelData().getCursorSelectionModel().getFacingDirection()));
 	}
 
-	private boolean isCursorSelectionModelDisabled( ) {
-		return services.cursorHandler()
-				.getCursorHandlerModelData()
-				.getCursorSelectionModel()
-				.getModelInstance() == null;
-	}
-
-	private MapNodeData getOrCreateNode( ) {
-		CursorHandlerModelData data = services.cursorHandler().getCursorHandlerModelData();
-		Vector3 position = data.getCursorSelectionModel().getModelInstance().transform.getTranslation(auxVector);
-		int row = (int) position.z;
-		int col = (int) position.x;
-		MapNodeData node = this.data.map().getNodes()[row][col];
-		if (node == null) {
-			node = addNewNode(row, col);
-		}
-		return node;
-	}
-
-	private MapNodeData addNewNode(int row, int col) {
-		MapNodeData[][] nodes = data.map().getNodes();
-		MapNodeData node;
-		node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
-		nodes[row][col] = node;
-		return node;
-	}
-
 	public void onTilesLift(final FlatNode src, final FlatNode dst, final float value) {
 		LiftNodesAction.Parameters params = new LiftNodesAction.Parameters(src, dst, value, services.wallCreator());
 		ActionFactory.liftNodes(data.map(), params, data.placedElements()).execute(services.eventsNotifier());
@@ -142,12 +115,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		} else if (elementsInTheNode.size() > 1) {
 			defineSelectedEnvObjectsInNode(mapNodeData, elementsInTheNode);
 		}
-	}
-
-	private static List<PlacedElement> fetchElementsFromNode(MapNodeData mapNodeData, Set<? extends PlacedElement> list) {
-		return list.stream()
-				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
-				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -176,7 +143,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public void placeLight(final GameAssetManager am, FlatNode node, float height, float radius, float intensity) {
+	public void placeLight(final GameAssetManager am, float height, float radius, float intensity) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		int row = (int) position.z;
@@ -193,7 +160,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 	}
 
 	@Override
-	public boolean beginSelectingTileForLiftProcess(final int direction,
+	public void beginSelectingTileForLiftProcess(final int direction,
 													final Set<MapNodeData> initializedTiles) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 pos = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
@@ -202,7 +169,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		p.setWallCreator(services.wallCreator());
 		p.setInitializedTiles(initializedTiles);
 		currentProcess = p;
-		return true;
 	}
 
 	@Override
@@ -231,14 +197,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		executeAction(action);
 	}
 
-	/**
-	 * Called when a node's walls were defined.
-	 *
-	 * @param defs
-	 * @param src
-	 * @param dst
-	 */
-	@SuppressWarnings("JavaDoc")
 	public void onNodeWallsDefined(final NodeWallsDefinitions defs,
 								   final FlatNode src,
 								   final FlatNode dst) {
@@ -250,14 +208,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		});
 	}
 
-	/**
-	 * Called when the mouse button is released.
-	 *
-	 * @param selectedTile
-	 * @param cursorTileModel
-	 * @return Whether an action taken in response to this event.
-	 */
-	@SuppressWarnings("JavaDoc")
 	public boolean onTouchUp(final Assets.SurfaceTextures selectedTile, final Model cursorTileModel) {
 		boolean result = false;
 		if (currentProcess != null) {
@@ -291,6 +241,39 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				assetsManager,
 				initializedTiles,
 				data.map());
+	}
+
+	private boolean isCursorSelectionModelDisabled( ) {
+		return services.cursorHandler()
+				.getCursorHandlerModelData()
+				.getCursorSelectionModel()
+				.getModelInstance() == null;
+	}
+
+	private MapNodeData getOrCreateNode( ) {
+		CursorHandlerModelData data = services.cursorHandler().getCursorHandlerModelData();
+		Vector3 position = data.getCursorSelectionModel().getModelInstance().transform.getTranslation(auxVector);
+		int row = (int) position.z;
+		int col = (int) position.x;
+		MapNodeData node = this.data.map().getNodes()[row][col];
+		if (node == null) {
+			node = addNewNode(row, col);
+		}
+		return node;
+	}
+
+	private MapNodeData addNewNode(int row, int col) {
+		MapNodeData[][] nodes = data.map().getNodes();
+		MapNodeData node;
+		node = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE);
+		nodes[row][col] = node;
+		return node;
+	}
+
+	private static List<PlacedElement> fetchElementsFromNode(MapNodeData mapNodeData, Set<? extends PlacedElement> list) {
+		return list.stream()
+				.filter(placedElement -> placedElement.getNode().equals(mapNodeData))
+				.collect(Collectors.toList());
 	}
 
 	private void onLeftClick(GameAssetManager assetsManager, Set<MapNodeData> initializedTiles) {

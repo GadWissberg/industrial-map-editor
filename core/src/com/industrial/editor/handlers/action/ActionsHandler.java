@@ -14,24 +14,24 @@ import java.util.Set;
 public interface ActionsHandler {
 	void beginTilePlacingProcess(final GameAssetManager assetsManager, final Set<MapNodeData> initializedTiles);
 
-	boolean beginSelectingTileForLiftProcess(int direction, Set<MapNodeData> initializedTiles);
+	void beginSelectingTileForLiftProcess(int direction, Set<MapNodeData> initializedTiles);
 
-	void beginSelectingTilesForWallTiling();
+	void beginSelectingTilesForWallTiling( );
 
 	void placeEnvObject(GameAssetManager assetsManager);
 
-	void defineSelectedEnvObject();
+	void defineSelectedEnvObject( );
 
 	void selectedNodeToPlaceLight( );
 
-	void placeLight(GameAssetManager assetsManager, FlatNode node, float height, float radius, float intensity);
+	void placeLight(GameAssetManager assetsManager, float height, float radius, float intensity);
 
 	void placeCharacter(GameAssetManager assetsManager);
 
 	void placePickup(GameAssetManager assetsManager);
 
 
-	MappingProcess<? extends MappingProcess.FinishProcessParameters> getCurrentProcess();
+	MappingProcess<? extends MappingProcess.FinishProcessParameters> getCurrentProcess( );
 
 	void onNodeWallsDefined(NodeWallsDefinitions definitions,
 							FlatNode src,

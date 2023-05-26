@@ -211,7 +211,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	@Override
 	public void onLightPlaced(FlatNode node, float height, float radius, float intensity) {
 		GameAssetManager assetsManager = handlers.getResourcesHandler().getAssetsManager();
-		handlers.getLogicHandlers().getActionsHandler().placeLight(assetsManager, node, height, radius, intensity);
+		handlers.getLogicHandlers().getActionsHandler().placeLight(assetsManager, height, radius, intensity);
 	}
 
 	@Override
