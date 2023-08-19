@@ -2,8 +2,8 @@ package com.industrial.editor.model.elements;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.assets.declarations.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.assets.definitions.ModelDefinition;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.utils.GeneralUtils;
 import lombok.Getter;
 

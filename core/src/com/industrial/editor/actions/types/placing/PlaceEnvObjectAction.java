@@ -1,9 +1,9 @@
 package com.industrial.editor.actions.types.placing;
 
 import com.gadarts.industrial.shared.assets.GameAssetManager;
+import com.gadarts.industrial.shared.assets.declarations.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.Coords;
 import com.gadarts.industrial.shared.model.characters.Direction;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.MapEditorEventsNotifier;
 import com.industrial.editor.actions.PlaceElementAction;

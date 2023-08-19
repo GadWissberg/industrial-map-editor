@@ -1,6 +1,6 @@
 package com.industrial.editor.mode;
 
-import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ElementDeclaration;
 import com.google.gson.JsonObject;
 import com.industrial.editor.model.elements.PlacedElement;
 

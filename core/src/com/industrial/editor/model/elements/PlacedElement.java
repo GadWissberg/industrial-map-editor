@@ -1,6 +1,6 @@
 package com.industrial.editor.model.elements;
 
-import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import lombok.Getter;

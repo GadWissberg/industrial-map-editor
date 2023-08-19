@@ -1,7 +1,7 @@
 package com.industrial.editor.handlers;
 
 import com.gadarts.industrial.shared.assets.Assets;
-import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ElementDeclaration;
 import lombok.Getter;
 import lombok.Setter;
 

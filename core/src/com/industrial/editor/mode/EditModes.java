@@ -2,7 +2,7 @@ package com.industrial.editor.mode;
 
 import com.gadarts.industrial.shared.assets.GameAssetManager;
 import com.gadarts.industrial.shared.assets.MapJsonKeys;
-import com.gadarts.industrial.shared.model.env.EnvironmentObjectDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.EnvironmentObjectDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.processes.MappingProcess;
 import com.industrial.editor.handlers.SelectionHandler;

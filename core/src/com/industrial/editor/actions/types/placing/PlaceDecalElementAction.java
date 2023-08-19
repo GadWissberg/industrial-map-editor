@@ -3,7 +3,7 @@ package com.industrial.editor.actions.types.placing;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
-import com.gadarts.industrial.shared.model.ElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ElementDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.actions.PlaceElementAction;

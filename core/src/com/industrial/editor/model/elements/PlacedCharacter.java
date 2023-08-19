@@ -1,7 +1,7 @@
 package com.industrial.editor.model.elements;
 
 import com.gadarts.industrial.shared.assets.GameAssetManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.characters.CharacterDeclaration;
 import com.industrial.editor.utils.Utils;
 import com.industrial.editor.model.node.FlatNode;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.industrial.editor.utils;
 
+import com.gadarts.industrial.shared.assets.declarations.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.Coords;
-import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.CharacterTypes;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.NodeWalls;

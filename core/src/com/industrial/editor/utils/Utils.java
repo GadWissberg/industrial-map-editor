@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
-import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.characters.CharacterDeclaration;
 import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.characters.SpriteType;
 import com.gadarts.industrial.shared.model.map.MapNodeData;

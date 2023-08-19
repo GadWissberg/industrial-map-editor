@@ -11,9 +11,9 @@ import com.gadarts.industrial.shared.WallCreator;
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.Declaration;
 import com.gadarts.industrial.shared.assets.GameAssetManager;
-import com.gadarts.industrial.shared.model.ItemDeclaration;
-import com.gadarts.industrial.shared.model.ModelElementDeclaration;
-import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ModelElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.pickups.ItemDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.utils.CameraUtils;
 import com.gadarts.industrial.shared.utils.GeneralUtils;
@@ -34,12 +34,14 @@ import lombok.Getter;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.gadarts.industrial.shared.utils.CameraUtils.*;
 
 
+@SuppressWarnings("LombokGetterMayBeUsed")
+@Getter
 public class MapRendererImpl extends Editor implements MapRenderer {
 
 	public static final float FAR = 200f;
@@ -48,9 +50,7 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public static final int TARGET_VERSION = 5;
 	private static final float NEAR = 0.01f;
 	private final static Vector2 auxVector2 = new Vector2();
-	@Getter
 	public static EditorMode mode = EditModes.TILES;
-	@Getter
 	public static EditorTool tool = TilesTools.BRUSH;
 	private final MapRendererData data;
 	private final HandlersManager handlers;
@@ -66,6 +66,14 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		cursorHandler.getCursorHandlerModelData().setCursorSelectionModel(new CursorSelectionModel(assetsManager));
 		handlers.getMapFileHandler().init(assetsManager, cursorHandler, data.getPlacedElements().getPlacedTiles());
 		Arrays.stream(EditModes.values()).forEach(mode -> data.getPlacedElements().getPlacedObjects().put(mode, new HashSet<>()));
+	}
+
+	public static EditorTool getTool( ) {
+		return tool;
+	}
+
+	public static EditorMode getMode( ) {
+		return mode;
 	}
 
 
@@ -235,6 +243,11 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 	public boolean touchUp(final int screenX, final int screenY, final int pointer, final int button) {
 		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
 		return handlers.onTouchUp(cursorHandler.getCursorHandlerModelData().getCursorTileModel());
+	}
+
+	@Override
+	public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+		return false;
 	}
 
 	@Override

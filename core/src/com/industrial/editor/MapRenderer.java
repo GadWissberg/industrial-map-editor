@@ -3,9 +3,9 @@ package com.industrial.editor;
 
 import com.gadarts.industrial.shared.assets.Assets;
 import com.gadarts.industrial.shared.assets.Declaration;
-import com.gadarts.industrial.shared.model.ItemDeclaration;
-import com.gadarts.industrial.shared.model.ModelElementDeclaration;
-import com.gadarts.industrial.shared.model.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.ModelElementDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.characters.CharacterDeclaration;
+import com.gadarts.industrial.shared.assets.declarations.pickups.ItemDeclaration;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.ViewModes;
