@@ -263,16 +263,6 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		return result;
 	}
 
-	private void onTouchDraggedInViewMode(int screenX, int screenY) {
-		Vector3 rotationPoint = GeneralUtils.defineRotationPoint(auxVector3_1, camera);
-		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
-		((ViewModes) mode).getManipulation().run(
-				cursorHandler.getLastMouseTouchPosition(auxVector2),
-				camera,
-				screenX, screenY,
-				rotationPoint);
-	}
-
 	@Override
 	public boolean mouseMoved(final int screenX, final int screenY) {
 		return handlers.getLogicHandlers().getCursorHandler().updateCursorByScreenCoords(screenX, screenY, camera, data.getMap());
@@ -302,6 +292,16 @@ public class MapRendererImpl extends Editor implements MapRenderer {
 		cam.update();
 		initializeCameraPosition(cam);
 		return cam;
+	}
+
+	private void onTouchDraggedInViewMode(int screenX, int screenY) {
+		Vector3 rotationPoint = GeneralUtils.defineRotationPoint(auxVector3_1, camera);
+		CursorHandler cursorHandler = handlers.getLogicHandlers().getCursorHandler();
+		((ViewModes) mode).getManipulation().run(
+				cursorHandler.getLastMouseTouchPosition(auxVector2),
+				camera,
+				screenX, screenY,
+				rotationPoint);
 	}
 
 	private void initializeCameraPosition(final OrthographicCamera cam) {

@@ -73,10 +73,6 @@ public abstract class DialogPane extends JPanel {
 		return jSpinner;
 	}
 
-	protected JSpinner createSpinner(double value, int maximum, float step, int minimum) {
-		return createSpinner(value, maximum, step, minimum, true);
-	}
-
 	protected JSpinner createSpinner(double value, int maximum, float step, int minimum, boolean allowNegative) {
 		return GuiUtils.createSpinner(value, minimum, maximum, step, allowNegative, SPINNER_WIDTH);
 	}
@@ -88,7 +84,4 @@ public abstract class DialogPane extends JPanel {
 		((Dialog) getRootPane().getParent()).dispose();
 	}
 
-	protected void addLabel(final String label) {
-		add(new JLabel(label));
-	}
 }

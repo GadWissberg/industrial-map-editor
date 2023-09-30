@@ -111,22 +111,24 @@ public class MapDeflater {
 		byte[] matrix = new byte[numberOfRows * numberOfCols];
 		JsonArray nodesDataJson = new JsonArray();
 		IntStream.range(0, numberOfRows).forEach(row ->
-				IntStream.range(0, numberOfCols).forEach(col -> {
-					MapNodeData mapNodeData = nodes[row][col];
-					int index = row * (numberOfCols) + col;
-					if (mapNodeData != null && mapNodeData.getTextureDefinition() != null) {
-						addNodeData(mapNodeData, nodesDataJson);
-						matrix[index] = (byte) (mapNodeData.getTextureDefinition().ordinal() + 1);
-					} else {
-						matrix[index] = (byte) (0);
-					}
-				})
+				IntStream.range(0, numberOfCols).forEach(col -> insertIntoMatrix(row, col, nodes, numberOfCols, nodesDataJson, matrix))
 		);
 		nodesJson.addProperty(MATRIX, new String(Base64.getEncoder().encode(matrix)));
-		if (nodesDataJson.size() > 0) {
+		if (!nodesDataJson.isEmpty()) {
 			nodesJson.add(NODES_DATA, nodesDataJson);
 		}
 		return nodesJson;
+	}
+
+	private void insertIntoMatrix(int row, int col, MapNodeData[][] nodes, int numberOfCols, JsonArray nodesDataJson, byte[] matrix) {
+		MapNodeData mapNodeData = nodes[row][col];
+		int index = row * numberOfCols + col;
+		if (mapNodeData != null && mapNodeData.getTextureDefinition() != null) {
+			addNodeData(mapNodeData, nodesDataJson);
+			matrix[index] = (byte) (mapNodeData.getTextureDefinition().ordinal() + 1);
+		} else {
+			matrix[index] = (byte) (0);
+		}
 	}
 
 	private void addMapSize(final JsonObject tiles, final GameMap map) {
