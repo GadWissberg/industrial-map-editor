@@ -247,7 +247,7 @@ public class WallTilingDialog extends DialogPane {
 			if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
 				GuiUtils.openNewDialog(getParent(), new TexturesGalleryDialog(assetsFolderLocation, image -> {
 					imageButton.applyTexture(image, imageIcon);
-					double value = (maxHeight / (imageIcon.getIconHeight() / WORLD_UNIT_SIZE));
+					double value = (maxHeight / ((double) imageIcon.getIconHeight() / WORLD_UNIT_SIZE));
 					wallSpinners.getWallVScale().getModel().setValue(value);
 				}));
 			}

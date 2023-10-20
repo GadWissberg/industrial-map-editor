@@ -6,11 +6,10 @@ import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.utils.Disposable;
 import lombok.Getter;
 
+@Getter
 public class RenderHandlerBatches implements Disposable {
 	private static final int DECALS_POOL_SIZE = 200;
-	@Getter
 	private ModelBatch modelBatch;
-	@Getter
 	private DecalBatch decalBatch;
 
 	@Override

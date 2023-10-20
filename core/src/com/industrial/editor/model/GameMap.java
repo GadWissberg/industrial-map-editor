@@ -20,19 +20,6 @@ public class GameMap {
 		initialize();
 	}
 
-	private void initialize( ) {
-		dimension = new Dimension(DEFAULT_LEVEL_SIZE, DEFAULT_LEVEL_SIZE);
-		createNodesMatrix(dimension);
-		ambientLight = 1;
-	}
-
-	private void createNodesMatrix(final Dimension dimension) {
-		nodes = new MapNodeData[dimension.height][dimension.width];
-		IntStream.range(0, dimension.height).forEach(row ->
-				IntStream.range(0, dimension.width)
-						.forEach(col -> nodes[row][col] = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE)));
-	}
-
 	public void resetSize(final Dimension dimension) {
 		MapNodeData[][] newNodes = new MapNodeData[dimension.height][dimension.width];
 		int minWidth = Math.min(newNodes[0].length, nodes[0].length);
@@ -44,5 +31,18 @@ public class GameMap {
 
 	public void reset( ) {
 		initialize();
+	}
+
+	private void initialize( ) {
+		dimension = new Dimension(DEFAULT_LEVEL_SIZE, DEFAULT_LEVEL_SIZE);
+		createNodesMatrix(dimension);
+		ambientLight = 1;
+	}
+
+	private void createNodesMatrix(final Dimension dimension) {
+		nodes = new MapNodeData[dimension.height][dimension.width];
+		IntStream.range(0, dimension.height).forEach(row ->
+				IntStream.range(0, dimension.width)
+						.forEach(col -> nodes[row][col] = new MapNodeData(row, col, MapNodesTypes.PASSABLE_NODE)));
 	}
 }
