@@ -16,15 +16,17 @@ import com.gadarts.industrial.shared.model.characters.Direction;
 import com.gadarts.industrial.shared.model.map.MapNodeData;
 import com.gadarts.industrial.shared.model.map.MapNodesTypes;
 import com.gadarts.industrial.shared.model.map.Wall;
-import com.industrial.editor.actions.types.placing.*;
-import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.MapRendererImpl;
 import com.industrial.editor.actions.ActionAnswer;
 import com.industrial.editor.actions.MappingAction;
 import com.industrial.editor.actions.processes.*;
-import com.industrial.editor.actions.types.*;
+import com.industrial.editor.actions.types.ActionFactory;
+import com.industrial.editor.actions.types.LiftNodesAction;
+import com.industrial.editor.actions.types.RemoveElementAction;
+import com.industrial.editor.actions.types.placing.*;
 import com.industrial.editor.handlers.cursor.CursorHandler;
 import com.industrial.editor.handlers.cursor.CursorHandlerModelData;
+import com.industrial.editor.handlers.cursor.CursorSelectionModel;
 import com.industrial.editor.mode.EditModes;
 import com.industrial.editor.mode.EditorMode;
 import com.industrial.editor.model.GameMap;
@@ -78,7 +80,8 @@ public class ActionsHandlerImpl implements ActionsHandler {
 			onLeftClick(assetsManager, initializedTiles);
 		} else if (button == Input.Buttons.RIGHT) {
 			if (MapRendererImpl.getMode() instanceof EditModes) {
-				return removeElementByMode();
+				removeElementByMode();
+				return true;
 			}
 		}
 		return false;
@@ -161,7 +164,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 
 	@Override
 	public void beginSelectingTileForLiftProcess(final int direction,
-													final Set<MapNodeData> initializedTiles) {
+												 final Set<MapNodeData> initializedTiles) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 pos = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		SelectTilesForLiftProcess p = new SelectTilesForLiftProcess(data.map(), new FlatNode((int) pos.z, (int) pos.x));
@@ -305,7 +308,7 @@ public class ActionsHandlerImpl implements ActionsHandler {
 		return data.map().getNodes()[row][col];
 	}
 
-	private boolean removeElementByMode( ) {
+	private void removeElementByMode( ) {
 		CursorHandlerModelData cursorHandlerModelData = services.cursorHandler().getCursorHandlerModelData();
 		Vector3 position = cursorHandlerModelData.getCursorTileModelInstance().transform.getTranslation(auxVector);
 		executeAction(new RemoveElementAction(
@@ -313,7 +316,6 @@ public class ActionsHandlerImpl implements ActionsHandler {
 				data.placedElements(),
 				new FlatNode((int) position.z, (int) position.x),
 				(EditModes) MapRendererImpl.getMode()));
-		return true;
 	}
 
 	private void finishProcess(final Assets.SurfaceTextures selectedTile, final Model cursorTileModel) {

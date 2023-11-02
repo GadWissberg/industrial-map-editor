@@ -33,6 +33,11 @@ public class PlaceCharacterAction extends PlaceElementAction<PlacedCharacter, Ch
 	}
 
 	@Override
+	public boolean isProcess() {
+		return false;
+	}
+
+	@Override
 	protected void addElementToList(final PlacedCharacter element) {
 		placedElements.add(element);
 	}
@@ -55,9 +60,4 @@ public class PlaceCharacterAction extends PlaceElementAction<PlacedCharacter, Ch
 		return result;
 	}
 
-
-	@Override
-	public boolean isProcess() {
-		return false;
-	}
 }
