@@ -20,7 +20,7 @@ allprojects {
     version = '0.1'
     ext {
         appName = "industrial-map-editor"
-        gdxVersion = '1.11.0'
+        gdxVersion = '1.12.1'
     }
 
     repositories {
